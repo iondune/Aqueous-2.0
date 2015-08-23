@@ -33,12 +33,62 @@ void CViewerState::Update(float const Elapsed)
 	GUI();
 }
 
+static bool ShowCameraWindow = false;
+
+void CameraWidget(CCameraController * Controller, CPerspectiveCamera * Camera)
+{
+	vec3f Position = Controller->GetPosition();
+	float Phi = Controller->GetPhi();
+	float Theta = Controller->GetTheta();
+	float NearPlane = Camera->GetNearPlane();
+	float FarPlane = Camera->GetFarPlane();
+	float FocalLength = Camera->GetFocalLength();
+	float Speed = Controller->GetVelocity();
+
+	ImGui::SetNextWindowPos(ImVec2(950, 50), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiSetCond_Once);
+	ImGui::Begin("Camera", &ShowCameraWindow);
+	ImGui::InputFloat3("Position", &Position.Values[0]);
+	ImGui::DragFloat("Phi", &Phi, 0.01f, -1.56f, 1.56f);
+	ImGui::DragFloat("Theta", &Theta, 0.01f, -3.1415f, 3.14156f);
+	ImGui::InputFloat("Near Plane", &NearPlane);
+	ImGui::InputFloat("Far Plane", &FarPlane);
+	ImGui::InputFloat("Focal Length", &FocalLength);
+	ImGui::InputFloat("Velocity", &Speed);
+	ImGui::End();
+
+	Controller->SetPhi(Phi);
+	Controller->SetTheta(Theta);
+	Controller->SetVelocity(Speed);
+	Camera->SetPosition(Position);
+	Camera->SetNearPlane(NearPlane);
+	Camera->SetFarPlane(FarPlane);
+	Camera->SetFocalLength(FocalLength);
+}
+
 void CViewerState::GUI()
 {
 	GUIManager->NewFrame();
 
 	static bool show_test_window = false;
 	static bool show_another_window = false;
+
+
+
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Quit", "Alt+F4")) { Application->Close();  }
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("View"))
+		{
+			if (ImGui::MenuItem("Camera Control")) { ShowCameraWindow ^= 1; };
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
 
 
 	// 1. Show a simple window
@@ -72,6 +122,8 @@ void CViewerState::GUI()
 		ImGui::SetNextWindowPos(ImVec2(950, 20), ImGuiSetCond_Once);
 		ImGui::ShowTestWindow(&show_test_window);
 	}
+
+	if (ShowCameraWindow) CameraWidget(DebugCameraControl, DebugCamera);
 }
 
 void CViewerState::OnEvent(IEvent & Event)
@@ -87,6 +139,10 @@ void CViewerState::OnEvent(IEvent & Event)
 			switch (KeyboardEvent.Key)
 			{
 			case EKey::Grave:
+				break;
+
+			case EKey::C:
+				ShowCameraWindow ^= 1;
 				break;
 			}
 		}
