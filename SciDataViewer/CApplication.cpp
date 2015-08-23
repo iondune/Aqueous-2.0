@@ -24,6 +24,7 @@ void CApplication::Run()
 		StateManager->Update((f32) TimeManager->GetElapsedTime());
 
 		SceneManager->DrawAll();
+		ImGui::Render();
 		Window->SwapBuffers();
 	}
 }
@@ -78,7 +79,7 @@ CWindow * CApplication::GetWindow()
 void CApplication::InitWindow()
 {
 	WindowManager->Init();
-	Window = WindowManager->CreateWindow(vec2i(1600, 900), "Scientific Data Viewer", EWindowType::Windowed);
+	Window = WindowManager->CreateWindow(vec2i(2560, 1440), "Scientific Data Viewer", EWindowType::Windowed);
 	Window->AddChild(this);
 }
 
