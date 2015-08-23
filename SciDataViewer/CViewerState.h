@@ -5,7 +5,7 @@
 
 
 class CApplication;
-class CCameraRig;
+class CParticleSystem;
 
 class CViewerState : public IState, public Singleton<CViewerState>
 {
@@ -23,6 +23,7 @@ private:
 	SingletonPointer<CApplication> Application;
 	SingletonPointer<CSceneManager> SceneManager;
 	SingletonPointer<CImGUIManager> GUIManager;
+	SingletonPointer<CParticleSystem> ParticleSystem;
 	
 	CCameraController * DebugCameraControl = nullptr;
 	CPerspectiveCamera * DebugCamera = nullptr;

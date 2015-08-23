@@ -4,9 +4,11 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="CApplication.cpp" />
     <ClCompile Include="CViewerState.cpp" />
+    <ClCompile Include="CParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CViewerState.h" />
+    <ClInclude Include="CParticleSystem.h" />
   </ItemGroup>
 </Project>

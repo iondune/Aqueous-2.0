@@ -90,6 +90,7 @@ void CApplication::LoadAssets()
 	SceneManager->GetMeshLibrary()->SetBaseDirectory("Assets/Meshes");
 
 	SceneManager->GetShaderLibrary()->Load("Diffuse");
+	SceneManager->GetShaderLibrary()->Load("Particle");
 
 	SceneManager->GetMeshLibrary()->Add("Cube", CGeometryCreator::CreateCube());
 }

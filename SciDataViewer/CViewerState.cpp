@@ -1,6 +1,7 @@
 
 #include "CViewerState.h"
 #include "CApplication.h"
+#include "CParticleSystem.h"
 
 
 void CViewerState::Init()
@@ -19,6 +20,22 @@ void CViewerState::Init()
 	ILightSceneNode * Light = SceneManager->GetFactory()->AddLight(vec3f(-128, 256, 128));
 	Light->SetRadius(150.f);
 
+	ParticleSystem->Init();
+
+	for (int x = 1; x < 20; ++ x)
+	for (int y = 1; y < 20; ++ y)
+	for (int z = 1; z < 20; ++ z)
+	{
+		static int const NumColors = 7;
+		static color3f const ColorChoices[] = {Colors::Red, Colors::Green, Colors::Blue, Colors::Cyan, Colors::Magenta, Colors::Yellow, Colors::Orange};
+		CParticle p;
+		p.Color = ColorChoices[rand() % NumColors];
+		p.Position = vec3f((f32) x, (f32) y, (f32) z);
+
+		ParticleSystem->Particles.push_back(p);
+	}
+	ParticleSystem->Update();
+
 	ClearColor = color3f(0.65f, 0.85f, 0.95f);
 	ion::GL::Context::SetClearColor(ClearColor);
 
@@ -29,11 +46,13 @@ void CViewerState::Init()
 void CViewerState::Update(float const Elapsed)
 {
 	DebugCameraControl->Update(Elapsed);
+	ParticleSystem->Draw();
 
 	GUI();
 }
 
 static bool ShowCameraWindow = false;
+static bool ShowPointsWindow = false;
 
 void CameraWidget(CCameraController * Controller, CPerspectiveCamera * Camera)
 {
@@ -66,6 +85,33 @@ void CameraWidget(CCameraController * Controller, CPerspectiveCamera * Camera)
 	Camera->SetFocalLength(FocalLength);
 }
 
+void PointsWidget()
+{
+	SingletonPointer<CParticleSystem> ParticleSystem;
+	ImGui::SetNextWindowPos(ImVec2(950, 50), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiSetCond_Once);
+	ImGui::Begin("Points", &ShowPointsWindow);
+
+	ImGui::Columns(3, "mycolumns");
+	ImGui::Separator();
+	ImGui::Text("#"); ImGui::NextColumn();
+	ImGui::Text("Position"); ImGui::NextColumn();
+	ImGui::Text("Color"); ImGui::NextColumn();
+	ImGui::Separator();
+
+	for (size_t i = 0; i < ParticleSystem->Particles.size(); i++)
+	{
+		CParticle const & p = ParticleSystem->Particles[i];
+
+		ImGui::Text("%d", i); ImGui::NextColumn();
+		ImGui::Text("%.2f, %.2f, %.2f", p.Position.X, p.Position.Y, p.Position.Z); ImGui::NextColumn();
+		ImGui::Text("%.2f, %.2f, %.2f", p.Color.Red, p.Color.Green, p.Color.Blue); ImGui::NextColumn();
+	}
+	ImGui::Columns(1);
+
+	ImGui::End();
+}
+
 void CViewerState::GUI()
 {
 	GUIManager->NewFrame();
@@ -82,9 +128,10 @@ void CViewerState::GUI()
 			if (ImGui::MenuItem("Quit", "Alt+F4")) { Application->Close();  }
 			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("View"))
+		if (ImGui::BeginMenu("Windows"))
 		{
-			if (ImGui::MenuItem("Camera Control")) { ShowCameraWindow ^= 1; };
+			if (ImGui::MenuItem("Camera")) { ShowCameraWindow ^= 1; };
+			if (ImGui::MenuItem("Points")) { ShowPointsWindow ^= 1; };
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -124,6 +171,7 @@ void CViewerState::GUI()
 	}
 
 	if (ShowCameraWindow) CameraWidget(DebugCameraControl, DebugCamera);
+	if (ShowPointsWindow) PointsWidget();
 }
 
 void CViewerState::OnEvent(IEvent & Event)
@@ -143,6 +191,10 @@ void CViewerState::OnEvent(IEvent & Event)
 
 			case EKey::C:
 				ShowCameraWindow ^= 1;
+				break;
+
+			case EKey::P:
+				ShowPointsWindow ^= 1;
 				break;
 			}
 		}
