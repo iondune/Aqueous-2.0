@@ -54,6 +54,9 @@ void CViewerState::Update(float const Elapsed)
 static bool ShowCameraWindow = false;
 static bool ShowPointsWindow = false;
 
+static bool show_debug_window = false;
+static bool show_test_window = false;
+
 void CameraWidget(CCameraController * Controller, CPerspectiveCamera * Camera)
 {
 	vec3f Position = Controller->GetPosition();
@@ -116,11 +119,6 @@ void CViewerState::GUI()
 {
 	GUIManager->NewFrame();
 
-	static bool show_test_window = false;
-	static bool show_another_window = false;
-
-
-
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -132,38 +130,22 @@ void CViewerState::GUI()
 		{
 			if (ImGui::MenuItem("Camera")) { ShowCameraWindow ^= 1; };
 			if (ImGui::MenuItem("Points")) { ShowPointsWindow ^= 1; };
+			if (ImGui::MenuItem("Debug")) { show_debug_window ^= 1; };
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
 
-
-	// 1. Show a simple window
-	// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
+	if (show_debug_window)
 	{
 		ImGui::SetNextWindowSize(ImVec2(800, 600), ImGuiSetCond_Once);
-		ImGui::Begin("Main Window", &show_another_window);
-		static float f = 0.0f;
-		ImGui::Text("Hello, world!");
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+		ImGui::Begin("Debug", &show_debug_window);
 		if (ImGui::ColorEdit4("clear color", (float*)&ClearColor.Values[0], false)) ion::GL::Context::SetClearColor(ClearColor);
-		if (ImGui::Button("Test Window")) show_test_window ^= 1;
-		if (ImGui::Button("Another Window")) show_another_window ^= 1;
+		if (ImGui::Button("GUI Test Window")) show_test_window ^= 1;
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
 
-	// 2. Show another simple window, this time using an explicit Begin/End pair
-	if (show_another_window)
-	{
-		ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiSetCond_Once);
-		ImGui::SetNextWindowPos(ImVec2(100, 800), ImGuiSetCond_Once);
-		ImGui::Begin("Another Window", &show_another_window);
-		ImGui::Text("Hello");
-		ImGui::End();
-	}
-
-	// 3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
 	if (show_test_window)
 	{
 		ImGui::SetNextWindowPos(ImVec2(950, 20), ImGuiSetCond_Once);
@@ -200,6 +182,10 @@ void CViewerState::OnEvent(IEvent & Event)
 
 			case EKey::P:
 				ShowPointsWindow ^= 1;
+				break;
+
+			case EKey::D:
+				show_debug_window ^= 1;
 				break;
 			}
 		}
