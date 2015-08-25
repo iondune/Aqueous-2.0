@@ -13,7 +13,7 @@ void CViewerState::Init()
 	DebugCameraControl->SetTheta(0);
 	DebugCameraControl->SetPhi(-Constants32::Pi / 4.f);
 	DebugCamera->SetFarPlane(50000.f);
-	Application->GetWindow()->AddListener(DebugCameraControl);
+	AddListener(DebugCameraControl);
 	SceneManager->GetScene()->SetActiveCamera(DebugCamera);
 
 	SceneManager->GetFactory()->AddMeshNode("Cube", "Diffuse");
@@ -177,6 +177,11 @@ void CViewerState::GUI()
 void CViewerState::OnEvent(IEvent & Event)
 {
 	GUIManager->OnEvent(Event);
+
+	if (GUIManager->IO.WantCaptureMouse)
+	{
+		Event.Block();
+	}
 
 	if (InstanceOf<SKeyboardEvent>(Event))
 	{
