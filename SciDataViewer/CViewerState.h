@@ -7,6 +7,10 @@
 class CApplication;
 class CParticleSystem;
 
+class CCameraWindowWidget;
+class CPointsWindowWidget;
+class CDebugWindowWidget;
+
 class CViewerState : public IState, public Singleton<CViewerState>
 {
 
@@ -27,6 +31,10 @@ private:
 	
 	CCameraController * DebugCameraControl = nullptr;
 	CPerspectiveCamera * DebugCamera = nullptr;
+
+	CCameraWindowWidget * CameraWindow = nullptr;
+	CPointsWindowWidget * PointsWindow = nullptr;
+	CDebugWindowWidget * DebugWindow = nullptr;
 
 	color4f ClearColor;
 

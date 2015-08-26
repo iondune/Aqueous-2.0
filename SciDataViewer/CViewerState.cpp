@@ -2,6 +2,9 @@
 #include "CViewerState.h"
 #include "CApplication.h"
 #include "CParticleSystem.h"
+#include "CCameraWindowWidget.h"
+#include "CPointsWindowWidget.h"
+#include "CDebugWindowWidget.h"
 
 
 void CViewerState::Init()
@@ -41,6 +44,15 @@ void CViewerState::Init()
 
 	GUIManager->Init(Application->GetWindow(), true);
 	GUIManager->AddFontFromFile("Assets/Fonts/OpenSans.ttf", 30.f);
+
+	CameraWindow = new CCameraWindowWidget();
+	CameraWindow->Camera = DebugCamera;
+	CameraWindow->Controller = DebugCameraControl;
+
+	PointsWindow = new CPointsWindowWidget();
+
+	DebugWindow = new CDebugWindowWidget();
+	DebugWindow->ClearColor = ion::GL::Context::GetClearColor();
 }
 
 void CViewerState::Update(float const Elapsed)
@@ -49,70 +61,6 @@ void CViewerState::Update(float const Elapsed)
 	ParticleSystem->Draw();
 
 	GUI();
-}
-
-static bool ShowCameraWindow = false;
-static bool ShowPointsWindow = false;
-
-static bool show_debug_window = false;
-static bool show_test_window = false;
-
-void CameraWidget(CCameraController * Controller, CPerspectiveCamera * Camera)
-{
-	vec3f Position = Controller->GetPosition();
-	float Phi = Controller->GetPhi();
-	float Theta = Controller->GetTheta();
-	float NearPlane = Camera->GetNearPlane();
-	float FarPlane = Camera->GetFarPlane();
-	float FocalLength = Camera->GetFocalLength();
-	float Speed = Controller->GetVelocity();
-
-	ImGui::SetNextWindowPos(ImVec2(950, 50), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiSetCond_Once);
-	ImGui::Begin("Camera", &ShowCameraWindow);
-	ImGui::InputFloat3("Position", &Position.Values[0]);
-	ImGui::DragFloat("Phi", &Phi, 0.01f, -1.56f, 1.56f);
-	ImGui::DragFloat("Theta", &Theta, 0.01f, -3.1415f, 3.14156f);
-	ImGui::InputFloat("Near Plane", &NearPlane);
-	ImGui::InputFloat("Far Plane", &FarPlane);
-	ImGui::InputFloat("Focal Length", &FocalLength);
-	ImGui::InputFloat("Velocity", &Speed);
-	ImGui::End();
-
-	Controller->SetPhi(Phi);
-	Controller->SetTheta(Theta);
-	Controller->SetVelocity(Speed);
-	Camera->SetPosition(Position);
-	Camera->SetNearPlane(NearPlane);
-	Camera->SetFarPlane(FarPlane);
-	Camera->SetFocalLength(FocalLength);
-}
-
-void PointsWidget()
-{
-	SingletonPointer<CParticleSystem> ParticleSystem;
-	ImGui::SetNextWindowPos(ImVec2(950, 50), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiSetCond_Once);
-	ImGui::Begin("Points", &ShowPointsWindow);
-
-	ImGui::Columns(3, "mycolumns");
-	ImGui::Separator();
-	ImGui::Text("#"); ImGui::NextColumn();
-	ImGui::Text("Position"); ImGui::NextColumn();
-	ImGui::Text("Color"); ImGui::NextColumn();
-	ImGui::Separator();
-
-	for (size_t i = 0; i < ParticleSystem->Particles.size(); i++)
-	{
-		CParticle const & p = ParticleSystem->Particles[i];
-
-		ImGui::Text("%d", i); ImGui::NextColumn();
-		ImGui::Text("%.2f, %.2f, %.2f", p.Position.X, p.Position.Y, p.Position.Z); ImGui::NextColumn();
-		ImGui::Text("%.2f, %.2f, %.2f", p.Color.Red, p.Color.Green, p.Color.Blue); ImGui::NextColumn();
-	}
-	ImGui::Columns(1);
-
-	ImGui::End();
 }
 
 void CViewerState::GUI()
@@ -128,32 +76,17 @@ void CViewerState::GUI()
 		}
 		if (ImGui::BeginMenu("Windows"))
 		{
-			if (ImGui::MenuItem("Camera")) { ShowCameraWindow ^= 1; };
-			if (ImGui::MenuItem("Points")) { ShowPointsWindow ^= 1; };
-			if (ImGui::MenuItem("Debug")) { show_debug_window ^= 1; };
+			if (ImGui::MenuItem("Camera")) { CameraWindow->ToggleVisibility(); };
+			if (ImGui::MenuItem("Points")) { PointsWindow->ToggleVisibility(); };
+			if (ImGui::MenuItem("Debug")) { DebugWindow->ToggleVisibility(); };
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
 
-	if (show_debug_window)
-	{
-		ImGui::SetNextWindowSize(ImVec2(800, 600), ImGuiSetCond_Once);
-		ImGui::Begin("Debug", &show_debug_window);
-		if (ImGui::ColorEdit4("clear color", (float*)&ClearColor.Values[0], false)) ion::GL::Context::SetClearColor(ClearColor);
-		if (ImGui::Button("GUI Test Window")) show_test_window ^= 1;
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::End();
-	}
-
-	if (show_test_window)
-	{
-		ImGui::SetNextWindowPos(ImVec2(950, 20), ImGuiSetCond_Once);
-		ImGui::ShowTestWindow(&show_test_window);
-	}
-
-	if (ShowCameraWindow) CameraWidget(DebugCameraControl, DebugCamera);
-	if (ShowPointsWindow) PointsWidget();
+	DebugWindow->DrawIfVisible();
+	CameraWindow->DrawIfVisible();
+	PointsWindow->DrawIfVisible();
 }
 
 void CViewerState::OnEvent(IEvent & Event)
@@ -177,15 +110,15 @@ void CViewerState::OnEvent(IEvent & Event)
 				break;
 
 			case EKey::C:
-				ShowCameraWindow ^= 1;
+				CameraWindow->ToggleVisibility();
 				break;
 
 			case EKey::P:
-				ShowPointsWindow ^= 1;
+				PointsWindow->ToggleVisibility();
 				break;
 
-			case EKey::D:
-				show_debug_window ^= 1;
+			case EKey::F1:
+				DebugWindow->ToggleVisibility();
 				break;
 			}
 		}
