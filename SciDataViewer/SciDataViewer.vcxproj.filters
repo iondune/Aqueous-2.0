@@ -6,6 +6,7 @@
     <ClCompile Include="CViewerState.cpp" />
     <ClCompile Include="CParticleSystem.cpp" />
     <ClCompile Include="CWindowWidget.cpp" />
+    <ClCompile Include="CDataSet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
@@ -15,5 +16,8 @@
     <ClInclude Include="CCameraWindowWidget.h" />
     <ClInclude Include="CPointsWindowWidget.h" />
     <ClInclude Include="CDebugWindowWidget.h" />
+    <ClInclude Include="CDataSet.h" />
+    <ClInclude Include="CDataLoader.h" />
+    <ClInclude Include="CDataLoaderCSV.h" />
   </ItemGroup>
 </Project>

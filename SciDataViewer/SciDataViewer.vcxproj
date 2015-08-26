@@ -23,11 +23,15 @@
     <ClCompile Include="CParticleSystem.cpp" />
     <ClCompile Include="CViewerState.cpp" />
     <ClCompile Include="CWindowWidget.cpp" />
+    <ClCompile Include="CDataSet.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CCameraWindowWidget.h" />
+    <ClInclude Include="CDataLoader.h" />
+    <ClInclude Include="CDataLoaderCSV.h" />
+    <ClInclude Include="CDataSet.h" />
     <ClInclude Include="CDebugWindowWidget.h" />
     <ClInclude Include="CParticleSystem.h" />
     <ClInclude Include="CPointsWindowWidget.h" />
