@@ -2,6 +2,11 @@
 #include "CDataSet.h"
 
 
+string CDataRow::GetFieldAsString(uint const i) const
+{
+	return DataSet->Columns[i].second->GetRowAsString(InternalIndex);
+}
+
 CDataRow::CDataRow(CDataSet * const DataSet, uint const InternalIndex)
 {
 	this->DataSet = DataSet;
@@ -14,18 +19,23 @@ void CDataSet::SetSchema(vector<string> const & Schema)
 
 	for (auto Field : Schema)
 	{
-		Columns.push_back(make_pair(Field, vector<double>()));
+		Columns.push_back(make_pair(Field, new CDataColumnString()));
 	}
 }
 
-void CDataSet::AddRow(vector<double> const & Values)
+void CDataSet::AddRow(vector<string> const & Values)
 {
-	assert(Values.size() == Columns.size());
-	
-	for (size_t i = 0; i < Values.size(); ++ i)
+	for (size_t i = 0; i < Columns.size(); ++ i)
 	{
-		Columns[i].second.push_back(Values[i]);
+		string Value;
+		if (i < Values.size())
+		{
+			Value = Values[i];
+		}
+
+		Columns[i].second->PushBackValueFromString(Value);
 	}
+	NumRows ++;
 }
 
 CDataRow CDataSet::GetRow(uint const i)
@@ -36,4 +46,34 @@ CDataRow CDataSet::GetRow(uint const i)
 uint CDataSet::Size() const
 {
 	return NumRows;
+}
+
+uint CDataSet::GetColumnCount() const
+{
+	return (uint) Columns.size();
+}
+
+string CDataSet::GetColumnLabel(uint const i)
+{
+	return Columns[i].first;
+}
+
+string CDataColumnString::GetRowAsString(uint const i) const
+{
+	return Rows[i];
+}
+
+string const & CDataColumnString::GetRow(uint const i) const
+{
+	return Rows[i];
+}
+
+void CDataColumnString::PushBackValueFromString(string const & s)
+{
+	Rows.push_back(s);
+}
+
+EDataType CDataColumnString::GetDataType() const
+{
+	return EDataType::String;
 }

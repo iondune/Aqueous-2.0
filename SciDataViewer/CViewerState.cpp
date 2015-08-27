@@ -63,6 +63,9 @@ void CViewerState::Update(float const Elapsed)
 	GUI();
 }
 
+#include <nfd.h>
+
+
 void CViewerState::GUI()
 {
 	GUIManager->NewFrame();
@@ -71,7 +74,25 @@ void CViewerState::GUI()
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("Quit", "Alt+F4")) { Application->Close();  }
+			if (ImGui::MenuItem("Import", ""))
+			{
+				nfdchar_t *outPath = NULL;
+				nfdresult_t result = NFD_OpenDialog(NULL, nullptr/*"C:/Users/Ian/Dropbox/Projects/ICEX 2015/Data"*/, &outPath);
+
+				if (result == NFD_OKAY) {
+					puts("Success!");
+					puts(outPath);
+					DataManager->Load(outPath);
+					free(outPath);
+				}
+				else if (result == NFD_CANCEL) {
+					puts("User pressed cancel.");
+				}
+				else {
+					printf("Error: %s\n", NFD_GetError());
+				}
+			}
+			if (ImGui::MenuItem("Quit", "Alt+F4")) { Application->Close(); }
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Windows"))

@@ -25,7 +25,7 @@ public:
 	{
 		std::ifstream File;
 		vector<string> Fields;
-		bool FirstLine = false;
+		bool FirstLine = true;
 
 		File.open(FileName);
 		while (File.is_open() && File.good())
@@ -53,16 +53,16 @@ public:
 			}
 			else
 			{
-				vector<double> Row;
+				vector<string> Row;
 				while (Stream.good())
 				{
 					string Label;
 					std::getline(Stream, Label, ValueDelim);
-					Row.push_back(string_to_double(Label));
+					Row.push_back(Label);
 				}
 
-				if (Row.size() != Fields.size())
-					std::cerr << "Mismatched row size at row " << DataSet->Size() << " in file '" << FileName << "', found " << Row.size() << " but expected " << Fields.size() << std::endl;
+				//if (Row.size() != Fields.size())
+				//	std::cerr << "Mismatched row size at row " << DataSet->Size() << " in file '" << FileName << "', found " << Row.size() << " but expected " << Fields.size() << std::endl;
 
 				DataSet->AddRow(Row);
 			}

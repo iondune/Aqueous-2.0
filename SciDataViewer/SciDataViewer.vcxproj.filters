@@ -7,6 +7,7 @@
     <ClCompile Include="CParticleSystem.cpp" />
     <ClCompile Include="CWindowWidget.cpp" />
     <ClCompile Include="CDataSet.cpp" />
+    <ClCompile Include="CDataManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
@@ -19,5 +20,6 @@
     <ClInclude Include="CDataSet.h" />
     <ClInclude Include="CDataLoader.h" />
     <ClInclude Include="CDataLoaderCSV.h" />
+    <ClInclude Include="CDataManager.h" />
   </ItemGroup>
 </Project>

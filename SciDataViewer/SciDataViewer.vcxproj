@@ -18,8 +18,18 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(VisualStudioDir)\Projects\ionEngine\Properties\Application.props" />
   </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\Ian\Documents\Visual Studio 2015\SDKs\nativefiledialog\src\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>nativefiledialog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Ian\Documents\Visual Studio 2015\SDKs\nativefiledialog\x64\Debug\</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CApplication.cpp" />
+    <ClCompile Include="CDataManager.cpp" />
     <ClCompile Include="CParticleSystem.cpp" />
     <ClCompile Include="CViewerState.cpp" />
     <ClCompile Include="CWindowWidget.cpp" />
@@ -31,6 +41,7 @@
     <ClInclude Include="CCameraWindowWidget.h" />
     <ClInclude Include="CDataLoader.h" />
     <ClInclude Include="CDataLoaderCSV.h" />
+    <ClInclude Include="CDataManager.h" />
     <ClInclude Include="CDataSet.h" />
     <ClInclude Include="CDebugWindowWidget.h" />
     <ClInclude Include="CParticleSystem.h" />

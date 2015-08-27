@@ -5,6 +5,7 @@
 
 
 class CApplication;
+class CDataManager;
 class CParticleSystem;
 
 class CCameraWindowWidget;
@@ -27,6 +28,7 @@ private:
 	SingletonPointer<CApplication> Application;
 	SingletonPointer<CSceneManager> SceneManager;
 	SingletonPointer<CImGUIManager> GUIManager;
+	SingletonPointer<CDataManager> DataManager;
 	SingletonPointer<CParticleSystem> ParticleSystem;
 	
 	CCameraController * DebugCameraControl = nullptr;
