@@ -74,23 +74,9 @@ void CViewerState::GUI()
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("Import", ""))
+			if (ImGui::MenuItem("Import", "Ctrl+I"))
 			{
-				nfdchar_t *outPath = NULL;
-				nfdresult_t result = NFD_OpenDialog(NULL, nullptr/*"C:/Users/Ian/Dropbox/Projects/ICEX 2015/Data"*/, &outPath);
-
-				if (result == NFD_OKAY) {
-					puts("Success!");
-					puts(outPath);
-					DataManager->Load(outPath);
-					free(outPath);
-				}
-				else if (result == NFD_CANCEL) {
-					puts("User pressed cancel.");
-				}
-				else {
-					printf("Error: %s\n", NFD_GetError());
-				}
+				DoImport();
 			}
 			if (ImGui::MenuItem("Quit", "Alt+F4")) { Application->Close(); }
 			ImGui::EndMenu();
@@ -141,7 +127,34 @@ void CViewerState::OnEvent(IEvent & Event)
 			case EKey::F1:
 				DebugWindow->ToggleVisibility();
 				break;
+
+			case EKey::I:
+				if (Application->GetWindow()->IsKeyDown(EKey::LeftControl) || Application->GetWindow()->IsKeyDown(EKey::RightControl))
+				{
+					DoImport();
+				}
 			}
 		}
+	}
+}
+
+void CViewerState::DoImport()
+{
+	nfdchar_t *outPath = NULL;
+	nfdresult_t result = NFD_OpenDialog(NULL, nullptr/*"C:/Users/Ian/Dropbox/Projects/ICEX 2015/Data"*/, &outPath);
+
+	if (result == NFD_OKAY) {
+		puts("Success!");
+		puts(outPath);
+		DataManager->Load(outPath);
+		ParticleSystem->SetParticlesFromData();
+
+		free(outPath);
+	}
+	else if (result == NFD_CANCEL) {
+		puts("User pressed cancel.");
+	}
+	else {
+		printf("Error: %s\n", NFD_GetError());
 	}
 }

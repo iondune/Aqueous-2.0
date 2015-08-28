@@ -12,6 +12,7 @@ class CDataRow
 public:
 
 	string GetFieldAsString(uint const i) const;
+	double GetFieldAsDouble(uint const i) const;
 
 private:
 

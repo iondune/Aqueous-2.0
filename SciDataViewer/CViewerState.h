@@ -40,4 +40,6 @@ private:
 
 	color4f ClearColor;
 
+	void DoImport();
+
 };

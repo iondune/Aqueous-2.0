@@ -7,6 +7,20 @@ string CDataRow::GetFieldAsString(uint const i) const
 	return DataSet->Columns[i].second->GetRowAsString(InternalIndex);
 }
 
+
+static inline f64 const string_to_double(std::string const & s)
+{
+	std::istringstream iss(s);
+	f64 t;
+	iss >> t;
+	return t;
+}
+
+double CDataRow::GetFieldAsDouble(uint const i) const
+{
+	return string_to_double(GetFieldAsString(i));
+}
+
 CDataRow::CDataRow(CDataSet * const DataSet, uint const InternalIndex)
 {
 	this->DataSet = DataSet;
