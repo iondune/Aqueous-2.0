@@ -12,6 +12,7 @@ public:
 
 	CDataSet * GetCurrentDataSet();
 	void Load(string const & FileName);
+	void WriteOBJ(string const & FileName);
 
 private:
 

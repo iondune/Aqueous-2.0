@@ -78,6 +78,14 @@ void CViewerState::GUI()
 			{
 				DoImport();
 			}
+			if (ImGui::BeginMenu("Export..."))
+			{
+				if (ImGui::MenuItem("OBJ"))
+				{
+					DoExportOBJ();
+				}
+				ImGui::EndMenu();
+			}
 			if (ImGui::MenuItem("Quit", "Alt+F4")) { Application->Close(); }
 			ImGui::EndMenu();
 		}
@@ -144,10 +152,28 @@ void CViewerState::DoImport()
 	nfdresult_t result = NFD_OpenDialog(NULL, nullptr/*"C:/Users/Ian/Dropbox/Projects/ICEX 2015/Data"*/, &outPath);
 
 	if (result == NFD_OKAY) {
-		puts("Success!");
 		puts(outPath);
 		DataManager->Load(outPath);
 		ParticleSystem->SetParticlesFromData();
+
+		free(outPath);
+	}
+	else if (result == NFD_CANCEL) {
+		puts("User pressed cancel.");
+	}
+	else {
+		printf("Error: %s\n", NFD_GetError());
+	}
+}
+
+void CViewerState::DoExportOBJ()
+{
+	nfdchar_t *outPath = NULL;
+	nfdresult_t result = NFD_SaveDialog("*.obj", nullptr, &outPath);
+
+	if (result == NFD_OKAY) {
+		puts(outPath);
+		DataManager->WriteOBJ(outPath);
 
 		free(outPath);
 	}
