@@ -2,30 +2,56 @@
 #include "CParticleSystem.h"
 #include "CDataManager.h"
 
+using namespace ion::Graphics;
 
-void CParticleSystem::Init()
+
+void CParticleSystem::Load(ion::Scene::CRenderPass * RenderPass)
 {
-	SingletonPointer<CSceneManager> SceneManager;
 
-	PositionBuffer = new ion::GL::VertexBuffer;
-	PositionBuffer->Data<f32>(MaxParticles * 3 * sizeof(f32), nullptr, 3);
-	ColorBuffer = new ion::GL::VertexBuffer;
-	ColorBuffer->Data<f32>(MaxParticles * 3 * sizeof(f32), nullptr, 3);
-	
-	Node = SceneManager->GetFactory()->AddSceneNode("Particle");
+	vector<f32> const Vertices
+	{
+		0.5f,  0.5f,   1, 1,
+		0.5f, -0.5f,   1, 0,
+		-0.5f, -0.5f,   0, 0,
+		-0.5f,  0.5f,   0, 1,
+	};
 
-	if (! Node)
+	vector<u32> const Indices
 	{
-		Log::Error("Failed to load particle shader!");
-	}
-	
-	if (Node)
+		0, 1, 2,
+		0, 2, 3,
+	};
+
+	SharedPointer<IIndexBuffer> IndexBuffer = RenderPass->GetGraphicsAPI()->CreateIndexBuffer();
+	IndexBuffer->UploadData(Indices);
+	SharedPointer<IVertexBuffer> VertexBuffer = RenderPass->GetGraphicsAPI()->CreateVertexBuffer();
+	VertexBuffer->UploadData(Vertices);
+	SInputLayoutElement InputLayout[] =
 	{
-		Node->SetVertexBuffer("vPosition", PositionBuffer);
-		Node->SetVertexBuffer("vColor", ColorBuffer);
-		Node->SetUniform("BillboardSize", &BillboardSize);
-		Node->SetPrimitiveType(ion::GL::EPrimitiveType::Points);
-	}
+		{ "vPosition", 2, EAttributeType::Float },
+		{ "vTexCoords", 2, EAttributeType::Float },
+	};
+	VertexBuffer->SetInputLayout(InputLayout, ION_ARRAYSIZE(InputLayout));
+
+	InstanceBuffer = RenderPass->GetGraphicsAPI()->CreateVertexBuffer();
+	InstanceBuffer->SetInstancingEnabled(true);
+	SInputLayoutElement InstanceLayout[] =
+	{
+		{ "vInstancePosition", 3, EAttributeType::Float },
+		{ "vInstanceColor", 3, EAttributeType::Float },
+	};
+	InstanceBuffer->SetInputLayout(InstanceLayout, ION_ARRAYSIZE(InstanceLayout));
+
+	PipelineState = RenderPass->GetGraphicsContext()->CreatePipelineState();
+	PipelineState->SetProgram(Shader);
+	PipelineState->SetIndexBuffer(IndexBuffer);
+	PipelineState->SetVertexBuffer(0, VertexBuffer);
+	PipelineState->SetVertexBuffer(1, InstanceBuffer);
+	PipelineState->SetUniform("uParticleSize", BillboardSize);
+	PipelineState->SetFeatureEnabled(EDrawFeature::DisableDepthWrite, true);
+
+	RenderPass->PreparePipelineStateForRendering(PipelineState, this);
+	Loaded = true;
 }
 
 void CParticleSystem::SetParticlesFromData()
@@ -200,35 +226,31 @@ void CParticleSystem::Update()
 
 	assert(Particles.size() <= MaxParticles);
 
-	Positions.clear();
-	Colors.clear();
+	InstanceData.clear();
 
-	size_t const FloatsNeeded = Particles.size() * 3;
-	if (Positions.size() < FloatsNeeded)
+	size_t const FloatsNeeded = Particles.size() * 6;
+	if (InstanceData.size() < FloatsNeeded)
 	{
-		Positions.resize(FloatsNeeded);
-		Colors.resize(FloatsNeeded);
+		InstanceData.resize(FloatsNeeded);
 	}
 
 	for (uint i = 0; i < Particles.size(); ++ i)
 	{
-		Positions[i * 3 + 0] = (f32) Particles[i].Position.X;
-		Positions[i * 3 + 1] = (f32) Particles[i].Position.Y;
-		Positions[i * 3 + 2] = (f32) Particles[i].Position.Z;
-		Colors[i * 3 + 0] = Particles[i].Color.Red;
-		Colors[i * 3 + 1] = Particles[i].Color.Green;
-		Colors[i * 3 + 2] = Particles[i].Color.Blue;
+		InstanceData[i * 6 + 0] = (f32) Particles[i].Position.X;
+		InstanceData[i * 6 + 1] = (f32) Particles[i].Position.Y;
+		InstanceData[i * 6 + 2] = (f32) Particles[i].Position.Z;
+		InstanceData[i * 6 + 3] = Particles[i].Color.Red;
+		InstanceData[i * 6 + 4] = Particles[i].Color.Green;
+		InstanceData[i * 6 + 5] = Particles[i].Color.Blue;
 	}
 
-	PositionBuffer->SubData(Positions);
-	ColorBuffer->SubData(Colors);
+	InstanceBuffer->UploadData(InstanceData);
 }
 
-void CParticleSystem::Draw()
+void CParticleSystem::Draw(ion::Scene::CRenderPass * RenderPass)
 {
-	if (Node)
+	if (Particles.size())
 	{
-		Node->SetElementCount((uint) Particles.size());
-		Node->SetVisible(Particles.size() != 0);
+		RenderPass->SubmitPipelineStateForRendering(PipelineState, this, Particles.size());
 	}
 }

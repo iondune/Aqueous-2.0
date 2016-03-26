@@ -15,12 +15,15 @@ public:
 
 };
 
-class CParticleSystem : public Singleton<CParticleSystem>
+class CParticleSystem : public ion::Scene::ISceneObject
 {
 
 public:
 
-	void Init();
+	CParticleSystem(SharedPointer<ion::Graphics::IShaderProgram> Shader);
+
+	void Load(ion::Scene::CRenderPass * RenderPass);
+	void Draw(ion::Scene::CRenderPass * RenderPass);
 
 	vector<CParticle> Particles;
 
@@ -36,22 +39,16 @@ public:
 	void NormalizeParticlePositions();
 	void UpdateColors();
 
-	CUniformValue<f32> BillboardSize = 0.08f;
+	ion::Graphics::CUniform<f32> BillboardSize = 0.08f;
 	float RampLow = -60, RampHigh = -50;
 
 private:
 
 	int const MaxParticles = 250000;
 
-	CSceneNode * Node;
-	
-	vector<f32> Positions;
-	vector<f32> Colors;
-	ion::GL::VertexBuffer * PositionBuffer = nullptr;
-	ion::GL::VertexBuffer * ColorBuffer = nullptr;
-
-
-	friend Singleton<CParticleSystem>;
-	CParticleSystem() {}
+	vector<f32> InstanceData;
+	SharedPointer<ion::Graphics::IVertexBuffer> InstanceBuffer;
+	SharedPointer<ion::Graphics::IPipelineState> PipelineState;
+	SharedPointer<ion::Graphics::IShaderProgram> Shader;
 
 };

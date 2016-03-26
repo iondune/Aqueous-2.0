@@ -7,9 +7,17 @@
 #include "CDebugWindowWidget.h"
 
 
+using namespace ion;
+using namespace ion::Graphics;
+using namespace ion::Scene;
+
 void CViewerState::Init()
 {
-	DebugCamera = SceneManager->GetFactory()->AddPerspectiveCamera(Application->GetWindow()->GetAspectRatio());
+	CRenderPass * RenderPass = new CRenderPass(Application->GraphicsAPI, Application->Context);
+	RenderPass->SetRenderTarget(Application->RenderTarget);
+	SceneManager->AddRenderPass(RenderPass);
+
+	DebugCamera = new CPerspectiveCamera(Application->GetWindow()->GetAspectRatio());
 	DebugCameraControl = new CGamePadCameraController(DebugCamera);
 	DebugCamera->SetPosition(vec3f(-10, 10, 0));
 	DebugCameraControl->SetVelocity(10.f);
@@ -17,13 +25,20 @@ void CViewerState::Init()
 	DebugCameraControl->SetPhi(-Constants32::Pi / 4.f);
 	DebugCamera->SetFarPlane(50000.f);
 	AddListener(DebugCameraControl);
-	SceneManager->GetScene()->SetActiveCamera(DebugCamera);
+	RenderPass->SetActiveCamera(DebugCamera);
 
-	SceneManager->GetFactory()->AddMeshNode("Cube", "Diffuse");
-	ILightSceneNode * Light = SceneManager->GetFactory()->AddLight(vec3f(-128, 256, 128));
+	CSimpleMeshSceneObject * Cube = new CSimpleMeshSceneObject();
+	Cube->SetShader(Application->DiffuseShader);
+	Cube->SetMesh(Application->CubeMesh);
+	RenderPass->AddSceneObject(Cube);
+
+	CPointLight * Light = new CPointLight();
+	Light->SetPosition(vec3f(-128, 256, 128));
 	Light->SetRadius(150.f);
+	RenderPass->AddLight(Light);
 
-	ParticleSystem->Init();
+	ParticleSystem = new CParticleSystem(Application->ParticleShader);
+	RenderPass->AddSceneObject(ParticleSystem);
 
 	for (int x = 1; x < 20; ++ x)
 	for (int y = 1; y < 20; ++ y)
@@ -39,10 +54,11 @@ void CViewerState::Init()
 	}
 	ParticleSystem->Update();
 
-	ClearColor = color3f(0.65f, 0.85f, 0.95f);
-	ion::GL::Context::SetClearColor(ClearColor);
+	DebugWindow = new CDebugWindowWidget();
+	DebugWindow->RenderTarget = Application->RenderTarget;
+	DebugWindow->RenderTarget->SetClearColor(DebugWindow->ClearColor = color3f(0.65f, 0.85f, 0.95f));
 
-	GUIManager->Init(Application->GetWindow(), true);
+	GUIManager->Init(Application->GetWindow());
 	GUIManager->AddFontFromFile("Assets/Fonts/OpenSans.ttf", 30.f);
 
 	CameraWindow = new CCameraWindowWidget();
@@ -50,9 +66,7 @@ void CViewerState::Init()
 	CameraWindow->Controller = DebugCameraControl;
 
 	PointsWindow = new CPointsWindowWidget();
-
-	DebugWindow = new CDebugWindowWidget();
-	DebugWindow->ClearColor = ion::GL::Context::GetClearColor();
+	PointsWindow->ParticleSystem = ParticleSystem;
 }
 
 void CViewerState::Update(float const Elapsed)
@@ -62,9 +76,6 @@ void CViewerState::Update(float const Elapsed)
 
 	GUI();
 }
-
-#include <nfd.h>
-
 
 void CViewerState::GUI()
 {
@@ -145,6 +156,8 @@ void CViewerState::OnEvent(IEvent & Event)
 		}
 	}
 }
+
+#include <nfd.h>
 
 void CViewerState::DoImport()
 {

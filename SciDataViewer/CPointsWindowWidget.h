@@ -13,7 +13,6 @@ public:
 	void Draw()
 	{
 		SingletonPointer<CDataManager> DataManager;
-		SingletonPointer<CParticleSystem> ParticleSystem;
 		CDataSet * DataSet = DataManager->GetCurrentDataSet();
 
 		ImGui::SetNextWindowPos(ImVec2(950, 50), ImGuiSetCond_Once);
@@ -85,5 +84,7 @@ public:
 
 		ImGui::End();
 	}
+
+	CParticleSystem * ParticleSystem = nullptr;
 
 };

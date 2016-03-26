@@ -9,8 +9,8 @@ class CCameraWindowWidget : public CWindowWidget
 
 public:
 
-	CCameraController * Controller = nullptr;
-	CPerspectiveCamera * Camera = nullptr;
+	ion::CCameraController * Controller = nullptr;
+	ion::Scene::CPerspectiveCamera * Camera = nullptr;
 
 	void Draw()
 	{

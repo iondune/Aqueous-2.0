@@ -26,13 +26,13 @@ public:
 private:
 	
 	SingletonPointer<CApplication> Application;
-	SingletonPointer<CSceneManager> SceneManager;
-	SingletonPointer<CImGUIManager> GUIManager;
+	SingletonPointer<ion::Scene::CSceneManager> SceneManager;
+	SingletonPointer<CGUIManager> GUIManager;
 	SingletonPointer<CDataManager> DataManager;
-	SingletonPointer<CParticleSystem> ParticleSystem;
 	
-	CCameraController * DebugCameraControl = nullptr;
-	CPerspectiveCamera * DebugCamera = nullptr;
+	ion::CCameraController * DebugCameraControl = nullptr;
+	ion::Scene::CPerspectiveCamera * DebugCamera = nullptr;
+	CParticleSystem * ParticleSystem = nullptr;
 
 	CCameraWindowWidget * CameraWindow = nullptr;
 	CPointsWindowWidget * PointsWindow = nullptr;

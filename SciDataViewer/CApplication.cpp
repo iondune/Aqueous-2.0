@@ -3,6 +3,11 @@
 #include "CViewerState.h"
 
 
+using namespace ion;
+using namespace ion::Graphics;
+using namespace ion::Scene;
+
+
 void CApplication::Run()
 {
 	InitWindow();
@@ -10,9 +15,6 @@ void CApplication::Run()
 
 	ViewerState->Init();
 	StateManager->SetState(ViewerState.Get());
-
-	ion::GL::Context::Init();
-	ion::GL::Context::SetClearColor(color3f(0.65f, 0.85f, 0.95f));
 
 	TimeManager->Init();
 	while (! WindowManager->ShouldClose())
@@ -79,18 +81,24 @@ CWindow * CApplication::GetWindow()
 void CApplication::InitWindow()
 {
 	WindowManager->Init();
-	Window = WindowManager->CreateWindow(vec2i(2560, 1440), "Scientific Data Viewer", EWindowType::Windowed);
-	Window->AddChild(this);
+	Window = WindowManager->CreateWindow(vec2i(2560, 1440), "[Scientific Data Viewer] Aqueous 2.0", EWindowType::Windowed);
+	Window->AddListener(this);
+
+	GraphicsAPI = new COpenGLAPI();
+	Context = GraphicsAPI->GetWindowContext(Window);
+	RenderTarget = Context->GetBackBuffer();
 }
 
 void CApplication::LoadAssets()
 {
-	SceneManager->GetShaderLibrary()->SetBaseDirectory("Assets/Shaders");
-	SceneManager->GetTextureLibrary()->SetBaseDirectory("Assets/Textures");
-	SceneManager->GetMeshLibrary()->SetBaseDirectory("Assets/Meshes");
+	SceneManager->Init(GraphicsAPI);
+	AssetManager->Init(GraphicsAPI);
+	AssetManager->SetAssetPath("Assets/");
+	AssetManager->SetShaderPath("Shaders/");
+	AssetManager->SetTexturePath("Textures/");
 
-	SceneManager->GetShaderLibrary()->Load("Diffuse");
-	SceneManager->GetShaderLibrary()->Load("Particle");
+	DiffuseShader = AssetManager->LoadShader("Diffuse");
+	ParticleShader = AssetManager->LoadShader("Particle");
 
-	SceneManager->GetMeshLibrary()->Add("Cube", CGeometryCreator::CreateCube());
+	CubeMesh = CGeometryCreator::CreateCube();
 }

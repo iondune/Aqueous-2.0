@@ -19,6 +19,7 @@ private:
 	CDataSet * CurrentDataSet = nullptr;
 
 	friend class Singleton<CDataManager>;
-	CDataManager() {}
+	CDataManager()
+	{}
 
 };
