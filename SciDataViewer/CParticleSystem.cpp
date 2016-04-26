@@ -5,8 +5,18 @@
 using namespace ion::Graphics;
 
 
-void CParticleSystem::Load(ion::Scene::CRenderPass * RenderPass)
+CParticleSystem::CParticleSystem(SharedPointer<ion::Graphics::IShaderProgram> Shader)
 {
+	this->Shader = Shader;
+
+	vector<u32> const Indices
+	{
+		0, 1, 2,
+		0, 2, 3,
+	};
+
+	IndexBuffer = GraphicsAPI->CreateIndexBuffer();
+	IndexBuffer->UploadData(Indices);
 
 	vector<f32> const Vertices
 	{
@@ -15,25 +25,17 @@ void CParticleSystem::Load(ion::Scene::CRenderPass * RenderPass)
 		-0.5f, -0.5f,   0, 0,
 		-0.5f,  0.5f,   0, 1,
 	};
-
-	vector<u32> const Indices
-	{
-		0, 1, 2,
-		0, 2, 3,
-	};
-
-	SharedPointer<IIndexBuffer> IndexBuffer = RenderPass->GetGraphicsAPI()->CreateIndexBuffer();
-	IndexBuffer->UploadData(Indices);
-	SharedPointer<IVertexBuffer> VertexBuffer = RenderPass->GetGraphicsAPI()->CreateVertexBuffer();
-	VertexBuffer->UploadData(Vertices);
-	SInputLayoutElement InputLayout[] =
+	SInputLayoutElement const InputLayout[] =
 	{
 		{ "vPosition", 2, EAttributeType::Float },
 		{ "vTexCoords", 2, EAttributeType::Float },
 	};
+
+	VertexBuffer = GraphicsAPI->CreateVertexBuffer();
+	VertexBuffer->UploadData(Vertices);
 	VertexBuffer->SetInputLayout(InputLayout, ION_ARRAYSIZE(InputLayout));
 
-	InstanceBuffer = RenderPass->GetGraphicsAPI()->CreateVertexBuffer();
+	InstanceBuffer = GraphicsAPI->CreateVertexBuffer();
 	InstanceBuffer->SetInstancingEnabled(true);
 	SInputLayoutElement InstanceLayout[] =
 	{
@@ -41,7 +43,10 @@ void CParticleSystem::Load(ion::Scene::CRenderPass * RenderPass)
 		{ "vInstanceColor", 3, EAttributeType::Float },
 	};
 	InstanceBuffer->SetInputLayout(InstanceLayout, ION_ARRAYSIZE(InstanceLayout));
+}
 
+void CParticleSystem::Load(ion::Scene::CRenderPass * RenderPass)
+{
 	PipelineState = RenderPass->GetGraphicsContext()->CreatePipelineState();
 	PipelineState->SetProgram(Shader);
 	PipelineState->SetIndexBuffer(IndexBuffer);
@@ -51,7 +56,7 @@ void CParticleSystem::Load(ion::Scene::CRenderPass * RenderPass)
 	PipelineState->SetFeatureEnabled(EDrawFeature::DisableDepthWrite, true);
 
 	RenderPass->PreparePipelineStateForRendering(PipelineState, this);
-	Loaded = true;
+	Loaded[RenderPass] = true;
 }
 
 void CParticleSystem::SetParticlesFromData()
@@ -218,14 +223,6 @@ void CParticleSystem::UpdateColors()
 
 void CParticleSystem::Update()
 {
-	if ((int) Particles.size() > MaxParticles)
-	{
-		Particles.erase(Particles.begin(), Particles.end() - MaxParticles);
-		assert(Particles.size() == MaxParticles);
-	}
-
-	assert(Particles.size() <= MaxParticles);
-
 	InstanceData.clear();
 
 	size_t const FloatsNeeded = Particles.size() * 6;
@@ -251,6 +248,6 @@ void CParticleSystem::Draw(ion::Scene::CRenderPass * RenderPass)
 {
 	if (Particles.size())
 	{
-		RenderPass->SubmitPipelineStateForRendering(PipelineState, this, Particles.size());
+		//RenderPass->SubmitPipelineStateForRendering(PipelineState, this, (uint) Particles.size() / 6);
 	}
 }

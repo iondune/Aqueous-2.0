@@ -28,7 +28,6 @@ public:
 	vector<CParticle> Particles;
 
 	void Update();
-	void Draw();
 
 	void SetParticlesFromData();
 
@@ -47,7 +46,12 @@ private:
 	int const MaxParticles = 250000;
 
 	vector<f32> InstanceData;
+	SingletonPointer<ion::CGraphicsAPI> GraphicsAPI;
 	SharedPointer<ion::Graphics::IVertexBuffer> InstanceBuffer;
+
+	SharedPointer<ion::Graphics::IVertexBuffer> VertexBuffer;
+	SharedPointer<ion::Graphics::IIndexBuffer> IndexBuffer;
+
 	SharedPointer<ion::Graphics::IPipelineState> PipelineState;
 	SharedPointer<ion::Graphics::IShaderProgram> Shader;
 

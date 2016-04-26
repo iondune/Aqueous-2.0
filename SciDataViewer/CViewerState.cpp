@@ -13,19 +13,20 @@ using namespace ion::Scene;
 
 void CViewerState::Init()
 {
-	CRenderPass * RenderPass = new CRenderPass(Application->GraphicsAPI, Application->Context);
+	CRenderPass * RenderPass = new CRenderPass(Application->Context);
 	RenderPass->SetRenderTarget(Application->RenderTarget);
 	SceneManager->AddRenderPass(RenderPass);
 
 	DebugCamera = new CPerspectiveCamera(Application->GetWindow()->GetAspectRatio());
-	DebugCameraControl = new CGamePadCameraController(DebugCamera);
 	DebugCamera->SetPosition(vec3f(-10, 10, 0));
+	DebugCamera->SetFarPlane(50000.f);
+	RenderPass->SetActiveCamera(DebugCamera);
+
+	DebugCameraControl = new CGamePadCameraController(DebugCamera);
 	DebugCameraControl->SetVelocity(10.f);
 	DebugCameraControl->SetTheta(0);
 	DebugCameraControl->SetPhi(-Constants32::Pi / 4.f);
-	DebugCamera->SetFarPlane(50000.f);
 	AddListener(DebugCameraControl);
-	RenderPass->SetActiveCamera(DebugCamera);
 
 	CSimpleMeshSceneObject * Cube = new CSimpleMeshSceneObject();
 	Cube->SetShader(Application->DiffuseShader);
@@ -58,9 +59,6 @@ void CViewerState::Init()
 	DebugWindow->RenderTarget = Application->RenderTarget;
 	DebugWindow->RenderTarget->SetClearColor(DebugWindow->ClearColor = color3f(0.65f, 0.85f, 0.95f));
 
-	GUIManager->Init(Application->GetWindow());
-	GUIManager->AddFontFromFile("Assets/Fonts/OpenSans.ttf", 30.f);
-
 	CameraWindow = new CCameraWindowWidget();
 	CameraWindow->Camera = DebugCamera;
 	CameraWindow->Controller = DebugCameraControl;
@@ -72,15 +70,12 @@ void CViewerState::Init()
 void CViewerState::Update(float const Elapsed)
 {
 	DebugCameraControl->Update(Elapsed);
-	ParticleSystem->Draw();
 
 	GUI();
 }
 
 void CViewerState::GUI()
 {
-	GUIManager->NewFrame();
-
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -117,13 +112,6 @@ void CViewerState::GUI()
 
 void CViewerState::OnEvent(IEvent & Event)
 {
-	GUIManager->OnEvent(Event);
-
-	if (GUIManager->IO.WantCaptureMouse)
-	{
-		Event.Block();
-	}
-
 	if (InstanceOf<SKeyboardEvent>(Event))
 	{
 		SKeyboardEvent & KeyboardEvent = As<SKeyboardEvent>(Event);
@@ -152,6 +140,7 @@ void CViewerState::OnEvent(IEvent & Event)
 				{
 					DoImport();
 				}
+				break;
 			}
 		}
 	}

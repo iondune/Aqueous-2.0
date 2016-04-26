@@ -16,17 +16,18 @@ void CApplication::Run()
 	ViewerState->Init();
 	StateManager->SetState(ViewerState.Get());
 
-	TimeManager->Init();
-	while (! WindowManager->ShouldClose())
+	TimeManager->Start();
+	while (WindowManager->Run())
 	{
 		TimeManager->Update();
-		WindowManager->PollEvents();
 
+		GUIManager->NewFrame();
 		StateManager->DoStateChange();
 		StateManager->Update((f32) TimeManager->GetElapsedTime());
 
+		RenderTarget->ClearColorAndDepth();
 		SceneManager->DrawAll();
-		ImGui::Render();
+		GUIManager->Draw();
 		Window->SwapBuffers();
 	}
 }
@@ -80,13 +81,18 @@ CWindow * CApplication::GetWindow()
 
 void CApplication::InitWindow()
 {
-	WindowManager->Init();
-	Window = WindowManager->CreateWindow(vec2i(2560, 1440), "[Scientific Data Viewer] Aqueous 2.0", EWindowType::Windowed);
+	GraphicsAPI->Init(new Graphics::COpenGLImplementation());
+	WindowManager->Init(GraphicsAPI);
+	Window = WindowManager->CreateWindow(vec2i(2160, 1280), "[Scientific Data Viewer] Aqueous 2.0", EWindowType::Windowed);
 	Window->AddListener(this);
+	TimeManager->Init(WindowManager);
 
-	GraphicsAPI = new COpenGLAPI();
 	Context = GraphicsAPI->GetWindowContext(Window);
 	RenderTarget = Context->GetBackBuffer();
+
+	GUIManager->Init(Window);
+	GUIManager->AddFontFromFile("Assets/Fonts/OpenSans.ttf", 20.f);
+	Window->AddListener(GUIManager);
 }
 
 void CApplication::LoadAssets()

@@ -26,8 +26,7 @@ public:
 private:
 	
 	SingletonPointer<CApplication> Application;
-	SingletonPointer<ion::Scene::CSceneManager> SceneManager;
-	SingletonPointer<CGUIManager> GUIManager;
+	SingletonPointer<ion::CSceneManager> SceneManager;
 	SingletonPointer<CDataManager> DataManager;
 	
 	ion::CCameraController * DebugCameraControl = nullptr;

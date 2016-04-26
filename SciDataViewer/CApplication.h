@@ -15,14 +15,13 @@ public:
 	void OnEvent(IEvent & Event);
 	void Close();
 	
-	CWindow * GetWindow();
+	ion::CWindow * GetWindow();
 
 	SharedPointer<ion::Graphics::IShaderProgram> DiffuseShader;
 	SharedPointer<ion::Graphics::IShaderProgram> ParticleShader;
 
 	ion::Scene::CSimpleMesh * CubeMesh = nullptr;
 
-	ion::Graphics::IGraphicsAPI * GraphicsAPI = nullptr;
 	SharedPointer<ion::Graphics::IGraphicsContext> Context;
 	SharedPointer<ion::Graphics::IRenderTarget> RenderTarget;
 
@@ -31,15 +30,17 @@ private:
 	void InitWindow();
 	void LoadAssets();
 
-	SingletonPointer<CWindowManager> WindowManager;
-	SingletonPointer<ion::Scene::CSceneManager> SceneManager;
-	SingletonPointer<CTimeManager> TimeManager;
-	SingletonPointer<CStateManager> StateManager;
+	SingletonPointer<ion::CGraphicsAPI> GraphicsAPI;
+	SingletonPointer<ion::CWindowManager> WindowManager;
+	SingletonPointer<ion::CSceneManager> SceneManager;
+	SingletonPointer<ion::CTimeManager> TimeManager;
+	SingletonPointer<ion::CStateManager> StateManager;
 	SingletonPointer<ion::CAssetManager> AssetManager;
+	SingletonPointer<ion::CGUIManager> GUIManager;
 
 	SingletonPointer<CViewerState> ViewerState;
 
 
-	CWindow * Window = nullptr;
+	ion::CWindow * Window = nullptr;
 
 };
