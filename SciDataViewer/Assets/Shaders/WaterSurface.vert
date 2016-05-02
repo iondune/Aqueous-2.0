@@ -3,6 +3,7 @@
 
 in vec2 vPosition;
 
+uniform float uTime;
 uniform float uScale;
 uniform float uFrequency;
 uniform float uHeight;
@@ -28,7 +29,7 @@ void main()
 	float x = vPosition.x;
 	float y = vPosition.y;
 
-	float t = 0.0;
+	float t = uTime;
 	float g = 9.81;
 	float k = uFrequency;
 	float h = uHeight;

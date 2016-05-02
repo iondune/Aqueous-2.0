@@ -30,9 +30,12 @@ protected:
 
 	SharedPointer<ion::Graphics::IPipelineState> PipelineState;
 
+	ion::Graphics::CUniform<float> uTime;
 	ion::Graphics::CUniform<float> uScale;
 	ion::Graphics::CUniform<float> uFrequency;
 	ion::Graphics::CUniform<float> uHeight;
+
+	float Speed;
 
 	bool IsGUIVisible = false;
 
