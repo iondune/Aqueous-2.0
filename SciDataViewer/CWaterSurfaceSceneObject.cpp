@@ -1,5 +1,6 @@
 
 #include "CWaterSurfaceSceneObject.h"
+#include <ionGUI.h>
 
 
 using namespace ion;
@@ -43,6 +44,10 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 	}
 	IndexBuffer = GraphicsAPI->CreateIndexBuffer();
 	IndexBuffer->UploadData(IndexData);
+
+	uScale = 1.0;
+	uFrequency = 10.0;
+	uHeight = 3.0;
 }
 
 void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
@@ -54,7 +59,9 @@ void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetIndexBuffer(IndexBuffer);
 		PipelineState->SetIndexBuffer(IndexBuffer);
 		PipelineState->SetVertexBuffer(0, VertexBuffer);
-		//PipelineState->SetUniform("uTime", uTime);
+		PipelineState->SetUniform("uScale", uScale);
+		PipelineState->SetUniform("uFrequency", uFrequency);
+		PipelineState->SetUniform("uHeight", uHeight);
 		PipelineState->SetFeatureEnabled(Graphics::EDrawFeature::Wireframe, true);
 	}
 
@@ -67,4 +74,22 @@ void CWaterSurfaceSceneObject::Draw(ion::Scene::CRenderPass * RenderPass)
 {
 	//uTime = uTime.Get() + (float) TimeManager->GetElapsedTime();
 	RenderPass->SubmitPipelineStateForRendering(PipelineState, this);
+}
+
+void CWaterSurfaceSceneObject::GUI()
+{
+	ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiSetCond_Once);
+	if (ImGui::Begin("Water Surface", &IsGUIVisible))
+	{
+		ImGui::DragFloat("Scale", &uScale.Get(), 0.1f, 1.f, 20.f);
+		ImGui::DragFloat("Frequency", &uFrequency.Get(), 0.1f, 1.f, 20.f);
+		ImGui::DragFloat("Height", &uHeight.Get(), 0.1f, 1.f, 20.f);
+		ImGui::End();
+	}
+}
+
+void CWaterSurfaceSceneObject::ToggleGUI()
+{
+	ToggleBool(IsGUIVisible);
 }

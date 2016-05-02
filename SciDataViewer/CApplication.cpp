@@ -92,7 +92,9 @@ void CApplication::InitWindow()
 
 	GUIManager->Init(Window);
 	GUIManager->AddFontFromFile("Assets/Fonts/OpenSans.ttf", 20.f);
-	Window->AddListener(GUIManager);
+
+	this->AddListener(GUIManager);
+	GUIManager->AddListener(StateManager);
 }
 
 void CApplication::LoadAssets()
@@ -104,7 +106,7 @@ void CApplication::LoadAssets()
 	AssetManager->SetTexturePath("Textures/");
 
 	DiffuseShader = AssetManager->LoadShader("Diffuse");
-	ParticleShader = AssetManager->LoadShader("Particle");
+	//ParticleShader = AssetManager->LoadShader("Particle");
 
 	CubeMesh = CGeometryCreator::CreateCube();
 }

@@ -14,6 +14,9 @@ public:
 
 	void Load(ion::Scene::CRenderPass * RenderPass);
 	void Draw(ion::Scene::CRenderPass * RenderPass);
+	
+	void GUI();
+	void ToggleGUI();
 
 protected:
 
@@ -27,6 +30,10 @@ protected:
 
 	SharedPointer<ion::Graphics::IPipelineState> PipelineState;
 
-	ion::Graphics::CUniform<float> uTime;
+	ion::Graphics::CUniform<float> uScale;
+	ion::Graphics::CUniform<float> uFrequency;
+	ion::Graphics::CUniform<float> uHeight;
+
+	bool IsGUIVisible = false;
 
 };
