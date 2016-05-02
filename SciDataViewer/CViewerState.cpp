@@ -5,6 +5,7 @@
 #include "CCameraWindowWidget.h"
 #include "CPointsWindowWidget.h"
 #include "CDebugWindowWidget.h"
+#include "CWaterSurfaceSceneObject.h"
 
 
 using namespace ion;
@@ -38,22 +39,25 @@ void CViewerState::Init()
 	Light->SetRadius(150.f);
 	RenderPass->AddLight(Light);
 
-	ParticleSystem = new CParticleSystem(Application->ParticleShader);
-	RenderPass->AddSceneObject(ParticleSystem);
+	//ParticleSystem = new CParticleSystem(Application->ParticleShader);
+	//RenderPass->AddSceneObject(ParticleSystem);
 
-	for (int x = 1; x < 20; ++ x)
-	for (int y = 1; y < 20; ++ y)
-	for (int z = 1; z < 20; ++ z)
-	{
-		static int const NumColors = 7;
-		static color3f const ColorChoices[] = {Colors::Red, Colors::Green, Colors::Blue, Colors::Cyan, Colors::Magenta, Colors::Yellow, Colors::Orange};
-		CParticle p;
-		p.Color = ColorChoices[rand() % NumColors];
-		p.Position = vec3f((f32) x, (f32) y, (f32) z);
+	//for (int x = 1; x < 20; ++ x)
+	//for (int y = 1; y < 20; ++ y)
+	//for (int z = 1; z < 20; ++ z)
+	//{
+	//	static int const NumColors = 7;
+	//	static color3f const ColorChoices[] = {Colors::Red, Colors::Green, Colors::Blue, Colors::Cyan, Colors::Magenta, Colors::Yellow, Colors::Orange};
+	//	CParticle p;
+	//	p.Color = ColorChoices[rand() % NumColors];
+	//	p.Position = vec3f((f32) x, (f32) y, (f32) z);
 
-		ParticleSystem->Particles.push_back(p);
-	}
-	ParticleSystem->Update();
+	//	ParticleSystem->Particles.push_back(p);
+	//}
+	//ParticleSystem->Update();
+
+	WaterSurface = new CWaterSurfaceSceneObject();
+	RenderPass->AddSceneObject(WaterSurface);
 
 	DebugWindow = new CDebugWindowWidget();
 	DebugWindow->RenderTarget = Application->RenderTarget;

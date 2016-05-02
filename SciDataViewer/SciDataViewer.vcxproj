@@ -38,6 +38,7 @@
     <ClCompile Include="CDataManager.cpp" />
     <ClCompile Include="CParticleSystem.cpp" />
     <ClCompile Include="CViewerState.cpp" />
+    <ClCompile Include="CWaterSurfaceSceneObject.cpp" />
     <ClCompile Include="CWindowWidget.cpp" />
     <ClCompile Include="CDataSet.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="CParticleSystem.h" />
     <ClInclude Include="CPointsWindowWidget.h" />
     <ClInclude Include="CViewerState.h" />
+    <ClInclude Include="CWaterSurfaceSceneObject.h" />
     <ClInclude Include="CWindowWidget.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

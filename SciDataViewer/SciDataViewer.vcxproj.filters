@@ -8,6 +8,7 @@
     <ClCompile Include="CWindowWidget.cpp" />
     <ClCompile Include="CDataSet.cpp" />
     <ClCompile Include="CDataManager.cpp" />
+    <ClCompile Include="CWaterSurfaceSceneObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
@@ -21,5 +22,6 @@
     <ClInclude Include="CDataLoader.h" />
     <ClInclude Include="CDataLoaderCSV.h" />
     <ClInclude Include="CDataManager.h" />
+    <ClInclude Include="CWaterSurfaceSceneObject.h" />
   </ItemGroup>
 </Project>

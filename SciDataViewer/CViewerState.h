@@ -7,6 +7,7 @@
 class CApplication;
 class CDataManager;
 class CParticleSystem;
+class CWaterSurfaceSceneObject;
 
 class CCameraWindowWidget;
 class CPointsWindowWidget;
@@ -32,6 +33,7 @@ private:
 	ion::CCameraController * DebugCameraControl = nullptr;
 	ion::Scene::CPerspectiveCamera * DebugCamera = nullptr;
 	CParticleSystem * ParticleSystem = nullptr;
+	CWaterSurfaceSceneObject * WaterSurface = nullptr;
 
 	CCameraWindowWidget * CameraWindow = nullptr;
 	CPointsWindowWidget * PointsWindow = nullptr;
