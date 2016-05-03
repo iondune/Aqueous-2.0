@@ -1,35 +1,23 @@
 #version 150
 
-#define LIGHT_MAX 4
+in vec3 vPosition;
+in vec3 vNormal;
 
-struct SLight
-{
-	vec3 Position;
-};
+uniform mat4 uModelMatrix;
+uniform mat4 uNormalMatrix;
+uniform mat4 uViewMatrix;
+uniform mat4 uProjectionMatrix;
 
-in vec3 Position;
-in vec3 Normal;
-
-uniform mat4 Local;
-uniform mat4 Model;
-uniform mat4 View;
-uniform mat4 Projection;
-uniform int uLightCount;
-uniform SLight uLights[LIGHT_MAX];
-uniform vec3 uCameraPosition;
-
-out vec3 vLight[LIGHT_MAX];
-out vec3 vNormal;
+out vec3 fNormal;
+out vec3 fWorldPosition;
 
 
 void main()
 {
-	vec4 Position = Model * Local * vec4(Position, 1.0);
+	vec4 WorldPosition = uModelMatrix * vec4(vPosition, 1.0);
 
-	for (int i = 0; i < LIGHT_MAX && i < uLightCount; ++ i)
-		vLight[i] = uLights[i].Position - vec3(Position);
+	fWorldPosition = WorldPosition.xyz;
+	fNormal = (uNormalMatrix * vec4(vNormal, 0.0)).xyz;
 
-	vNormal = Normal;
-
-	gl_Position = Projection * View * Position;
+	gl_Position = uProjectionMatrix * uViewMatrix * WorldPosition;
 }
