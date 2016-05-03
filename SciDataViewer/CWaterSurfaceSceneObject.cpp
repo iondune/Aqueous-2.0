@@ -9,15 +9,15 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 {
 	Shader = AssetManager->LoadShader("WaterSurface");
 
-	uint const GeometrySize = 256 + 1;
+	uint const GeometrySize = 4096 + 1;
 
 	vector<float> VertexData;
 	for (int y = 0; y < GeometrySize; ++ y)
 	{
 		for (int x = 0; x < GeometrySize; ++ x)
 		{
-			VertexData.push_back((float) x);
-			VertexData.push_back((float) y);
+			VertexData.push_back((float) x / 16.f);
+			VertexData.push_back((float) y / 16.f);
 		}
 	}
 	VertexBuffer = GraphicsAPI->CreateVertexBuffer();

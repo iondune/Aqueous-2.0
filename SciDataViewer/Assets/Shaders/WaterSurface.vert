@@ -19,6 +19,47 @@ out vec3 vNormal;
 out vec3 vWorldPosition;
 
 
+vec2 Gerstner(float x, float t, float g, float k, float h, float w)
+{
+	return vec2(
+		x + h * sin(w * t - k * x),
+		h * cos(w * t - k * x)
+		);
+}
+
+vec3 GerstnerXY(float x, float y)
+{
+	float t = uTime;
+	float g = 9.81;
+	float k = uFrequency;
+	float h = uHeight;
+	float w = sqrt(g * k);
+
+	vec2 gerstnerX = Gerstner(x, t, g, k, h, w);
+	vec2 gerstnerY = Gerstner(y, t, g, k, h, w);
+
+	return vec3(
+		gerstnerX.x * uScale,
+		gerstnerX.y + gerstnerY.y,
+		gerstnerY.x * uScale
+		);
+}
+
+vec3 GerstnerNormal(float x, float y)
+{
+	const float Epsilon = 0.1;
+
+	vec3 s01 = GerstnerXY(x - Epsilon, y);
+	vec3 s21 = GerstnerXY(x + Epsilon, y);
+	vec3 s10 = GerstnerXY(x, y - Epsilon);
+	vec3 s12 = GerstnerXY(x, y + Epsilon);
+
+	vec3 va = normalize(vec3(s21.x - s01.x, s21.y - s01.y, 0.0));
+	vec3 vb = normalize(vec3(0.0, s12.y - s10.y, s12.z - s10.z));
+	return normalize(cross(vb, va));
+}
+
+
 void main()
 {
 	const vec2 D[3] = vec2[] (normalize(vec2(1.0, 0.5)), normalize(vec2(0.5, 1.0)), normalize(vec2(1.0, 1.0)));
@@ -63,10 +104,12 @@ void main()
 	}
 
 	vec4 WorldPosition = uModelMatrix * vec4(
+		// GerstnerXY(x, y),
 		P * vec3(uScale, 1.0, uScale),
 		1.0);
 
 	vNormal = N;
+	// vNormal = GerstnerNormal(x, y);
 	vWorldPosition = WorldPosition.xyz;
 
 	gl_Position = uProjectionMatrix * uViewMatrix * WorldPosition;
