@@ -14,7 +14,7 @@ using namespace ion::Scene;
 
 void CViewerState::Init()
 {
-	CRenderPass * RenderPass = new CRenderPass(Application->Context);
+	RenderPass = new CRenderPass(Application->Context);
 	RenderPass->SetRenderTarget(Application->RenderTarget);
 	SceneManager->AddRenderPass(RenderPass);
 
@@ -38,6 +38,20 @@ void CViewerState::Init()
 	Light->SetPosition(vec3f(-128, 256, 128));
 	Light->SetRadius(150.f);
 	RenderPass->AddLight(Light);
+
+	SharedPointer<ITextureCubeMap> SkyBoxTexture = AssetManager->LoadCubeMapTexture(
+		"TropicalSunnyDayLeft2048.png",
+		"TropicalSunnyDayRight2048.png",
+		"TropicalSunnyDayUp2048.png",
+		"TropicalSunnyDayDown2048.png",
+		"TropicalSunnyDayFront2048.png",
+		"TropicalSunnyDayBack2048.png");
+
+	SkyBox = new CSimpleMeshSceneObject();
+	SkyBox->SetMesh(Application->CubeMesh);
+	SkyBox->SetShader(Application->SkyBoxShader);
+	SkyBox->SetTexture("uTexture", SkyBoxTexture);
+	RenderPass->AddSceneObject(SkyBox);
 
 	//ParticleSystem = new CParticleSystem(Application->ParticleShader);
 	//RenderPass->AddSceneObject(ParticleSystem);
@@ -74,6 +88,8 @@ void CViewerState::Init()
 void CViewerState::Update(float const Elapsed)
 {
 	DebugCameraControl->Update(Elapsed);
+
+	SkyBox->SetPosition(RenderPass->GetActiveCamera()->GetPosition());
 
 	GUI();
 }

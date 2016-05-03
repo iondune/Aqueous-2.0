@@ -28,12 +28,15 @@ private:
 	
 	SingletonPointer<CApplication> Application;
 	SingletonPointer<ion::CSceneManager> SceneManager;
+	SingletonPointer<ion::CAssetManager> AssetManager;
 	SingletonPointer<CDataManager> DataManager;
-	
-	ion::CCameraController * DebugCameraControl = nullptr;
+
+	ion::Scene::CRenderPass * RenderPass = nullptr;
 	ion::Scene::CPerspectiveCamera * DebugCamera = nullptr;
+	ion::CCameraController * DebugCameraControl = nullptr;
 	CParticleSystem * ParticleSystem = nullptr;
 	CWaterSurfaceSceneObject * WaterSurface = nullptr;
+	ion::Scene::CSimpleMeshSceneObject * SkyBox = nullptr;
 
 	CCameraWindowWidget * CameraWindow = nullptr;
 	CPointsWindowWidget * PointsWindow = nullptr;

@@ -105,8 +105,9 @@ void CApplication::LoadAssets()
 	AssetManager->SetShaderPath("Shaders/");
 	AssetManager->SetTexturePath("Textures/");
 
-	DiffuseShader = AssetManager->LoadShader("Diffuse");
+	//DiffuseShader = AssetManager->LoadShader("Diffuse");
 	//ParticleShader = AssetManager->LoadShader("Particle");
+	SkyBoxShader = AssetManager->LoadShader("SkyBox");
 
 	CubeMesh = CGeometryCreator::CreateCube();
 }
