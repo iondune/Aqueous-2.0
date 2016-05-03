@@ -9,6 +9,7 @@ uniform float uFrequency;
 uniform float uHeight;
 uniform int uSelectWave;
 uniform float uSteepness;
+uniform int uNumWaves;
 
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
@@ -68,7 +69,7 @@ void main()
 	vec3 P = vec3(x, 0.0, y);
 
 	int low = 1;
-	int high = 15;
+	int high = uNumWaves;
 	int NumWaves = high - low + 1;
 
 	if (uSelectWave > 0)

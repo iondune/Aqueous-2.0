@@ -54,6 +54,7 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 	uSteepness = 0.5f;
 
 	uSelectWave = -1;
+	uNumWaves = 15;
 }
 
 void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
@@ -71,7 +72,7 @@ void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetUniform("uHeight", uHeight);
 		PipelineState->SetUniform("uSelectWave", uSelectWave);
 		PipelineState->SetUniform("uSteepness", uSteepness);
-		//PipelineState->SetFeatureEnabled(Graphics::EDrawFeature::Wireframe, true);
+		PipelineState->SetUniform("uNumWaves", uNumWaves);
 	}
 
 	RenderPass->PreparePipelineStateForRendering(PipelineState, this);
@@ -96,10 +97,15 @@ void CWaterSurfaceSceneObject::GUI()
 		ImGui::DragFloat("Frequency", &uFrequency.Get(), 0.1f, 1.f, 20.f);
 		ImGui::DragFloat("Height", &uHeight.Get(), 0.1f, 1.f, 20.f);
 		ImGui::DragFloat("Steepness", &uSteepness.Get(), 0.01f, 0.f, 1.f);
+		ImGui::SliderInt("Wave Count", &uNumWaves.Get(), 1, 60);
 
 		ImGui::Separator();
 
-		ImGui::SliderInt("Wave Debug", &uSelectWave.Get(), 0, 14);
+		ImGui::SliderInt("Wave Debug", &uSelectWave.Get(), 0, uNumWaves.Get());
+		if (ImGui::Checkbox("Wireframe?", &Wireframe))
+		{
+			PipelineState->SetFeatureEnabled(Graphics::EDrawFeature::Wireframe, Wireframe);
+		}
 		
 		ImGui::End();
 	}

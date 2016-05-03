@@ -36,8 +36,11 @@ protected:
 	ion::Graphics::CUniform<float> uHeight;
 	ion::Graphics::CUniform<float> uSteepness;
 	ion::Graphics::CUniform<int> uSelectWave;
+	ion::Graphics::CUniform<int> uNumWaves;
 
 	float Speed;
+
+	bool Wireframe = false;
 
 	bool IsGUIVisible = false;
 
