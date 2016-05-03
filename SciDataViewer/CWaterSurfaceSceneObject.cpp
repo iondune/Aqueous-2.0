@@ -48,7 +48,7 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 	Speed = 1.0f;
 
 	uTime = 0.f;
-	uScale = 1.f;
+	uScale = 10.f;
 	uFrequency = 6.356f;
 	uHeight = 2.765f;
 	uSteepness = 0.5f;
@@ -71,7 +71,7 @@ void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetUniform("uHeight", uHeight);
 		PipelineState->SetUniform("uSelectWave", uSelectWave);
 		PipelineState->SetUniform("uSteepness", uSteepness);
-		PipelineState->SetFeatureEnabled(Graphics::EDrawFeature::Wireframe, true);
+		//PipelineState->SetFeatureEnabled(Graphics::EDrawFeature::Wireframe, true);
 	}
 
 	RenderPass->PreparePipelineStateForRendering(PipelineState, this);
