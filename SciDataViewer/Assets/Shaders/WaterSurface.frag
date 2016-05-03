@@ -32,10 +32,13 @@ void main()
 	const vec3 SpecularColor = 0.5 * vec3(1.0, 1.0, 1.0);
 	const float Shininess = 100.0;
 	const float Reflection = 0.5;
+	const float Filter = 0.9;
+	const float IoR = 1.00 / 1.2;
 
 	vec3 nNormal = normalize(vNormal);
 	vec3 nView = normalize(uCameraPosition - vWorldPosition);
 	vec3 nReflect = normalize(reflect(-nView, nNormal));
+	vec3 nRefract = normalize(refract(-nView, nNormal, IoR));
 
 	vec3 Diffuse = vec3(0);
 	vec3 Specular = vec3(0);
@@ -66,6 +69,8 @@ void main()
 	outColor = vec4(Specular * SpecularColor + Diffuse * DiffuseColor + AmbientColor, 1.0);
 	outColor.rgb *= (1.0 - Reflection);
 	outColor.rgb += Reflection * texture(uSkyBox, nReflect).rgb;
+	outColor.rgb *= (1.0 - Filter);
+	outColor.rgb += Filter * texture(uSkyBox, nRefract).rgb;
 	// outColor = vec4(Diffuse, 1.0);
 	// outColor = vec4(vNormal * 0.5 + vec3(0.5), 1);
 }
