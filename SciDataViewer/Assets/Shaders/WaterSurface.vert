@@ -22,7 +22,7 @@ float Amplitude[3] = float[] (3.0 * uHeight, 3.0 * uHeight, 1.0 * uHeight);
 const float phi[3] = float[] (1.0, 1.0, 1.0);
 float w[3] = float[] (uFrequency / 20.0, uFrequency / 20.0, uFrequency / 40.0);
 
-vec3 GerstnerNew(float x, float y)
+vec3 Gerstner(float x, float y)
 {
 	vec3 P = vec3(x, 0.0, y);
 
@@ -43,34 +43,14 @@ vec3 GerstnerNew(float x, float y)
 	return P;
 }
 
-vec2 Gerstner(float x, float t, float g, float k, float h, float w)
-{
-	return vec2(
-		x + h * sin(w * t - k * x),
-		h * cos(w * t - k * x)
-		);
-}
-
 void main()
 {
 
 	float x = vPosition.x;
 	float y = vPosition.y;
 
-	float t = uTime;
-	float g = 9.81;
-	float k = uFrequency;
-	float h = uHeight;
-	float w = sqrt(g * k);
-
-	vec2 gerstnerX = Gerstner(x, t, g, k, h, w);
-	vec2 gerstnerY = Gerstner(y, t, g, k, h, w);
-
 	vec4 WorldPosition = uModelMatrix * vec4(
-		// gerstnerX.x * uScale,
-		// gerstnerX.y + gerstnerY.y,
-		// gerstnerY.x * uScale,
-		GerstnerNew(x, y) * vec3(uScale, 1.0, uScale),
+		Gerstner(x, y) * vec3(uScale, 1.0, uScale),
 		1.0);
 
 	vNormal = vec3(0.0, 1.0, 0.0);
