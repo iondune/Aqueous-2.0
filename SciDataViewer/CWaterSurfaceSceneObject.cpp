@@ -99,7 +99,7 @@ void CWaterSurfaceSceneObject::GUI()
 
 		ImGui::Separator();
 
-		ImGui::SliderInt("Wave Debug", &uSelectWave.Get(), -1, 2);
+		ImGui::SliderInt("Wave Debug", &uSelectWave.Get(), 0, 14);
 		
 		ImGui::End();
 	}
