@@ -32,7 +32,7 @@ void main()
 	const vec3 SpecularColor = 0.5 * vec3(1.0, 1.0, 1.0);
 	const float Shininess = 100.0;
 	const float Reflection = 0.5;
-	const float Filter = 0.9;
+	const float Filter = 0.5;
 	const float IoR = 1.00 / 1.2;
 
 	vec3 nNormal = normalize(vNormal);

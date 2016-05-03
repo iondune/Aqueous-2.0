@@ -9,15 +9,15 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 {
 	Shader = AssetManager->LoadShader("WaterSurface");
 
-	uint const GeometrySize = 4096 + 1;
+	uint const GeometrySize = 1024 + 1;
 
 	vector<float> VertexData;
 	for (int y = 0; y < GeometrySize; ++ y)
 	{
 		for (int x = 0; x < GeometrySize; ++ x)
 		{
-			VertexData.push_back((float) x / 16.f);
-			VertexData.push_back((float) y / 16.f);
+			VertexData.push_back((float) x / 4.f);
+			VertexData.push_back((float) y / 4.f);
 		}
 	}
 	VertexBuffer = GraphicsAPI->CreateVertexBuffer();
@@ -45,7 +45,7 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 	IndexBuffer = GraphicsAPI->CreateIndexBuffer();
 	IndexBuffer->UploadData(IndexData);
 
-	Speed = 1.0f;
+	Speed = 0.6f;
 
 	uTime = 0.f;
 	uScale = 10.f;
@@ -54,7 +54,7 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 	uSteepness = 0.5f;
 
 	uSelectWave = -1;
-	uNumWaves = 15;
+	uNumWaves = 35;
 }
 
 void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
