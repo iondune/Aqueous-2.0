@@ -9,7 +9,7 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 {
 	Shader = AssetManager->LoadShader("WaterSurface");
 
-	uint const GeometrySize = 128 + 1;
+	uint const GeometrySize = 256 + 1;
 
 	vector<float> VertexData;
 	for (int y = 0; y < GeometrySize; ++ y)
@@ -45,12 +45,14 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 	IndexBuffer = GraphicsAPI->CreateIndexBuffer();
 	IndexBuffer->UploadData(IndexData);
 
-	Speed = 0.1f;
+	Speed = 1.0f;
 
 	uTime = 0.f;
 	uScale = 1.f;
 	uFrequency = 6.356f;
 	uHeight = 2.765f;
+
+	uSelectWave = -1;
 }
 
 void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
@@ -66,6 +68,7 @@ void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetUniform("uScale", uScale);
 		PipelineState->SetUniform("uFrequency", uFrequency);
 		PipelineState->SetUniform("uHeight", uHeight);
+		PipelineState->SetUniform("uSelectWave", uSelectWave);
 		PipelineState->SetFeatureEnabled(Graphics::EDrawFeature::Wireframe, true);
 	}
 
@@ -90,6 +93,11 @@ void CWaterSurfaceSceneObject::GUI()
 		ImGui::DragFloat("Scale", &uScale.Get(), 0.1f, 1.f, 20.f);
 		ImGui::DragFloat("Frequency", &uFrequency.Get(), 0.1f, 1.f, 20.f);
 		ImGui::DragFloat("Height", &uHeight.Get(), 0.1f, 1.f, 20.f);
+
+		ImGui::Separator();
+
+		ImGui::SliderInt("Wave Debug", &uSelectWave.Get(), -1, 2);
+		
 		ImGui::End();
 	}
 }
