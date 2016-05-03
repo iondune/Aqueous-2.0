@@ -51,6 +51,7 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 	uScale = 1.f;
 	uFrequency = 6.356f;
 	uHeight = 2.765f;
+	uSteepness = 0.5f;
 
 	uSelectWave = -1;
 }
@@ -69,6 +70,7 @@ void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetUniform("uFrequency", uFrequency);
 		PipelineState->SetUniform("uHeight", uHeight);
 		PipelineState->SetUniform("uSelectWave", uSelectWave);
+		PipelineState->SetUniform("uSteepness", uSteepness);
 		PipelineState->SetFeatureEnabled(Graphics::EDrawFeature::Wireframe, true);
 	}
 
@@ -93,6 +95,7 @@ void CWaterSurfaceSceneObject::GUI()
 		ImGui::DragFloat("Scale", &uScale.Get(), 0.1f, 1.f, 20.f);
 		ImGui::DragFloat("Frequency", &uFrequency.Get(), 0.1f, 1.f, 20.f);
 		ImGui::DragFloat("Height", &uHeight.Get(), 0.1f, 1.f, 20.f);
+		ImGui::DragFloat("Steepness", &uSteepness.Get(), 0.01f, 0.f, 1.f);
 
 		ImGui::Separator();
 

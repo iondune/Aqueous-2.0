@@ -34,6 +34,7 @@ protected:
 	ion::Graphics::CUniform<float> uScale;
 	ion::Graphics::CUniform<float> uFrequency;
 	ion::Graphics::CUniform<float> uHeight;
+	ion::Graphics::CUniform<float> uSteepness;
 	ion::Graphics::CUniform<int> uSelectWave;
 
 	float Speed;

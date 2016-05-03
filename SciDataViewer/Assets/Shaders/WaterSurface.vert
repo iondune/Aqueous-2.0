@@ -7,27 +7,27 @@ uniform float uTime;
 uniform float uScale;
 uniform float uFrequency;
 uniform float uHeight;
+uniform int uSelectWave;
+uniform float uSteepness;
 
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform vec3 uCameraPosition;
-uniform int uSelectWave;
 
 out vec3 vNormal;
 
 const vec2 D[3] = vec2[] (normalize(vec2(1.0, 0.0)), normalize(vec2(0.0, 1.0)), normalize(vec2(1.0, 1.0)));
-const float Amplitude[3] = float[] (3.0, 3.0, 1.0);
-const float Steepness = 0.5;
+float Amplitude[3] = float[] (3.0 * uHeight, 3.0 * uHeight, 1.0 * uHeight);
 const float phi[3] = float[] (1.0, 1.0, 1.0);
-float w[3] = float[] (uFrequency, uFrequency, uFrequency / 2.0);
+float w[3] = float[] (uFrequency / 20.0, uFrequency / 20.0, uFrequency / 40.0);
 
 vec3 GerstnerNew(float x, float y)
 {
 	vec3 P = vec3(x, 0.0, y);
 
 	int low = 0;
-	int high = 2;
+	int high = 1;
 
 	if (uSelectWave != -1)
 	{
@@ -36,7 +36,7 @@ vec3 GerstnerNew(float x, float y)
 
 	for (int i = low; i <= high; ++ i)
 	{
-		float Q = Steepness / (w[i] * Amplitude[i]);
+		float Q = uSteepness / (w[i] * Amplitude[i]);
 		P.xz += Q * Amplitude[i] * D[i] * cos(w[i] * dot(D[i], vec2(x, y)) + phi[i] * uTime);
 		P.y += Amplitude[i] * sin(w[i] * dot(D[i], vec2(x, y)) + phi[i] * uTime);
 	}
@@ -67,6 +67,9 @@ void main()
 	vec2 gerstnerY = Gerstner(y, t, g, k, h, w);
 
 	vec4 WorldPosition = uModelMatrix * vec4(
+		// gerstnerX.x * uScale,
+		// gerstnerX.y + gerstnerY.y,
+		// gerstnerY.x * uScale,
 		GerstnerNew(x, y) * vec3(uScale, 1.0, uScale),
 		1.0);
 
