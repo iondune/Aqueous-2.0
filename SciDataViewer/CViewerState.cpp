@@ -71,6 +71,7 @@ void CViewerState::Init()
 	//ParticleSystem->Update();
 
 	WaterSurface = new CWaterSurfaceSceneObject();
+	WaterSurface->SkyBoxTexture = SkyBoxTexture;
 	RenderPass->AddSceneObject(WaterSurface);
 
 	DebugWindow = new CDebugWindowWidget();

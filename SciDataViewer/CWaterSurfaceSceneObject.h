@@ -18,6 +18,8 @@ public:
 	void GUI();
 	void ToggleGUI();
 
+	SharedPointer<ion::Graphics::ITextureCubeMap> SkyBoxTexture;
+
 protected:
 
 	SingletonPointer<ion::CGraphicsAPI> GraphicsAPI;

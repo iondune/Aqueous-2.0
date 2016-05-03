@@ -15,6 +15,7 @@ in vec3 vWorldPosition;
 uniform int uPointLightCount;
 uniform SPointLight uPointLights[LIGHT_MAX];
 uniform vec3 uCameraPosition;
+uniform samplerCube uSkyBox;
 
 out vec4 outColor;
 
@@ -30,9 +31,11 @@ void main()
 	const vec3 DiffuseColor = 0.6 * vec3(0.0, 0.5, 1.0);
 	const vec3 SpecularColor = 0.5 * vec3(1.0, 1.0, 1.0);
 	const float Shininess = 100.0;
+	const float Reflection = 0.5;
 
 	vec3 nNormal = normalize(vNormal);
 	vec3 nView = normalize(uCameraPosition - vWorldPosition);
+	vec3 nReflect = normalize(reflect(-nView, nNormal));
 
 	vec3 Diffuse = vec3(0);
 	vec3 Specular = vec3(0);
@@ -61,6 +64,8 @@ void main()
 
 
 	outColor = vec4(Specular * SpecularColor + Diffuse * DiffuseColor + AmbientColor, 1.0);
+	outColor.rgb *= (1.0 - Reflection);
+	outColor.rgb += Reflection * texture(uSkyBox, nReflect).rgb;
 	// outColor = vec4(Diffuse, 1.0);
 	// outColor = vec4(vNormal * 0.5 + vec3(0.5), 1);
 }
