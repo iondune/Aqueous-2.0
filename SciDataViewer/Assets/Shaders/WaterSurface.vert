@@ -25,6 +25,21 @@ float rand(vec2 co)
 	return fract(sin(dot(co.xy ,vec2(12.9898, 78.233))) * 43758.5453);
 }
 
+float rand(float c)
+{
+	return fract(sin(dot(vec2(c - 39.01298, c + 809.203), vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+vec2 rotate(vec2 v, float a)
+{
+	float cs = cos(a);
+	float sn = sin(a);
+	return vec2(
+		v.x * cs - v.y * sn,
+		v.x * sn + v.y * cs
+		);
+}
+
 void main()
 {
 	float x = vPosition.x;
@@ -34,6 +49,9 @@ void main()
 
 	int low = 1;
 	int high = uNumWaves;
+	int mid1 = low + (high - low) / 4;
+	int mid2 = low + (high - low) * 2 / 4;
+	int mid3 = low + (high - low) * 3 / 4;
 	int NumWaves = high - low + 1;
 
 	if (uSelectWave > 0)
@@ -42,36 +60,57 @@ void main()
 		NumWaves = 1;
 	}
 
-	NumWaves += 1;
+	const float pi = 3.14159;
+	const float g = 9.8;
+	const float MedianWavelength = 900.0;
+	float MedianAmplitude = 1.25 * uHeight;
+	const vec2 MedianDirection = normalize(vec2(1.0, 1.0));
+	const float MaxDirectionVariance = pi / 2.0;
 
 	for (int i = low; i <= high; ++ i)
 	{
-		vec2 D_i = normalize(vec2(1.0, rand(vec2(float(i), 2.0 * float(i)))));
-		float A_i = 3.0 * uHeight / pow(float(i), 2.3564);
-		float phi_i = 0.376 + 1.329 * pow(float(i), 1.322);
-		float w_i = uFrequency / 20.0 * float(i);
+		float Factor = 1.0;
+		if (i > mid1)
+			Factor = sqrt(0.1);
+		if (i > mid2)
+			Factor = sqrt(0.01);
+		if (i > mid3)
+			Factor = sqrt(0.001);
+
+		float Wavelength = (rand(float(i)) * 1.5 + 0.5) * MedianWavelength * Factor * Factor;
+		float Amplitude = (rand(float(i)) * 1.5 + 0.5) * MedianAmplitude * Factor;
+		float Angle = (rand(float(i + 37)) * 2.0 - 1.0) * MaxDirectionVariance;
+
+		vec2 D_i = rotate(MedianDirection, Angle);
+		float A_i = Amplitude;
+		float phi_i = 2.0 * pi;//0.376 + 1.329 * pow(float(i), 1.322);
+		float w_i = sqrt(g * 2.0 * pi / Wavelength);
 		float Q_i = uSteepness / (w_i * A_i * NumWaves);
 
 		P.xz += Q_i * A_i * D_i * cos(w_i * dot(D_i, vec2(x, y)) + phi_i * uTime);
 		P.y += A_i * sin(w_i * dot(D_i, vec2(x, y)) + phi_i * uTime);
-
-		if (i == low)
-		{
-			D_i = D_i.yx * vec2(-1.0, 1.0);
-
-			P.xz += Q_i * A_i * D_i * cos(w_i * dot(D_i, vec2(x, y)) + phi_i * uTime);
-			P.y += A_i * sin(w_i * dot(D_i, vec2(x, y)) + phi_i * uTime);
-		}
 	}
 
 	vec3 N = vec3(0.0, 1.0, 0.0);
 
 	for (int i = low; i <= high; ++ i)
 	{
-		vec2 D_i = normalize(vec2(1.0, rand(vec2(float(i), 2.0 * float(i)))));
-		float A_i = 3.0 * uHeight / float(i);
-		float phi_i = 0.376 + 1.329 * pow(float(i), 1.322);
-		float w_i = uFrequency / 20.0 * float(i);
+		float Factor = 1.0;
+		if (i > mid1)
+			Factor = sqrt(0.1);
+		if (i > mid2)
+			Factor = sqrt(0.01);
+		if (i > mid3)
+			Factor = sqrt(0.001);
+
+		float Wavelength = (rand(float(i)) * 1.5 + 0.5) * MedianWavelength * Factor * Factor;
+		float Amplitude = (rand(float(i)) * 1.5 + 0.5) * MedianAmplitude * Factor;
+		float Angle = (rand(float(i + 37)) * 2.0 - 1.0) * MaxDirectionVariance;
+
+		vec2 D_i = rotate(MedianDirection, Angle);
+		float A_i = Amplitude;
+		float phi_i = 2.0 * pi;//0.376 + 1.329 * pow(float(i), 1.322);
+		float w_i = sqrt(g * 2.0 * pi / Wavelength);
 		float Q_i = uSteepness / (w_i * A_i * NumWaves);
 
 		float WA = w_i * A_i;
@@ -80,16 +119,6 @@ void main()
 
 		N.xz += D_i * WA * C;
 		N.y -= Q_i * WA * S;
-
-		if (i == low)
-		{
-			D_i = D_i.yx * vec2(-1.0, 1.0);
-			S = sin(w_i * dot(D_i, P.xz) + phi_i * uTime);
-			C = cos(w_i * dot(D_i, P.xz) + phi_i * uTime);
-
-			N.xz += D_i * WA * C;
-			N.y -= Q_i * WA * S;
-		}
 	}
 
 	vec4 WorldPosition = uModelMatrix * vec4(

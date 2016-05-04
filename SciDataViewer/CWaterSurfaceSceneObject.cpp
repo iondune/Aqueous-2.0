@@ -45,12 +45,12 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 	IndexBuffer = GraphicsAPI->CreateIndexBuffer();
 	IndexBuffer->UploadData(IndexData);
 
-	Speed = 0.6f;
+	Speed = 0.21f;
 
 	uTime = 0.f;
 	uScale = 10.f;
 	uFrequency = 6.356f;
-	uHeight = 2.765f;
+	uHeight = 1.f;
 	uSteepness = 0.5f;
 
 	uSelectWave = -1;

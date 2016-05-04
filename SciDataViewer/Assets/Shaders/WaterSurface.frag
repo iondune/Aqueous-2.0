@@ -69,8 +69,9 @@ void main()
 	outColor = vec4(Specular * SpecularColor + Diffuse * DiffuseColor + AmbientColor, 1.0);
 	outColor.rgb *= (1.0 - Reflection);
 	outColor.rgb += Reflection * texture(uSkyBox, nReflect).rgb;
-	outColor.rgb *= (1.0 - Filter);
-	outColor.rgb += Filter * texture(uSkyBox, nRefract).rgb;
+	// outColor.rgb *= (1.0 - Filter);
+	// outColor.rgb += Filter * texture(uSkyBox, nRefract).rgb;
 	// outColor = vec4(Diffuse, 1.0);
 	// outColor = vec4(vNormal * 0.5 + vec3(0.5), 1);
+	// outColor = vec4(vec3(0.0), 1.0);
 }
