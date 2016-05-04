@@ -60,6 +60,10 @@ vec3 GerstnerNormal(float x, float y)
 	return normalize(cross(vb, va));
 }
 
+float rand(vec2 co)
+{
+	return fract(sin(dot(co.xy ,vec2(12.9898, 78.233))) * 43758.5453);
+}
 
 void main()
 {
@@ -78,11 +82,11 @@ void main()
 		NumWaves = 1;
 	}
 
+	NumWaves += 1;
+
 	for (int i = low; i <= high; ++ i)
 	{
-		vec2 D_i = normalize(vec2(1.0, 0.8 * float(i) / float(high)));
-		if (i % 2 == 0)
-			D_i = D_i.yx;
+		vec2 D_i = normalize(vec2(1.0, rand(vec2(float(i), 2.0 * float(i)))));
 		float A_i = 3.0 * uHeight / pow(float(i), 2.3564);
 		float phi_i = 0.376 + 1.329 * pow(float(i), 1.322);
 		float w_i = uFrequency / 20.0 * float(i);
@@ -90,15 +94,21 @@ void main()
 
 		P.xz += Q_i * A_i * D_i * cos(w_i * dot(D_i, vec2(x, y)) + phi_i * uTime);
 		P.y += A_i * sin(w_i * dot(D_i, vec2(x, y)) + phi_i * uTime);
+
+		if (i == low)
+		{
+			D_i = D_i.yx * vec2(-1.0, 1.0);
+
+			P.xz += Q_i * A_i * D_i * cos(w_i * dot(D_i, vec2(x, y)) + phi_i * uTime);
+			P.y += A_i * sin(w_i * dot(D_i, vec2(x, y)) + phi_i * uTime);
+		}
 	}
 
 	vec3 N = vec3(0.0, 1.0, 0.0);
 
 	for (int i = low; i <= high; ++ i)
 	{
-		vec2 D_i = normalize(vec2(1.0, 0.8 * float(i) / float(high)));
-		if (i % 2 == 0)
-			D_i = D_i.yx;
+		vec2 D_i = normalize(vec2(1.0, rand(vec2(float(i), 2.0 * float(i)))));
 		float A_i = 3.0 * uHeight / float(i);
 		float phi_i = 0.376 + 1.329 * pow(float(i), 1.322);
 		float w_i = uFrequency / 20.0 * float(i);
@@ -110,6 +120,16 @@ void main()
 
 		N.xz += D_i * WA * C;
 		N.y -= Q_i * WA * S;
+
+		if (i == low)
+		{
+			D_i = D_i.yx * vec2(-1.0, 1.0);
+			S = sin(w_i * dot(D_i, P.xz) + phi_i * uTime);
+			C = cos(w_i * dot(D_i, P.xz) + phi_i * uTime);
+
+			N.xz += D_i * WA * C;
+			N.y -= Q_i * WA * S;
+		}
 	}
 
 	vec4 WorldPosition = uModelMatrix * vec4(
