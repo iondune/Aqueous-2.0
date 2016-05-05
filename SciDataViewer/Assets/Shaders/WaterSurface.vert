@@ -16,8 +16,10 @@ uniform mat4 uViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform vec3 uCameraPosition;
 
-out vec3 vNormal;
-out vec3 vWorldPosition;
+out vec3 fNormal;
+out vec3 fWorldPosition;
+out vec2 fModelPosition;
+out vec3 fP;
 
 
 float rand(vec2 co)
@@ -42,6 +44,7 @@ vec2 rotate(vec2 v, float a)
 
 void main()
 {
+	fModelPosition = vPosition.xy;
 	float x = vPosition.x;
 	float y = vPosition.y;
 
@@ -91,42 +94,43 @@ void main()
 		P.y += A_i * sin(w_i * dot(D_i, vec2(x, y)) + phi_i * uTime);
 	}
 
-	vec3 N = vec3(0.0, 1.0, 0.0);
+	// vec3 N = vec3(0.0, 1.0, 0.0);
 
-	for (int i = low; i <= high; ++ i)
-	{
-		float Factor = 1.0;
-		if (i > mid1)
-			Factor = sqrt(0.1);
-		if (i > mid2)
-			Factor = sqrt(0.01);
-		if (i > mid3)
-			Factor = sqrt(0.001);
+	// for (int i = low; i <= high; ++ i)
+	// {
+	// 	float Factor = 1.0;
+	// 	if (i > mid1)
+	// 		Factor = sqrt(0.1);
+	// 	if (i > mid2)
+	// 		Factor = sqrt(0.01);
+	// 	if (i > mid3)
+	// 		Factor = sqrt(0.001);
 
-		float Wavelength = (rand(float(i)) * 1.5 + 0.5) * MedianWavelength * Factor * Factor;
-		float Amplitude = (rand(float(i)) * 1.5 + 0.5) * MedianAmplitude * Factor;
-		float Angle = (rand(float(i + 37)) * 2.0 - 1.0) * MaxDirectionVariance;
+	// 	float Wavelength = (rand(float(i)) * 1.5 + 0.5) * MedianWavelength * Factor * Factor;
+	// 	float Amplitude = (rand(float(i)) * 1.5 + 0.5) * MedianAmplitude * Factor;
+	// 	float Angle = (rand(float(i + 37)) * 2.0 - 1.0) * MaxDirectionVariance;
 
-		vec2 D_i = rotate(MedianDirection, Angle);
-		float A_i = Amplitude;
-		float phi_i = 2.0 * pi;//0.376 + 1.329 * pow(float(i), 1.322);
-		float w_i = sqrt(g * 2.0 * pi / Wavelength);
-		float Q_i = uSteepness / (w_i * A_i * NumWaves);
+	// 	vec2 D_i = rotate(MedianDirection, Angle);
+	// 	float A_i = Amplitude;
+	// 	float phi_i = 2.0 * pi;//0.376 + 1.329 * pow(float(i), 1.322);
+	// 	float w_i = sqrt(g * 2.0 * pi / Wavelength);
+	// 	float Q_i = uSteepness / (w_i * A_i * NumWaves);
 
-		float WA = w_i * A_i;
-		float S = sin(w_i * dot(D_i, P.xz) + phi_i * uTime);
-		float C = cos(w_i * dot(D_i, P.xz) + phi_i * uTime);
+	// 	float WA = w_i * A_i;
+	// 	float S = sin(w_i * dot(D_i, P.xz) + phi_i * uTime);
+	// 	float C = cos(w_i * dot(D_i, P.xz) + phi_i * uTime);
 
-		N.xz += D_i * WA * C;
-		N.y -= Q_i * WA * S;
-	}
+	// 	N.xz += D_i * WA * C;
+	// 	N.y -= Q_i * WA * S;
+	// }
 
 	vec4 WorldPosition = uModelMatrix * vec4(
 		P * vec3(uScale, 1.0, uScale),
 		1.0);
+	fP = P;
 
-	vNormal = N;
-	vWorldPosition = WorldPosition.xyz;
+	// fNormal = N;
+	fWorldPosition = WorldPosition.xyz;
 
 	gl_Position = uProjectionMatrix * uViewMatrix * WorldPosition;
 }
