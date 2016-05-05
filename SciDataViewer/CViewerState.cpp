@@ -6,6 +6,7 @@
 #include "CPointsWindowWidget.h"
 #include "CDebugWindowWidget.h"
 #include "CWaterSurfaceSceneObject.h"
+#include "CVolumeSceneObject.h"
 
 
 using namespace ion;
@@ -29,10 +30,10 @@ void CViewerState::Init()
 	DebugCameraControl->SetPhi(-Constants32::Pi / 4.f);
 	AddListener(DebugCameraControl);
 
-	CSimpleMeshSceneObject * Cube = new CSimpleMeshSceneObject();
-	Cube->SetShader(Application->DiffuseShader);
-	Cube->SetMesh(Application->CubeMesh);
-	RenderPass->AddSceneObject(Cube);
+	//CSimpleMeshSceneObject * Cube = new CSimpleMeshSceneObject();
+	//Cube->SetShader(Application->DiffuseShader);
+	//Cube->SetMesh(Application->CubeMesh);
+	//RenderPass->AddSceneObject(Cube);
 
 	CPointLight * Light = new CPointLight();
 	Light->SetPosition(vec3f(-128, 256, 128));
@@ -73,6 +74,32 @@ void CViewerState::Init()
 	WaterSurface = new CWaterSurfaceSceneObject();
 	WaterSurface->SkyBoxTexture = SkyBoxTexture;
 	RenderPass->AddSceneObject(WaterSurface);
+
+	Volume = new CVolumeSceneObject();
+	SharedPointer<Graphics::ITexture3D> VolumeData = GraphicsAPI->CreateTexture3D(vec3u(30), ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
+	byte * Data = new byte[30 * 30 * 30 * 4];
+	for (int k = 0; k < 30; ++ k)
+	{
+		for (int j = 0; j < 30; ++ j)
+		{
+			for (int i = 0; i < 30; ++ i)
+			{
+				color4i const Color = color4f(i / 30.f, j / 30.f, k / 30.f, 0.6f);
+				for (int t = 0; t < 4; ++ t)
+				{
+					Data[(i + j * 30 + k * 30 * 30) * 4 + t] = Color[t];
+				}
+			}
+		}
+	}
+	VolumeData->Upload(Data, vec3u(30), ITexture::EFormatComponents::RGBA, EScalarType::UnsignedInt8);
+	delete[] Data;
+	VolumeData->SetMinFilter(ITexture::EFilter::Linear);
+	VolumeData->SetMagFilter(ITexture::EFilter::Linear);
+	VolumeData->SetWrapMode(ITexture::EWrapMode::Clamp);
+	Volume->VolumeData = VolumeData;
+	Volume->SetScale(6.f);
+	RenderPass->AddSceneObject(Volume);
 
 	DebugWindow = new CDebugWindowWidget();
 	DebugWindow->RenderTarget = Application->RenderTarget;
@@ -131,6 +158,7 @@ void CViewerState::GUI()
 	//CameraWindow->DrawIfVisible();
 	//PointsWindow->DrawIfVisible();
 	WaterSurface->GUI();
+	Volume->GUI();
 }
 
 void CViewerState::OnEvent(IEvent & Event)

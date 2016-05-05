@@ -38,6 +38,7 @@
     <ClCompile Include="CDataManager.cpp" />
     <ClCompile Include="CParticleSystem.cpp" />
     <ClCompile Include="CViewerState.cpp" />
+    <ClCompile Include="CVolumeSceneObject.cpp" />
     <ClCompile Include="CWaterSurfaceSceneObject.cpp" />
     <ClCompile Include="CWindowWidget.cpp" />
     <ClCompile Include="CDataSet.cpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="CParticleSystem.h" />
     <ClInclude Include="CPointsWindowWidget.h" />
     <ClInclude Include="CViewerState.h" />
+    <ClInclude Include="CVolumeSceneObject.h" />
     <ClInclude Include="CWaterSurfaceSceneObject.h" />
     <ClInclude Include="CWindowWidget.h" />
   </ItemGroup>

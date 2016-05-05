@@ -8,6 +8,7 @@ class CApplication;
 class CDataManager;
 class CParticleSystem;
 class CWaterSurfaceSceneObject;
+class CVolumeSceneObject;
 
 class CCameraWindowWidget;
 class CPointsWindowWidget;
@@ -27,15 +28,18 @@ public:
 private:
 	
 	SingletonPointer<CApplication> Application;
+	SingletonPointer<CDataManager> DataManager;
+
 	SingletonPointer<ion::CSceneManager> SceneManager;
 	SingletonPointer<ion::CAssetManager> AssetManager;
-	SingletonPointer<CDataManager> DataManager;
+	SingletonPointer<ion::CGraphicsAPI> GraphicsAPI;
 
 	ion::Scene::CRenderPass * RenderPass = nullptr;
 	ion::Scene::CPerspectiveCamera * DebugCamera = nullptr;
 	ion::CCameraController * DebugCameraControl = nullptr;
 	CParticleSystem * ParticleSystem = nullptr;
 	CWaterSurfaceSceneObject * WaterSurface = nullptr;
+	CVolumeSceneObject * Volume = nullptr;
 	ion::Scene::CSimpleMeshSceneObject * SkyBox = nullptr;
 
 	CCameraWindowWidget * CameraWindow = nullptr;
