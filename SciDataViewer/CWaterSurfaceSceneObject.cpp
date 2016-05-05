@@ -64,7 +64,6 @@ void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState = RenderPass->GetGraphicsContext()->CreatePipelineState();
 		PipelineState->SetProgram(Shader);
 		PipelineState->SetIndexBuffer(IndexBuffer);
-		PipelineState->SetIndexBuffer(IndexBuffer);
 		PipelineState->SetVertexBuffer(0, VertexBuffer);
 		PipelineState->SetUniform("uTime", uTime);
 		PipelineState->SetUniform("uScale", uScale);
@@ -107,9 +106,8 @@ void CWaterSurfaceSceneObject::GUI()
 		{
 			PipelineState->SetFeatureEnabled(Graphics::EDrawFeature::Wireframe, Wireframe);
 		}
-		
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 void CWaterSurfaceSceneObject::ToggleGUI()
