@@ -156,6 +156,7 @@ void main()
 		vec3 nLight = normalize(100.0 * vec3(1.0, 6.0, 0.0) * fWorldPosition);
 		vec3 nHalf = normalize(nLight + nView);
 		float Lambertian = clamp(dot(nNormal, nLight), 0.0, 1.0);
+		// float Phong = pow(clamp(dot(nView, nReflect), 0.0, 1.0), Shininess);
 		float BlinnPhong = pow(clamp(dot(nNormal, nHalf), 0.0, 1.0), Shininess);
 		Diffuse += Lambertian;
 		Specular += BlinnPhong;
