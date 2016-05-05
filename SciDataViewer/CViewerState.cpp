@@ -148,6 +148,7 @@ void CViewerState::GUI()
 			if (ImGui::MenuItem("Camera")) { CameraWindow->ToggleVisibility(); };
 			if (ImGui::MenuItem("Points")) { PointsWindow->ToggleVisibility(); };
 			if (ImGui::MenuItem("Water")) { WaterSurface->ToggleGUI(); };
+			if (ImGui::MenuItem("Volume")) { Volume->ToggleGUI(); };
 			if (ImGui::MenuItem("Debug")) { DebugWindow->ToggleVisibility(); };
 			ImGui::EndMenu();
 		}
@@ -184,6 +185,10 @@ void CViewerState::OnEvent(IEvent & Event)
 
 			case EKey::M:
 				WaterSurface->ToggleGUI();
+				break;
+
+			case EKey::N:
+				Volume->ToggleGUI();
 				break;
 
 			case EKey::F1:

@@ -132,6 +132,11 @@ void CVolumeSceneObject::Draw(ion::Scene::CRenderPass * RenderPass)
 
 void CVolumeSceneObject::GUI()
 {
+	if (! IsGUIVisible)
+	{
+		return;
+	}
+
 	ImGui::SetNextWindowPos(ImVec2(700, 50), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiSetCond_Once);
 	if (ImGui::Begin("Volume", &IsGUIVisible))

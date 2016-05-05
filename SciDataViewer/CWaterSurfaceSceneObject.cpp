@@ -88,6 +88,11 @@ void CWaterSurfaceSceneObject::Draw(ion::Scene::CRenderPass * RenderPass)
 
 void CWaterSurfaceSceneObject::GUI()
 {
+	if (! IsGUIVisible)
+	{
+		return;
+	}
+
 	ImGui::SetNextWindowPos(ImVec2(50, 50), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiSetCond_Once);
 	if (ImGui::Begin("Water Surface", &IsGUIVisible))
