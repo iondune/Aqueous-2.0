@@ -52,9 +52,11 @@ void main()
 
 	int low = 1;
 	int high = uNumWaves;
-	int mid1 = low + (high - low) / 4;
-	int mid2 = low + (high - low) * 2 / 4;
-	int mid3 = low + (high - low) * 3 / 4;
+	int mid1 = low + (high - low) * 1 / 6;
+	int mid2 = low + (high - low) * 2 / 6;
+	int mid3 = low + (high - low) * 3 / 6;
+	int mid4 = low + (high - low) * 4 / 6;
+	int mid5 = low + (high - low) * 5 / 6;
 	int NumWaves = high - low + 1;
 
 	if (uSelectWave > 0)
@@ -79,6 +81,10 @@ void main()
 			Factor = sqrt(0.01);
 		if (i > mid3)
 			Factor = sqrt(0.001);
+		if (i > mid4)
+			Factor = sqrt(0.0001);
+		if (i > mid5)
+			Factor = sqrt(0.00001);
 
 		float Wavelength = (rand(float(i)) * 1.5 + 0.5) * MedianWavelength * Factor * Factor;
 		float Amplitude = (rand(float(i)) * 1.5 + 0.5) * MedianAmplitude * Factor;

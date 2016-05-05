@@ -50,11 +50,11 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 	uTime = 0.f;
 	uScale = 10.f;
 	uFrequency = 6.356f;
-	uHeight = 1.f;
+	uHeight = 1.65f;
 	uSteepness = 0.5f;
 
 	uSelectWave = -1;
-	uNumWaves = 35;
+	uNumWaves = 60;
 }
 
 void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
@@ -97,7 +97,7 @@ void CWaterSurfaceSceneObject::GUI()
 		ImGui::DragFloat("Frequency", &uFrequency.Get(), 0.1f, 1.f, 20.f);
 		ImGui::DragFloat("Height", &uHeight.Get(), 0.1f, 1.f, 20.f);
 		ImGui::DragFloat("Steepness", &uSteepness.Get(), 0.01f, 0.f, 1.f);
-		ImGui::SliderInt("Wave Count", &uNumWaves.Get(), 1, 60);
+		ImGui::SliderInt("Wave Count", &uNumWaves.Get(), 1, 110);
 
 		ImGui::Separator();
 

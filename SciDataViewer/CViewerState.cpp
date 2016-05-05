@@ -154,9 +154,9 @@ void CViewerState::GUI()
 		ImGui::EndMainMenuBar();
 	}
 
-	//DebugWindow->DrawIfVisible();
-	//CameraWindow->DrawIfVisible();
-	//PointsWindow->DrawIfVisible();
+	DebugWindow->DrawIfVisible();
+	CameraWindow->DrawIfVisible();
+	PointsWindow->DrawIfVisible();
 	WaterSurface->GUI();
 	Volume->GUI();
 }

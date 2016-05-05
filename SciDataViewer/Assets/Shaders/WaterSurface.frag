@@ -65,10 +65,16 @@ void main()
 
 	int low = 1;
 	int high = uNumWaves;
-	int mid1 = low + (high - low) / 4;
-	int mid2 = low + (high - low) * 2 / 4;
-	int mid3 = low + (high - low) * 3 / 4;
+	int mid1 = low + (high - low) * 1 / 6;
+	int mid2 = low + (high - low) * 2 / 6;
+	int mid3 = low + (high - low) * 3 / 6;
+	int mid4 = low + (high - low) * 4 / 6;
+	int mid5 = low + (high - low) * 5 / 6;
 	int NumWaves = high - low + 1;
+
+	vec3 CameraVector = uCameraPosition - fWorldPosition;
+	float CameraDistance = length(CameraVector);
+	int ArtificialCutoff = clamp(int((1.0 - CameraDistance / 1500.0) * float(high)), mid3, high);
 
 	if (uSelectWave > 0)
 	{
@@ -85,7 +91,7 @@ void main()
 
 	vec3 N = vec3(0.0, 1.0, 0.0);
 
-	for (int i = low; i <= high; ++ i)
+	for (int i = low; i <= high && i <= ArtificialCutoff; ++ i)
 	{
 		float Factor = 1.0;
 		if (i > mid1)
@@ -94,6 +100,10 @@ void main()
 			Factor = sqrt(0.01);
 		if (i > mid3)
 			Factor = sqrt(0.001);
+		if (i > mid4)
+			Factor = sqrt(0.0001);
+		if (i > mid5)
+			Factor = sqrt(0.00001);
 
 		float Wavelength = (rand(float(i)) * 1.5 + 0.5) * MedianWavelength * Factor * Factor;
 		float Amplitude = (rand(float(i)) * 1.5 + 0.5) * MedianAmplitude * Factor;
@@ -113,11 +123,11 @@ void main()
 		N.y -= Q_i * WA * S;
 	}
 
-	const vec3 AmbientColor = 0.4 * vec3(0.0, 1.0, 1.0);
-	const vec3 DiffuseColor = 0.6 * vec3(0.0, 0.5, 1.0);
+	const vec3 AmbientColor = vec3(20.0 / 255.0, 45.0 / 255.0, 60.0 / 255.0);
+	const vec3 DiffuseColor = vec3(116.0 / 255.0, 155.0 / 255.0, 175.0 / 255.0) - AmbientColor;
 	const vec3 SpecularColor = 0.5 * vec3(1.0, 1.0, 1.0);
-	const float Shininess = 100.0;
-	const float Reflection = 0.5;
+	const float Shininess = 10.0;
+	const float Reflection = 0.1;
 	const float Filter = 0.5;
 	const float IoR = 1.00 / 1.2;
 
@@ -143,7 +153,7 @@ void main()
 
 	//for (int i = 0; i < LIGHT_MAX && i < uLightCount; ++ i)
 	{
-		vec3 nLight = -normalize(vec3(-1.0, -6.0, 0.0));
+		vec3 nLight = normalize(100.0 * vec3(1.0, 6.0, 0.0) * fWorldPosition);
 		vec3 nHalf = normalize(nLight + nView);
 		float Lambertian = clamp(dot(nNormal, nLight), 0.0, 1.0);
 		float BlinnPhong = pow(clamp(dot(nNormal, nHalf), 0.0, 1.0), Shininess);
