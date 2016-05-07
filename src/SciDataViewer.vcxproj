@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{22EC7411-52B2-47EE-83F7-5D5C3823B561}</ProjectGuid>
+    <RootNamespace>SciDataViewer</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(VisualStudioDir)\Projects\ionEngine\Properties\Application.props" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <IncludePath>$(VisualStudioDir)\SDKs\nativefiledialog\src\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <AdditionalDependencies>nativefiledialog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(VisualStudioDir)\SDKs\nativefiledialog\x64\Debug\</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>nativefiledialog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(VisualStudioDir)\SDKs\nativefiledialog\x64\Release\</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="CApplication.cpp" />
+    <ClCompile Include="CDataManager.cpp" />
+    <ClCompile Include="CParticleSystem.cpp" />
+    <ClCompile Include="CViewerState.cpp" />
+    <ClCompile Include="CVolumeSceneObject.cpp" />
+    <ClCompile Include="CWaterSurfaceSceneObject.cpp" />
+    <ClCompile Include="CWindowWidget.cpp" />
+    <ClCompile Include="CDataSet.cpp" />
+    <ClCompile Include="Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CApplication.h" />
+    <ClInclude Include="CCameraWindowWidget.h" />
+    <ClInclude Include="CDataLoader.h" />
+    <ClInclude Include="CDataLoaderCSV.h" />
+    <ClInclude Include="CDataManager.h" />
+    <ClInclude Include="CDataSet.h" />
+    <ClInclude Include="CDebugWindowWidget.h" />
+    <ClInclude Include="CParticleSystem.h" />
+    <ClInclude Include="CPointsWindowWidget.h" />
+    <ClInclude Include="CViewerState.h" />
+    <ClInclude Include="CVolumeSceneObject.h" />
+    <ClInclude Include="CWaterSurfaceSceneObject.h" />
+    <ClInclude Include="CWindowWidget.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>
