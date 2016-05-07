@@ -72,7 +72,7 @@ void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetUniform("uSelectWave", uSelectWave);
 		PipelineState->SetUniform("uSteepness", uSteepness);
 		PipelineState->SetUniform("uNumWaves", uNumWaves);
-		PipelineState->SetTexture("uSkyBox", SkyBoxTexture);
+		PipelineState->SetTexture("uSceneColor", SceneColor);
 	}
 
 	RenderPass->PreparePipelineStateForRendering(PipelineState, this);

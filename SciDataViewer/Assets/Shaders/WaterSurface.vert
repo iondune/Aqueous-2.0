@@ -19,6 +19,7 @@ uniform vec3 uCameraPosition;
 out vec3 fNormal;
 out vec3 fWorldPosition;
 out vec2 fModelPosition;
+out vec4 fScreenPosition;
 out vec3 fP;
 
 
@@ -139,4 +140,5 @@ void main()
 	fWorldPosition = WorldPosition.xyz;
 
 	gl_Position = uProjectionMatrix * uViewMatrix * WorldPosition;
+	fScreenPosition = gl_Position;
 }

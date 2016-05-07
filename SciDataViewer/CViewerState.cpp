@@ -33,6 +33,19 @@ void CViewerState::Init()
 	VolumeRenderPass->SetRenderTarget(SceneFrameBuffer);
 	SceneManager->AddRenderPass(VolumeRenderPass);
 
+	SharedPointer<IFrameBuffer> CopyFrameBuffer = Application->Context->CreateFrameBuffer();
+	SwapColor = GraphicsAPI->CreateTexture2D(Application->GetWindow()->GetSize(), ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
+	SwapColor->SetWrapMode(ITexture::EWrapMode::Clamp);
+	CopyFrameBuffer->AttachColorTexture(SwapColor, 0);
+	if (! CopyFrameBuffer->CheckCorrectness())
+	{
+		Log::Error("Frame buffer not valid!");
+	}
+
+	CopyRenderPass = new CRenderPass(Application->Context);
+	CopyRenderPass->SetRenderTarget(CopyFrameBuffer);
+	SceneManager->AddRenderPass(CopyRenderPass);
+
 	WaterRenderPass = new CRenderPass(Application->Context);
 	WaterRenderPass->SetRenderTarget(SceneFrameBuffer);
 	SceneManager->AddRenderPass(WaterRenderPass);
@@ -96,7 +109,7 @@ void CViewerState::Init()
 	//ParticleSystem->Update();
 
 	WaterSurface = new CWaterSurfaceSceneObject();
-	WaterSurface->SkyBoxTexture = SkyBoxTexture;
+	WaterSurface->SceneColor = SwapColor;
 	WaterRenderPass->AddSceneObject(WaterSurface);
 
 	Volume = new CVolumeSceneObject();
@@ -131,6 +144,7 @@ void CViewerState::Init()
 	PostProcessObject->SetMesh(CGeometryCreator::CreateScreenTriangle());
 	PostProcessObject->SetShader(Application->QuadCopyShader);
 	PostProcessObject->SetTexture("uTexture", SceneColor);
+	CopyRenderPass->AddSceneObject(PostProcessObject);
 	FinalRenderPass->AddSceneObject(PostProcessObject);
 
 	DebugWindow = new CDebugWindowWidget();

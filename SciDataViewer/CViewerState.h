@@ -36,11 +36,13 @@ private:
 
 	ion::Scene::CRenderPass * DefaultRenderPass = nullptr;
 	ion::Scene::CRenderPass * VolumeRenderPass = nullptr;
+	ion::Scene::CRenderPass * CopyRenderPass = nullptr;
 	ion::Scene::CRenderPass * WaterRenderPass = nullptr;
 	ion::Scene::CRenderPass * FinalRenderPass = nullptr;
 
 	SharedPointer<ion::Graphics::IFrameBuffer> SceneFrameBuffer;
 	SharedPointer<ion::Graphics::ITexture2D> SceneColor;
+	SharedPointer<ion::Graphics::ITexture2D> SwapColor;
 	SharedPointer<ion::Graphics::ITexture2D> SceneDepth;
 
 	ion::Scene::CPerspectiveCamera * DebugCamera = nullptr;
