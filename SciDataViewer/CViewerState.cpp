@@ -15,14 +15,38 @@ using namespace ion::Scene;
 
 void CViewerState::Init()
 {
-	RenderPass = new CRenderPass(Application->Context);
-	RenderPass->SetRenderTarget(Application->RenderTarget);
-	SceneManager->AddRenderPass(RenderPass);
+	SceneFrameBuffer = Application->Context->CreateFrameBuffer();
+	SceneColor = GraphicsAPI->CreateTexture2D(Application->GetWindow()->GetSize(), ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
+	SceneDepth = GraphicsAPI->CreateTexture2D(Application->GetWindow()->GetSize(), ITexture::EMipMaps::False, ITexture::EFormatComponents::R, ITexture::EInternalFormatType::Depth);
+	SceneFrameBuffer->AttachColorTexture(SceneColor, 0);
+	SceneFrameBuffer->AttachDepthTexture(SceneDepth);
+	if (! SceneFrameBuffer->CheckCorrectness())
+	{
+		Log::Error("Frame buffer not valid!");
+	}
+
+	DefaultRenderPass = new CRenderPass(Application->Context);
+	DefaultRenderPass->SetRenderTarget(SceneFrameBuffer);
+	SceneManager->AddRenderPass(DefaultRenderPass);
+
+	VolumeRenderPass = new CRenderPass(Application->Context);
+	VolumeRenderPass->SetRenderTarget(SceneFrameBuffer);
+	SceneManager->AddRenderPass(VolumeRenderPass);
+
+	WaterRenderPass = new CRenderPass(Application->Context);
+	WaterRenderPass->SetRenderTarget(SceneFrameBuffer);
+	SceneManager->AddRenderPass(WaterRenderPass);
+
+	FinalRenderPass = new CRenderPass(Application->Context);
+	FinalRenderPass->SetRenderTarget(Application->RenderTarget);
+	SceneManager->AddRenderPass(FinalRenderPass);
 
 	DebugCamera = new CPerspectiveCamera(Application->GetWindow()->GetAspectRatio());
 	DebugCamera->SetPosition(vec3f(-10, 10, 0));
 	DebugCamera->SetFarPlane(50000.f);
-	RenderPass->SetActiveCamera(DebugCamera);
+	DefaultRenderPass->SetActiveCamera(DebugCamera);
+	VolumeRenderPass->SetActiveCamera(DebugCamera);
+	WaterRenderPass->SetActiveCamera(DebugCamera);
 
 	DebugCameraControl = new CGamePadCameraController(DebugCamera);
 	DebugCameraControl->SetVelocity(10.f);
@@ -38,7 +62,7 @@ void CViewerState::Init()
 	CPointLight * Light = new CPointLight();
 	Light->SetPosition(vec3f(-128, 256, 128));
 	Light->SetRadius(150.f);
-	RenderPass->AddLight(Light);
+	DefaultRenderPass->AddLight(Light);
 
 	SharedPointer<ITextureCubeMap> SkyBoxTexture = AssetManager->LoadCubeMapTexture(
 		"TropicalSunnyDayLeft2048.png",
@@ -52,7 +76,7 @@ void CViewerState::Init()
 	SkyBox->SetMesh(Application->CubeMesh);
 	SkyBox->SetShader(Application->SkyBoxShader);
 	SkyBox->SetTexture("uTexture", SkyBoxTexture);
-	RenderPass->AddSceneObject(SkyBox);
+	DefaultRenderPass->AddSceneObject(SkyBox);
 
 	//ParticleSystem = new CParticleSystem(Application->ParticleShader);
 	//RenderPass->AddSceneObject(ParticleSystem);
@@ -73,7 +97,7 @@ void CViewerState::Init()
 
 	WaterSurface = new CWaterSurfaceSceneObject();
 	WaterSurface->SkyBoxTexture = SkyBoxTexture;
-	RenderPass->AddSceneObject(WaterSurface);
+	WaterRenderPass->AddSceneObject(WaterSurface);
 
 	Volume = new CVolumeSceneObject();
 	SharedPointer<Graphics::ITexture3D> VolumeData = GraphicsAPI->CreateTexture3D(vec3u(30), ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
@@ -99,7 +123,14 @@ void CViewerState::Init()
 	VolumeData->SetWrapMode(ITexture::EWrapMode::Clamp);
 	Volume->VolumeData = VolumeData;
 	Volume->SetScale(6.f);
-	RenderPass->AddSceneObject(Volume);
+	VolumeRenderPass->AddSceneObject(Volume);
+
+
+	CSimpleMeshSceneObject * PostProcessObject = new CSimpleMeshSceneObject();
+	PostProcessObject->SetMesh(CGeometryCreator::CreateScreenTriangle());
+	PostProcessObject->SetShader(Application->QuadCopyShader);
+	PostProcessObject->SetTexture("uTexture", SceneColor);
+	FinalRenderPass->AddSceneObject(PostProcessObject);
 
 	DebugWindow = new CDebugWindowWidget();
 	DebugWindow->RenderTarget = Application->RenderTarget;
@@ -115,9 +146,11 @@ void CViewerState::Init()
 
 void CViewerState::Update(float const Elapsed)
 {
+	SceneFrameBuffer->ClearColorAndDepth();
+
 	DebugCameraControl->Update(Elapsed);
 
-	SkyBox->SetPosition(RenderPass->GetActiveCamera()->GetPosition());
+	SkyBox->SetPosition(DefaultRenderPass->GetActiveCamera()->GetPosition());
 
 	GUI();
 }
