@@ -5,6 +5,7 @@
 #include "CCameraWindowWidget.h"
 #include "CPointsWindowWidget.h"
 #include "CDebugWindowWidget.h"
+
 #include "CWaterSurfaceSceneObject.h"
 #include "CVolumeSceneObject.h"
 
@@ -15,6 +16,8 @@ using namespace ion::Scene;
 
 void CViewerState::Init()
 {
+	SingletonPointer<ion::CAssetManager> AssetManager;
+	
 	RenderPass = new CRenderPass(Application->Context);
 	RenderPass->SetRenderTarget(Application->RenderTarget);
 	SceneManager->AddRenderPass(RenderPass);
@@ -53,6 +56,8 @@ void CViewerState::Init()
 	SkyBox->SetShader(Application->SkyBoxShader);
 	SkyBox->SetTexture("uTexture", SkyBoxTexture);
 	RenderPass->AddSceneObject(SkyBox);
+
+
 
 	//ParticleSystem = new CParticleSystem(Application->ParticleShader);
 	//RenderPass->AddSceneObject(ParticleSystem);
@@ -111,6 +116,29 @@ void CViewerState::Init()
 
 	PointsWindow = new CPointsWindowWidget();
 	PointsWindow->ParticleSystem = ParticleSystem;
+	//Shark
+	SharkObject = new SharkSceneObject("Assets/Models/leopardSharkUnparented.dae");
+	SharkObject->SetShader(Application->SharkShader);
+	SharkObject->TriggerReload();
+	RenderPass->AddSceneObject(SharkObject);
+
+	//Spline
+	Spline = new KeySpline();
+	glm::vec3 offset (0,0,0);
+	Spline->addNode(SplineNode(offset+glm::vec3(-3,0,5)));
+   Spline->addNode(SplineNode(offset+glm::vec3(1,0,2)));
+   Spline->addNode(SplineNode(offset+glm::vec3(2,0,-4)));
+   Spline->addNode(SplineNode(offset+glm::vec3(-3,0,-8)));
+	Spline->addNode(SplineNode(offset+glm::vec3(-3,0,5)));
+   Spline->addNode(SplineNode(offset+glm::vec3(1,0,2)));
+   Spline->addNode(SplineNode(offset+glm::vec3(2,0,-4)));
+   Spline->addNode(SplineNode(offset+glm::vec3(-3,0,-8)));
+	Spline->addNode(SplineNode(offset+glm::vec3(-3,0,5)));
+   Spline->addNode(SplineNode(offset+glm::vec3(1,0,2)));
+   Spline->addNode(SplineNode(offset+glm::vec3(2,0,-4)));
+   Spline->addNode(SplineNode(offset+glm::vec3(-3,0,-8)));
+  
+   Spline->addNode(SplineNode(glm::vec3(0,0,-10)));
 }
 
 void CViewerState::Update(float const Elapsed)
@@ -118,7 +146,7 @@ void CViewerState::Update(float const Elapsed)
 	DebugCameraControl->Update(Elapsed);
 
 	SkyBox->SetPosition(RenderPass->GetActiveCamera()->GetPosition());
-
+	SharkObject->update(*Spline, Elapsed);
 	GUI();
 }
 
@@ -150,6 +178,7 @@ void CViewerState::GUI()
 			if (ImGui::MenuItem("Water")) { WaterSurface->ToggleGUI(); };
 			if (ImGui::MenuItem("Volume")) { Volume->ToggleGUI(); };
 			if (ImGui::MenuItem("Debug")) { DebugWindow->ToggleVisibility(); };
+
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();

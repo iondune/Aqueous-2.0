@@ -6,6 +6,7 @@
 struct SPointLight
 {
 	vec3 Color;
+	vec3 Position;
 	float Radius;
 };
 
