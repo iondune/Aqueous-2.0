@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="CApplication.cpp" />
+    <ClCompile Include="CViewerState.cpp" />
+    <ClCompile Include="CParticleSystem.cpp" />
+    <ClCompile Include="CWindowWidget.cpp" />
+    <ClCompile Include="CDataSet.cpp" />
+    <ClCompile Include="CDataManager.cpp" />
+    <ClCompile Include="CWaterSurfaceSceneObject.cpp" />
+    <ClCompile Include="CVolumeSceneObject.cpp" />
+    <ClCompile Include="shark\Model.cpp">
+      <Filter>shark</Filter>
+    </ClCompile>
+    <ClCompile Include="shark\SharkSceneObject.cpp">
+      <Filter>shark</Filter>
+    </ClCompile>
+    <ClCompile Include="shark\SharkSpineOscilator.cpp">
+      <Filter>shark</Filter>
+    </ClCompile>
+    <ClCompile Include="shark\SkeletalAnimation.cpp">
+      <Filter>shark</Filter>
+    </ClCompile>
+    <ClCompile Include="shark\Skeleton.cpp">
+      <Filter>shark</Filter>
+    </ClCompile>
+    <ClCompile Include="shark\Transform.cpp">
+      <Filter>shark</Filter>
+    </ClCompile>
+    <ClCompile Include="spline\KeySpline.cpp">
+      <Filter>spline</Filter>
+    </ClCompile>
+    <ClCompile Include="spline\SplineSceneObject.cpp">
+      <Filter>spline</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CApplication.h" />
+    <ClInclude Include="CViewerState.h" />
+    <ClInclude Include="CParticleSystem.h" />
+    <ClInclude Include="CWindowWidget.h" />
+    <ClInclude Include="CCameraWindowWidget.h" />
+    <ClInclude Include="CPointsWindowWidget.h" />
+    <ClInclude Include="CDebugWindowWidget.h" />
+    <ClInclude Include="CDataSet.h" />
+    <ClInclude Include="CDataLoader.h" />
+    <ClInclude Include="CDataLoaderCSV.h" />
+    <ClInclude Include="CDataManager.h" />
+    <ClInclude Include="CWaterSurfaceSceneObject.h" />
+    <ClInclude Include="CVolumeSceneObject.h" />
+    <ClInclude Include="shark\Model.h">
+      <Filter>shark</Filter>
+    </ClInclude>
+    <ClInclude Include="shark\SharkSceneObject.h">
+      <Filter>shark</Filter>
+    </ClInclude>
+    <ClInclude Include="shark\SharkSpineOscilator.h">
+      <Filter>shark</Filter>
+    </ClInclude>
+    <ClInclude Include="shark\SkeletalAnimation.h">
+      <Filter>shark</Filter>
+    </ClInclude>
+    <ClInclude Include="shark\Skeleton.h">
+      <Filter>shark</Filter>
+    </ClInclude>
+    <ClInclude Include="shark\Transform.h">
+      <Filter>shark</Filter>
+    </ClInclude>
+    <ClInclude Include="shark\VertexBoneData.h">
+      <Filter>shark</Filter>
+    </ClInclude>
+    <ClInclude Include="spline\KeySpline.h">
+      <Filter>spline</Filter>
+    </ClInclude>
+    <ClInclude Include="spline\SplineNode.h">
+      <Filter>spline</Filter>
+    </ClInclude>
+    <ClInclude Include="spline\SplineSceneObject.h">
+      <Filter>spline</Filter>
+    </ClInclude>
+    <ClInclude Include="spline\SplineType.h">
+      <Filter>spline</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="shark">
+      <UniqueIdentifier>{236569cd-3439-4b40-b689-0ed2258a2c34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="spline">
+      <UniqueIdentifier>{ce7cb6ab-e375-43af-b8ac-7ea54efffd4d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

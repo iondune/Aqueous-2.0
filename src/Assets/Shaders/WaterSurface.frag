@@ -13,6 +13,7 @@ struct SPointLight
 in vec3 fNormal;
 in vec3 fWorldPosition;
 in vec2 fModelPosition;
+in vec4 fScreenPosition;
 in vec3 fP;
 
 uniform float uTime;
@@ -26,7 +27,7 @@ uniform int uNumWaves;
 uniform int uPointLightCount;
 uniform SPointLight uPointLights[LIGHT_MAX];
 uniform vec3 uCameraPosition;
-uniform samplerCube uSkyBox;
+uniform sampler2D uSceneColor;
 
 out vec4 outColor;
 
@@ -77,6 +78,7 @@ void main()
 	float CameraDistance = length(CameraVector);
 	int ArtificialCutoff = clamp(int((1.0 - CameraDistance / 1500.0) * float(high)), mid3, high);
 
+	ArtificialCutoff = high;
 	if (uSelectWave > 0)
 	{
 		low = high = uSelectWave;
@@ -95,16 +97,16 @@ void main()
 	for (int i = low; i <= high && i <= ArtificialCutoff; ++ i)
 	{
 		float Factor = 1.0;
-		if (i > mid1)
-			Factor = sqrt(0.1);
-		if (i > mid2)
-			Factor = sqrt(0.01);
-		if (i > mid3)
-			Factor = sqrt(0.001);
-		if (i > mid4)
-			Factor = sqrt(0.0001);
-		if (i > mid5)
-			Factor = sqrt(0.00001);
+		// if (i > mid1)
+		// 	Factor = sqrt(0.1);
+		// if (i > mid2)
+		// 	Factor = sqrt(0.01);
+		// if (i > mid3)
+		// 	Factor = sqrt(0.001);
+		// if (i > mid4)
+		// 	Factor = sqrt(0.0001);
+		// if (i > mid5)
+		// 	Factor = sqrt(0.00001);
 
 		float Wavelength = (rand(float(i)) * 1.5 + 0.5) * MedianWavelength * Factor * Factor;
 		float Amplitude = (rand(float(i)) * 1.5 + 0.5) * MedianAmplitude * Factor;
@@ -129,7 +131,7 @@ void main()
 	const vec3 SpecularColor = 0.5 * vec3(1.0, 1.0, 1.0);
 	const float Shininess = 10.0;
 	const float Reflection = 0.1;
-	const float Filter = 0.5;
+	const float Filter = 0.8;
 	const float IoR = 1.00 / 1.2;
 
 	vec3 nNormal = normalize(N);
@@ -160,16 +162,19 @@ void main()
 		// float Phong = pow(clamp(dot(nView, nReflect), 0.0, 1.0), Shininess);
 		float BlinnPhong = pow(clamp(dot(nNormal, nHalf), 0.0, 1.0), Shininess);
 		Diffuse += Lambertian;
-		Specular += BlinnPhong;
+		// Specular += BlinnPhong;
 	}
 
+	vec2 TexCoords = fScreenPosition.xy / fScreenPosition.w / 2.0 + vec2(0.5);
 
 	outColor = vec4(Specular * SpecularColor + Diffuse * DiffuseColor + AmbientColor, 1.0);
-	outColor.rgb *= (1.0 - Reflection);
-	outColor.rgb += Reflection * texture(uSkyBox, nReflect).rgb;
-	// outColor.rgb *= (1.0 - Filter);
-	// outColor.rgb += Filter * texture(uSkyBox, nRefract).rgb;
+	// outColor.rgb *= (1.0 - Reflection);
+	// outColor.rgb += Reflection * texture(uSkyBox, nReflect).rgb;
+	outColor.rgb *= (1.0 - Filter);
+	float RefractStrength = 0.01;
+	outColor.rgb += Filter * texture(uSceneColor, TexCoords + RefractStrength * vec2(-nNormal.x, -nNormal.z)).rgb;
 	// outColor = vec4(Diffuse, 1.0);
 	// outColor = vec4(vNormal * 0.5 + vec3(0.5), 1);
 	// outColor = vec4(vec3(0.0), 1.0);
+	// outColor = vec4(TexCoords, 0.0, 1.0);
 }

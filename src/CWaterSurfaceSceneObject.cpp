@@ -9,15 +9,15 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 {
 	Shader = AssetManager->LoadShader("WaterSurface");
 
-	uint const GeometrySize = 1024 + 1;
+	uint const GeometrySize = 256 + 1;
 
 	vector<float> VertexData;
 	for (int y = 0; y < GeometrySize; ++ y)
 	{
 		for (int x = 0; x < GeometrySize; ++ x)
 		{
-			VertexData.push_back((float) x / 4.f);
-			VertexData.push_back((float) y / 4.f);
+			VertexData.push_back((float) x / 1.f);
+			VertexData.push_back((float) y / 1.f);
 		}
 	}
 	VertexBuffer = GraphicsAPI->CreateVertexBuffer();
@@ -54,7 +54,7 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 	uSteepness = 0.5f;
 
 	uSelectWave = -1;
-	uNumWaves = 60;
+	uNumWaves = 10;
 }
 
 void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
@@ -72,7 +72,7 @@ void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetUniform("uSelectWave", uSelectWave);
 		PipelineState->SetUniform("uSteepness", uSteepness);
 		PipelineState->SetUniform("uNumWaves", uNumWaves);
-		PipelineState->SetTexture("uSkyBox", SkyBoxTexture);
+		PipelineState->SetTexture("uSceneColor", SceneColor);
 	}
 
 	RenderPass->PreparePipelineStateForRendering(PipelineState, this);

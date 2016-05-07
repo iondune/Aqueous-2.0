@@ -18,14 +18,51 @@ void CViewerState::Init()
 {
 	SingletonPointer<ion::CAssetManager> AssetManager;
 	
-	RenderPass = new CRenderPass(Application->Context);
-	RenderPass->SetRenderTarget(Application->RenderTarget);
-	SceneManager->AddRenderPass(RenderPass);
+	SceneFrameBuffer = Application->Context->CreateFrameBuffer();
+	SceneColor = GraphicsAPI->CreateTexture2D(Application->GetWindow()->GetSize(), ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
+	SceneDepth = GraphicsAPI->CreateTexture2D(Application->GetWindow()->GetSize(), ITexture::EMipMaps::False, ITexture::EFormatComponents::R, ITexture::EInternalFormatType::Depth);
+	SceneFrameBuffer->AttachColorTexture(SceneColor, 0);
+	SceneFrameBuffer->AttachDepthTexture(SceneDepth);
+	if (! SceneFrameBuffer->CheckCorrectness())
+	{
+		Log::Error("Frame buffer not valid!");
+	}
+
+	DefaultRenderPass = new CRenderPass(Application->Context);
+	DefaultRenderPass->SetRenderTarget(SceneFrameBuffer);
+	SceneManager->AddRenderPass(DefaultRenderPass);
+
+	VolumeRenderPass = new CRenderPass(Application->Context);
+	VolumeRenderPass->SetRenderTarget(SceneFrameBuffer);
+	SceneManager->AddRenderPass(VolumeRenderPass);
+
+	SharedPointer<IFrameBuffer> CopyFrameBuffer = Application->Context->CreateFrameBuffer();
+	SwapColor = GraphicsAPI->CreateTexture2D(Application->GetWindow()->GetSize(), ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
+	SwapColor->SetWrapMode(ITexture::EWrapMode::Clamp);
+	CopyFrameBuffer->AttachColorTexture(SwapColor, 0);
+	if (! CopyFrameBuffer->CheckCorrectness())
+	{
+		Log::Error("Frame buffer not valid!");
+	}
+
+	CopyRenderPass = new CRenderPass(Application->Context);
+	CopyRenderPass->SetRenderTarget(CopyFrameBuffer);
+	SceneManager->AddRenderPass(CopyRenderPass);
+
+	WaterRenderPass = new CRenderPass(Application->Context);
+	WaterRenderPass->SetRenderTarget(SceneFrameBuffer);
+	SceneManager->AddRenderPass(WaterRenderPass);
+
+	FinalRenderPass = new CRenderPass(Application->Context);
+	FinalRenderPass->SetRenderTarget(Application->RenderTarget);
+	SceneManager->AddRenderPass(FinalRenderPass);
 
 	DebugCamera = new CPerspectiveCamera(Application->GetWindow()->GetAspectRatio());
 	DebugCamera->SetPosition(vec3f(-10, 10, 0));
 	DebugCamera->SetFarPlane(50000.f);
-	RenderPass->SetActiveCamera(DebugCamera);
+	DefaultRenderPass->SetActiveCamera(DebugCamera);
+	VolumeRenderPass->SetActiveCamera(DebugCamera);
+	WaterRenderPass->SetActiveCamera(DebugCamera);
 
 	DebugCameraControl = new CGamePadCameraController(DebugCamera);
 	DebugCameraControl->SetVelocity(10.f);
@@ -41,7 +78,7 @@ void CViewerState::Init()
 	CPointLight * Light = new CPointLight();
 	Light->SetPosition(vec3f(-128, 256, 128));
 	Light->SetRadius(150.f);
-	RenderPass->AddLight(Light);
+	DefaultRenderPass->AddLight(Light);
 
 	SharedPointer<ITextureCubeMap> SkyBoxTexture = AssetManager->LoadCubeMapTexture(
 		"TropicalSunnyDayLeft2048.png",
@@ -55,7 +92,7 @@ void CViewerState::Init()
 	SkyBox->SetMesh(Application->CubeMesh);
 	SkyBox->SetShader(Application->SkyBoxShader);
 	SkyBox->SetTexture("uTexture", SkyBoxTexture);
-	RenderPass->AddSceneObject(SkyBox);
+	DefaultRenderPass->AddSceneObject(SkyBox);
 
 
 
@@ -77,8 +114,8 @@ void CViewerState::Init()
 	//ParticleSystem->Update();
 
 	WaterSurface = new CWaterSurfaceSceneObject();
-	WaterSurface->SkyBoxTexture = SkyBoxTexture;
-	RenderPass->AddSceneObject(WaterSurface);
+	WaterSurface->SceneColor = SwapColor;
+	WaterRenderPass->AddSceneObject(WaterSurface);
 
 	Volume = new CVolumeSceneObject();
 	SharedPointer<Graphics::ITexture3D> VolumeData = GraphicsAPI->CreateTexture3D(vec3u(30), ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
@@ -89,7 +126,7 @@ void CViewerState::Init()
 		{
 			for (int i = 0; i < 30; ++ i)
 			{
-				color4i const Color = color4f(i / 30.f, j / 30.f, k / 30.f, 0.6f);
+				color4i const Color = color4f(i / 30.f, j / 30.f, k / 30.f, i / 90.f + j / 90.f + k / 90.f);
 				for (int t = 0; t < 4; ++ t)
 				{
 					Data[(i + j * 30 + k * 30 * 30) * 4 + t] = Color[t];
@@ -103,8 +140,17 @@ void CViewerState::Init()
 	VolumeData->SetMagFilter(ITexture::EFilter::Linear);
 	VolumeData->SetWrapMode(ITexture::EWrapMode::Clamp);
 	Volume->VolumeData = VolumeData;
-	Volume->SetScale(6.f);
-	RenderPass->AddSceneObject(Volume);
+	Volume->SetScale(vec3f(2560.f, 160.f, 2560.f));
+	Volume->SetPosition(vec3f(1280.f, -160.f, 1280.f));
+	VolumeRenderPass->AddSceneObject(Volume);
+
+
+	CSimpleMeshSceneObject * PostProcessObject = new CSimpleMeshSceneObject();
+	PostProcessObject->SetMesh(CGeometryCreator::CreateScreenTriangle());
+	PostProcessObject->SetShader(Application->QuadCopyShader);
+	PostProcessObject->SetTexture("uTexture", SceneColor);
+	CopyRenderPass->AddSceneObject(PostProcessObject);
+	FinalRenderPass->AddSceneObject(PostProcessObject);
 
 	DebugWindow = new CDebugWindowWidget();
 	DebugWindow->RenderTarget = Application->RenderTarget;
@@ -120,7 +166,7 @@ void CViewerState::Init()
 	SharkObject = new SharkSceneObject("Assets/Models/leopardSharkUnparented.dae");
 	SharkObject->SetShader(Application->SharkShader);
 	SharkObject->TriggerReload();
-	RenderPass->AddSceneObject(SharkObject);
+	DefaultRenderPass->AddSceneObject(SharkObject);
 
 	//Spline
 	Spline = new KeySpline();
@@ -143,9 +189,11 @@ void CViewerState::Init()
 
 void CViewerState::Update(float const Elapsed)
 {
+	SceneFrameBuffer->ClearColorAndDepth();
+
 	DebugCameraControl->Update(Elapsed);
 
-	SkyBox->SetPosition(RenderPass->GetActiveCamera()->GetPosition());
+	SkyBox->SetPosition(DefaultRenderPass->GetActiveCamera()->GetPosition());
 	SharkObject->update(*Spline, Elapsed);
 	GUI();
 }

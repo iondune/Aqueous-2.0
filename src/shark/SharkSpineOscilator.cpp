@@ -45,7 +45,7 @@ void SharkSpineOscilator::SharkSpineOscilator::update(float dt)
    dTau  +=  (targDTau - dTau) * 0.01; //Exponential interpolation
    alpha += (targAlpha - alpha) * 0.01;
    phase += (targPhase - phase) * 0.01;
-   tau += (M_PI*2 * dTau) * dt;
+   tau += (Constants32::Pi*2 * dTau) * dt;
 }
 
 void SharkSpineOscilator::handleGUI()

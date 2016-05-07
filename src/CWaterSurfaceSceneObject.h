@@ -18,7 +18,7 @@ public:
 	void GUI();
 	void ToggleGUI();
 
-	SharedPointer<ion::Graphics::ITextureCubeMap> SkyBoxTexture;
+	SharedPointer<ion::Graphics::ITexture2D> SceneColor;
 
 protected:
 
