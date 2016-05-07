@@ -108,7 +108,7 @@ void CViewerState::Init()
 		{
 			for (int i = 0; i < 30; ++ i)
 			{
-				color4i const Color = color4f(i / 30.f, j / 30.f, k / 30.f, 0.6f);
+				color4i const Color = color4f(i / 30.f, j / 30.f, k / 30.f, i / 90.f + j / 90.f + k / 90.f);
 				for (int t = 0; t < 4; ++ t)
 				{
 					Data[(i + j * 30 + k * 30 * 30) * 4 + t] = Color[t];
@@ -122,7 +122,8 @@ void CViewerState::Init()
 	VolumeData->SetMagFilter(ITexture::EFilter::Linear);
 	VolumeData->SetWrapMode(ITexture::EWrapMode::Clamp);
 	Volume->VolumeData = VolumeData;
-	Volume->SetScale(6.f);
+	Volume->SetScale(vec3f(2560.f, 160.f, 2560.f));
+	Volume->SetPosition(vec3f(1280.f, -160.f, 1280.f));
 	VolumeRenderPass->AddSceneObject(Volume);
 
 
