@@ -75,16 +75,16 @@ void main()
 	for (int i = low; i <= high; ++ i)
 	{
 		float Factor = 1.0;
-		if (i > mid1)
-			Factor = sqrt(0.1);
-		if (i > mid2)
-			Factor = sqrt(0.01);
-		if (i > mid3)
-			Factor = sqrt(0.001);
-		if (i > mid4)
-			Factor = sqrt(0.0001);
-		if (i > mid5)
-			Factor = sqrt(0.00001);
+		// if (i > mid1)
+		// 	Factor = sqrt(0.1);
+		// if (i > mid2)
+		// 	Factor = sqrt(0.01);
+		// if (i > mid3)
+		// 	Factor = sqrt(0.001);
+		// if (i > mid4)
+		// 	Factor = sqrt(0.0001);
+		// if (i > mid5)
+		// 	Factor = sqrt(0.00001);
 
 		float Wavelength = (rand(float(i)) * 1.5 + 0.5) * MedianWavelength * Factor * Factor;
 		float Amplitude = (rand(float(i)) * 1.5 + 0.5) * MedianAmplitude * Factor;
