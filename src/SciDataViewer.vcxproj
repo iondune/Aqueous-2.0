@@ -12,24 +12,35 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{22EC7411-52B2-47EE-83F7-5D5C3823B561}</ProjectGuid>
-    <RootNamespace>SciDataViewer</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <RootNamespace>src</RootNamespace>
   </PropertyGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(VisualStudioDir)\Projects\ionEngine\Properties\Application.props" />
   </ImportGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x64'">
-    <IncludePath>$(VisualStudioDir)\SDKs\nativefiledialog\src\include;$(IncludePath)</IncludePath>
+  <PropertyGroup>
+    <IncludePath>;
+      ;$(SolutionDir)\src;
+      ;$(VisualStudioDir)\SDKs\assimp-3.1.1\include;
+      ;$(VisualStudioDir)\SDKs\eigen;
+      ;$(VisualStudioDir)\SDKs\nativefiledialog\src\include;
+      ;$(IncludePath);
+    </IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <LibraryPath>$(VisualStudioDir)\SDKs\assimp-3.1.1\lib64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>assimp.lib;nativefiledialog.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>nativefiledialog.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(VisualStudioDir)\SDKs\nativefiledialog\x64\Debug\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <AdditionalDependencies>nativefiledialog.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(VisualStudioDir)\SDKs\nativefiledialog\x64\Release\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -43,6 +54,14 @@
     <ClCompile Include="CWindowWidget.cpp" />
     <ClCompile Include="CDataSet.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="shark\Model.cpp" />
+    <ClCompile Include="shark\SharkSceneObject.cpp" />
+    <ClCompile Include="shark\SharkSpineOscilator.cpp" />
+    <ClCompile Include="shark\SkeletalAnimation.cpp" />
+    <ClCompile Include="shark\Skeleton.cpp" />
+    <ClCompile Include="shark\Transform.cpp" />
+    <ClCompile Include="spline\KeySpline.cpp" />
+    <ClCompile Include="spline\SplineSceneObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
@@ -58,6 +77,17 @@
     <ClInclude Include="CVolumeSceneObject.h" />
     <ClInclude Include="CWaterSurfaceSceneObject.h" />
     <ClInclude Include="CWindowWidget.h" />
+    <ClInclude Include="shark\Model.h" />
+    <ClInclude Include="shark\SharkSceneObject.h" />
+    <ClInclude Include="shark\SharkSpineOscilator.h" />
+    <ClInclude Include="shark\SkeletalAnimation.h" />
+    <ClInclude Include="shark\Skeleton.h" />
+    <ClInclude Include="shark\Transform.h" />
+    <ClInclude Include="shark\VertexBoneData.h" />
+    <ClInclude Include="spline\KeySpline.h" />
+    <ClInclude Include="spline\SplineNode.h" />
+    <ClInclude Include="spline\SplineSceneObject.h" />
+    <ClInclude Include="spline\SplineType.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -166,7 +166,7 @@ void CViewerState::Init()
 	SharkObject = new SharkSceneObject("Assets/Models/leopardSharkUnparented.dae");
 	SharkObject->SetShader(Application->SharkShader);
 	SharkObject->TriggerReload();
-	RenderPass->AddSceneObject(SharkObject);
+	DefaultRenderPass->AddSceneObject(SharkObject);
 
 	//Spline
 	Spline = new KeySpline();
