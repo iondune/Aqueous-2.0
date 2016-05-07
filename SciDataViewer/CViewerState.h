@@ -2,7 +2,8 @@
 #pragma once
 
 #include <ionEngine.h>
-
+#include "shark/SharkSceneObject.h"
+#include "spline/KeySpline.h"
 
 class CApplication;
 class CDataManager;
@@ -51,6 +52,10 @@ private:
 	CWaterSurfaceSceneObject * WaterSurface = nullptr;
 	CVolumeSceneObject * Volume = nullptr;
 	ion::Scene::CSimpleMeshSceneObject * SkyBox = nullptr;
+
+	SharkSceneObject * SharkObject = nullptr;
+	KeySpline * Spline;
+
 
 	CCameraWindowWidget * CameraWindow = nullptr;
 	CPointsWindowWidget * PointsWindow = nullptr;

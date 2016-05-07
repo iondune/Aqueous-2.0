@@ -15,7 +15,7 @@ void CApplication::Run()
 
 	ViewerState->Init();
 	StateManager->SetState(ViewerState.Get());
-
+	
 	TimeManager->Start();
 	while (WindowManager->Run())
 	{
@@ -109,6 +109,7 @@ void CApplication::LoadAssets()
 	//ParticleShader = AssetManager->LoadShader("Particle");
 	SkyBoxShader = AssetManager->LoadShader("SkyBox");
 	QuadCopyShader = AssetManager->LoadShader("QuadCopy");
+	SharkShader = AssetManager->LoadShader("DiffuseShark");
 
 	CubeMesh = CGeometryCreator::CreateCube();
 }
