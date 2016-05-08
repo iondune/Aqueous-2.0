@@ -42,6 +42,7 @@ private:
 	ion::Scene::CRenderPass * FinalRenderPass = nullptr;
 
 	SharedPointer<ion::Graphics::IFrameBuffer> SceneFrameBuffer;
+	SharedPointer<ion::Graphics::IFrameBuffer> CopyFrameBuffer;
 	SharedPointer<ion::Graphics::ITexture2D> SceneColor;
 	SharedPointer<ion::Graphics::ITexture2D> SwapColor;
 	SharedPointer<ion::Graphics::ITexture2D> SceneDepth;

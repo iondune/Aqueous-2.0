@@ -8,10 +8,10 @@ using namespace ion::Graphics;
 using namespace ion::Scene;
 
 CVolumeSceneObject::CVolumeSceneObject()
-	: Mode(0), SliceAxis(vec3f(1.f, 0.f, 0.f)),
+	: Mode(2), SliceAxis(vec3f(1.f, 0.f, 0.f)),
 	LocalRange(0.2f), MinimumAlpha(0.1f),
 	EmphasisLocation(0.5f), AlphaIntensity(1.f),
-	StepSize(1.f / 10.f), QualityLevel(10.f), DebugLevel(0), UseShading(0)
+	StepSize(1.f / 100.f), QualityLevel(10.f), DebugLevel(0), UseShading(0)
 {
 	Mesh = new CSimpleMesh();
 
@@ -143,8 +143,11 @@ void CVolumeSceneObject::GUI()
 	{
 		ImGui::SliderInt("Wave Debug", &DebugLevel.Get(), 0, 6);
 		ImGui::SliderInt("Draw Mode", &Mode.Get(), 0, 3);
-		ImGui::DragFloat("Emphasis Location", &EmphasisLocation.Get(), 0.1f, 0.f, 1.f);
-		if (ImGui::SliderFloat("Quality", &QualityLevel, 5.f, 100.f, "%.3f", 2.f))
+		ImGui::SliderFloat("Emphasis Location", &EmphasisLocation.Get(), 0.f, 1.f);
+		ImGui::SliderFloat("Alpha Intensity", &AlphaIntensity.Get(), 0.5f, 10.f);
+		ImGui::SliderFloat("Minimum Alpha", &MinimumAlpha.Get(), 0.f, 0.5f);
+		ImGui::SliderFloat("Local Range", &LocalRange.Get(), 0.05f, 0.5f);
+		if (ImGui::SliderFloat("Quality", &QualityLevel, 5.f, 200.f, "%.3f", 2.f))
 		{
 			StepSize = 1 / QualityLevel;
 		}
