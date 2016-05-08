@@ -411,7 +411,7 @@ void CViewerState::Init()
 
 	WaterSurface = new CWaterSurfaceSceneObject();
 	WaterSurface->SceneColor = SwapColor;
-	WaterRenderPass->AddSceneObject(WaterSurface);
+	//WaterRenderPass->AddSceneObject(WaterSurface);
 
 	Volume = new CVolumeSceneObject();
 	vec3u VolumeSize = vec3u(14, 23, 28);
@@ -441,8 +441,8 @@ void CViewerState::Init()
 	VolumeData->SetWrapMode(ITexture::EWrapMode::Clamp);
 	Volume->VolumeData = VolumeData;
 	Volume->SceneDepth = SceneDepth;
-	Volume->SetScale(vec3f(2560.f, 1600.f, 2560.f));
-	Volume->SetPosition(vec3f(1280.f, -1600.f, 1280.f));
+	Volume->SetScale(vec3f(16.f));
+	//Volume->SetPosition(vec3f(1280.f, -1600.f, 1280.f));
 	VolumeRenderPass->AddSceneObject(Volume);
 
 
@@ -496,7 +496,7 @@ void CViewerState::Update(float const Elapsed)
 	DebugCameraControl->Update(Elapsed);
 
 	SkyBox->SetPosition(DefaultRenderPass->GetActiveCamera()->GetPosition());
-	SharkObject->update(*Spline, Elapsed);
+	SharkObject->update(*Spline, 0.033333f);
 	GUI();
 }
 

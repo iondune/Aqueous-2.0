@@ -27,6 +27,18 @@ void CApplication::Run()
 
 		RenderTarget->ClearColorAndDepth();
 		SceneManager->DrawAll();
+
+		if (Recording)
+		{
+			CImage * Image = RenderTarget->ReadImage();
+
+			static int FrameCounter = 0;
+			string FileName = String::Build("Frames/%06d.png", FrameCounter);
+			FrameCounter ++;
+
+			Image->Write(FileName);
+		}
+
 		GUIManager->Draw();
 		Window->SwapBuffers();
 	}
@@ -83,7 +95,7 @@ void CApplication::InitWindow()
 {
 	GraphicsAPI->Init(new Graphics::COpenGLImplementation());
 	WindowManager->Init(GraphicsAPI);
-	Window = WindowManager->CreateWindow(vec2i(2160, 1280), "[Scientific Data Viewer] Aqueous 2.0", EWindowType::Windowed);
+	Window = WindowManager->CreateWindow(vec2i(1920, 1080), "[Scientific Data Viewer] Aqueous 2.0", EWindowType::Windowed);
 	Window->AddListener(this);
 	TimeManager->Init(WindowManager);
 

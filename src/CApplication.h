@@ -28,6 +28,8 @@ public:
 	SharedPointer<ion::Graphics::IGraphicsContext> Context;
 	SharedPointer<ion::Graphics::IRenderTarget> RenderTarget;
 
+	bool Recording = false;
+
 private:
 	
 	void InitWindow();

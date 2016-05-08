@@ -31,7 +31,7 @@ uniform int uUseShading;
 
 vec4 GetColorSample(vec3 coords)
 {
-	vec4 sample = texture(uVolumeData, coords);
+	vec4 sample = texture(uVolumeData, coords.xzy);
 
 	switch (uHighlightMode)
 	{

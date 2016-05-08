@@ -199,7 +199,11 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt){
 
       //u += dt * speed;
 
-
+	  float t = InternalTime;
+	  if (ImGui::SliderFloat("Time", &t, 0.0f, 100.0f))
+	  {
+		  InternalTime = t;
+	  }
    }
    ImGui::End();
 
