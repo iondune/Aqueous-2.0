@@ -140,6 +140,7 @@ void CViewerState::Init()
 	VolumeData->SetMagFilter(ITexture::EFilter::Linear);
 	VolumeData->SetWrapMode(ITexture::EWrapMode::Clamp);
 	Volume->VolumeData = VolumeData;
+	Volume->SceneDepth = SceneDepth;
 	Volume->SetScale(vec3f(2560.f, 160.f, 2560.f));
 	Volume->SetPosition(vec3f(1280.f, -160.f, 1280.f));
 	VolumeRenderPass->AddSceneObject(Volume);
