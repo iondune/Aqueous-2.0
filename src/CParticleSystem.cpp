@@ -100,7 +100,7 @@ void CParticleSystem::SetParticlesFromData()
 
 
 
-static color4f MapColor(f32 const v)
+static color3f MapColor(f32 const v)
 {
 	f32 Color[4] = { 0.f, 0.f, 0.f, 1.f };
 
@@ -143,7 +143,7 @@ static color4f MapColor(f32 const v)
 
 	Color[3] = (f32)v;
 
-	return SColorAf(Color[0], Color[1], Color[2], Color[3]);
+	return color3f(Color[0], Color[1], Color[2]);// , Color[3]);
 }
 
 void CParticleSystem::NormalizeParticlePositions()
