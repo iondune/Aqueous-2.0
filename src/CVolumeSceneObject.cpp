@@ -11,7 +11,7 @@ CVolumeSceneObject::CVolumeSceneObject()
 	: Mode(2), SliceAxis(vec3f(1.f, 0.f, 0.f)),
 	LocalRange(0.2f), MinimumAlpha(0.1f),
 	EmphasisLocation(0.5f), AlphaIntensity(1.f),
-	StepSize(1.f / 100.f), QualityLevel(100.f), DebugLevel(0), UseShading(0)
+	StepSize(1.f / 10.f), QualityLevel(10.f), DebugLevel(0), UseShading(0)
 {
 	Mesh = new CSimpleMesh();
 
