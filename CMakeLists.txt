@@ -23,6 +23,9 @@ set(SOURCES
    src/spline/SplineSceneObject.cpp)
 
 #Dependencies
+#simpleini
+include_directories("${PROJECT_SOURCE_DIR}/thirdparty")
+#ionEngine
 add_subdirectory(${ionEngine_SOURCE_DIR})
 include_directories("${ionEngine_SOURCE_DIR}")
 include_directories("${ionEngine_SOURCE_DIR}/Include")
@@ -43,8 +46,9 @@ ENDIF()
 
 
 #nfd
-include_directories("${PROJECT_SOURCE_DIR}/thirdparty/nfd/include")
-link_directories("${PROJECT_SOURCE_DIR}/thirdparty/nfd")
+include_directories("${PROJECT_SOURCE_DIR}/thirdparty/nfd/src/include")
+link_directories("${PROJECT_SOURCE_DIR}/thirdparty/nfd/src")
+
 
 
 include_directories("$ENV{EIGEN3_INCLUDE_DIR}")

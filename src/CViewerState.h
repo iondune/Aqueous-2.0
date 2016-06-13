@@ -55,7 +55,8 @@ private:
 	ion::Scene::CSimpleMeshSceneObject * SkyBox = nullptr;
 
 	SharkSceneObject * SharkObject = nullptr;
-	KeySpline * Spline;
+	KeySpline * Spline, *Spline2;
+	float totalTime;
 
 
 	CCameraWindowWidget * CameraWindow = nullptr;

@@ -7,12 +7,16 @@ layout (location = 3) in vec4  vBoneWeight;
 
 out vec3 fNormal;
 out vec3 fWorldPosition;
+out vec4 caustCoords;
+
 
 const int MAX_BONES = 37;
 
 uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix;
 uniform mat4 uProjectionMatrix;
+uniform mat4 uCaustVPMatrix;
+
 
 struct bindData
 {
@@ -33,6 +37,7 @@ void main()
 
     vec4 PosL = uViewMatrix * uModelMatrix * BoneTransform * vec4(vPosition, 1.0);
     gl_Position = uProjectionMatrix * PosL;
+    caustCoords = uCaustVPMatrix * uModelMatrix * BoneTransform * vec4(vPosition,1.0);
     //fragTexCoords = TexCoord;
     vec4 NormalL = uViewMatrix * BoneTransform * vec4(vNormal, 0.0);
     fNormal = (NormalL).xyz;

@@ -96,6 +96,7 @@ void SharkSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
    //Offer pointers to the bones and binds.
    std::vector<glm::mat4> offsets = Model.getBoneOffsets();
    std::vector<Bone> & bones = Model.getAllBones();
+   elapsedTime = std::make_shared<ion::Graphics::CUniformValue<float>>(0);
    assert(offsets.size() == bones.size());
    for(int i = 0; i < bones.size(); i++)
    {
@@ -108,7 +109,9 @@ void SharkSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
       boneUniforms.push_back(boneUniform);
       SetUniform("bDat[" + std::to_string(i) + "].gBind", bindUniform);
       SetUniform("bDat[" + std::to_string(i) + "].gBone", boneUniform);
+      
    }
+   SetUniform("elapsed",elapsedTime);
    CSimpleMeshSceneObject::Load(RenderPass);
    RenderPass->PreparePipelineStateForRendering(PipelineState, this);
 }
@@ -158,6 +161,7 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt){
          oscilators[i].setOffset(boneTransform.getMatrix());
          //Model.getBone("Spine" + std::to_string(i))->transform.setTransformation(boneTransform.getMatrix());
          //oscilators[i].getBone(Model)->setApplyParentTransform(true);
+         
       }
    }
 
@@ -226,6 +230,11 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt){
          *boneUniforms[i] = bones[i].getAnimMatrix();
 
       }      
+   }
+   if(elapsedTime != nullptr)
+   {
+      *elapsedTime = InternalTime;
+
    }
 
 }
