@@ -190,7 +190,7 @@ void Transform::lookAlong(glm::vec3 forward, glm::vec3 upVec)
    Vector up = Vector::Cross(forward, right);*/
    
    glm::vec3 up = glm::orthonormalize(upVec, forward); // Keeps up the same, make forward orthogonal to up
-   glm::vec3 right = glm::normalize(glm::cross(forward, up));
+    glm::vec3 right = glm::normalize(glm::cross(forward, up));
 
    glm::mat4 rotMat;
    rotMat[0] = glm::vec4(right.x,right.y,right.z,0);

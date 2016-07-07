@@ -86,7 +86,7 @@ SharkSceneObject::~SharkSceneObject()
 }
 void SharkSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 {
-   
+
    SharedPointer<ion::Graphics::IPipelineState> PipelineState;
    if (! TryMapAccess(PipelineStates, RenderPass, PipelineState))
    {
@@ -109,7 +109,7 @@ void SharkSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
       boneUniforms.push_back(boneUniform);
       SetUniform("bDat[" + std::to_string(i) + "].gBind", bindUniform);
       SetUniform("bDat[" + std::to_string(i) + "].gBone", boneUniform);
-      
+
    }
    SetUniform("elapsed",elapsedTime);
    CSimpleMeshSceneObject::Load(RenderPass);
@@ -125,7 +125,7 @@ void SharkSceneObject::setTime(f64 newTime)
 void SharkSceneObject::update(KeySpline & spline, f64 dt){
    static float targSpeed = 1.0;
    static float speed = 1.0;
-   
+
    InternalTime += speed * dt;
    static float length = 100;
    float s = InternalTime;
@@ -145,15 +145,15 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt){
                //Model.transform.setRotation(tns.getRotation());
          Transform boneTransform;
          //float sclRecip = 1/(length/100.f/Model.getWidth());
-            
+
                //Swizzel the positions
          boneTransform.setPosition(glm::vec3(tns.getPosition().z,tns.getPosition().y,tns.getPosition().x));
-         boneTransform.lookAlong(glm::vec3(-tns.forward().x,tns.forward().y,tns.forward().z));
+         boneTransform.lookAlong(glm::vec3(tns.up().x,tns.up().y,tns.up().z));
 
-            
+
          //boneTransform.rotate(M_PI/2,tns.forward());
-         boneTransform.rotate(M_PI, glm::vec3(0,1,0));
-         
+         //boneTransform.rotate(M_PI, glm::vec3(0,1,0), Space::LOCAL);
+
          //boneTransform.setRotation()
          //boneTransform.setPosition(glm::vec3(i,0,0));
          //tns.lookAlong(glm::vec3(tns.forward().z,tns.forward().y,tns.forward().x));
@@ -161,7 +161,7 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt){
          oscilators[i].setOffset(boneTransform.getMatrix());
          //Model.getBone("Spine" + std::to_string(i))->transform.setTransformation(boneTransform.getMatrix());
          //oscilators[i].getBone(Model)->setApplyParentTransform(true);
-         
+
       }
    }
 
@@ -229,7 +229,7 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt){
       {
          *boneUniforms[i] = bones[i].getAnimMatrix();
 
-      }      
+      }
    }
    if(elapsedTime != nullptr)
    {

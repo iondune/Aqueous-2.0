@@ -32,7 +32,7 @@ void SharkSpineOscilator::SharkSpineOscilator::apply(BoneModel & model)
       //axial angle has a period of 2x the original angle, and a frequency of "A fraction" of the original.
       //t.rotate(sin(2*tau+phase) * alpha * 0.1f,glm::vec3(0,0,1));
       glm::mat4 offsetMtx = glm::column(bonePtr->getOffsetMatrix(),3,glm::vec4(0,0,0,1));
-      bonePtr->setAnimatedTransform( offset * offsetMtx *  t.getMatrix());
+      bonePtr->setAnimatedTransform( offset /* offsetMtx *  t.getMatrix()*/);
    }
    else
    {

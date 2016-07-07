@@ -122,6 +122,7 @@ void CApplication::LoadAssets()
 	SkyBoxShader = AssetManager->LoadShader("SkyBox");
 	QuadCopyShader = AssetManager->LoadShader("QuadCopy");
 	SharkShader = AssetManager->LoadShader("DiffuseShark");
+	DebugShader = AssetManager->LoadShader("Debug");
 
 	CubeMesh = CGeometryCreator::CreateCube();
 }

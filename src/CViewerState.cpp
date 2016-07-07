@@ -354,6 +354,7 @@ void CViewerState::Init()
 	FinalRenderPass->SetRenderTarget(Application->RenderTarget);
 	SceneManager->AddRenderPass(FinalRenderPass);
 
+
 	DebugCamera = new CPerspectiveCamera(Application->GetWindow()->GetAspectRatio());
 	DebugCamera->SetPosition(vec3f(-10, 10, 0));
 	DebugCamera->SetFarPlane(50000.f);
@@ -495,15 +496,15 @@ void CViewerState::Init()
 	//
 
 	//Spline
-	Spline = new KeySpline();
+	Spline = std::make_shared<KeySpline>();
 	glm::vec3 offset (0,0,0);
 	Spline->addNode(SplineNode(offset+glm::vec3(-3,0,5)));
    Spline->addNode(SplineNode(offset+glm::vec3(1,0,2)));
-   Spline->addNode(SplineNode(offset+glm::vec3(2,0,-4)));
+   Spline->addNode(SplineNode(offset+glm::vec3(2,5,-4)));
    Spline->addNode(SplineNode(offset+glm::vec3(-3,0,-8)));
 	Spline->addNode(SplineNode(offset+glm::vec3(-3,0,5)));
    Spline->addNode(SplineNode(offset+glm::vec3(1,0,2)));
-   Spline->addNode(SplineNode(offset+glm::vec3(2,0,-4)));
+   Spline->addNode(SplineNode(offset+glm::vec3(2,-5,-4)));
    Spline->addNode(SplineNode(offset+glm::vec3(-3,0,-8)));
 	Spline->addNode(SplineNode(offset+glm::vec3(-3,0,5)));
    Spline->addNode(SplineNode(offset+glm::vec3(1,0,2)));
@@ -512,13 +513,17 @@ void CViewerState::Init()
   
    Spline->addNode(SplineNode(glm::vec3(0,0,-10)));
 
-   Spline2 = new KeySpline();
+   Spline2 = std::make_shared<KeySpline>();
 	glm::vec3 offset2 (0,5,0);
 	Spline2->addNode(SplineNode(offset2+glm::vec3(-3,0,-8)));
 	Spline2->addNode(SplineNode(offset2+glm::vec3(-3,0,5)));
    Spline2->addNode(SplineNode(offset2+glm::vec3(1,0,2)));
    Spline2->addNode(SplineNode(offset2+glm::vec3(2,0,-4)));
    Spline2->addNode(SplineNode(offset2+glm::vec3(-3,0,-8)));
+
+   splineObject = std::make_shared<SplineSceneObject>(Spline);
+   splineObject->SetShader(Application->DebugShader);
+   DefaultRenderPass->AddSceneObject(splineObject.get());
 
 }
 

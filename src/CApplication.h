@@ -22,6 +22,7 @@ public:
 	SharedPointer<ion::Graphics::IShaderProgram> SkyBoxShader;
 	SharedPointer<ion::Graphics::IShaderProgram> QuadCopyShader;
 	SharedPointer<ion::Graphics::IShaderProgram> SharkShader;
+	SharedPointer<ion::Graphics::IShaderProgram> DebugShader;
 
 	ion::Scene::CSimpleMesh * CubeMesh = nullptr;
 
