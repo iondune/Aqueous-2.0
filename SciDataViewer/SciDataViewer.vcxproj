@@ -12,14 +12,14 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{22EC7411-52B2-47EE-83F7-5D5C3823B561}</ProjectGuid>
-    <RootNamespace>src</RootNamespace>
+    <RootNamespace>SciDataViewer</RootNamespace>
   </PropertyGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(VisualStudioDir)\Projects\ionEngine\Properties\Application.props" />
   </ImportGroup>
   <PropertyGroup>
     <IncludePath>;
-      ;$(SolutionDir)\src;
+      ;$(SolutionDir)\SciDataViewer;
       ;$(VisualStudioDir)\SDKs\assimp-3.1.1\include;
       ;$(VisualStudioDir)\SDKs\eigen;
       ;$(VisualStudioDir)\SDKs\nativefiledialog\src\include;
