@@ -118,7 +118,7 @@ void CApplication::LoadAssets()
 	AssetManager->SetTexturePath("Textures/");
 
 	DiffuseShader = AssetManager->LoadShader("Diffuse");
-	//ParticleShader = AssetManager->LoadShader("Particle");
+	ParticleShader = AssetManager->LoadShader("Particle");
 	SkyBoxShader = AssetManager->LoadShader("SkyBox");
 	QuadCopyShader = AssetManager->LoadShader("QuadCopy");
 	SharkShader = AssetManager->LoadShader("DiffuseShark");

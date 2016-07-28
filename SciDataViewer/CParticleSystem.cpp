@@ -248,6 +248,6 @@ void CParticleSystem::Draw(ion::Scene::CRenderPass * RenderPass)
 {
 	if (Particles.size())
 	{
-		//RenderPass->SubmitPipelineStateForRendering(PipelineState, this, (uint) Particles.size() / 6);
+		RenderPass->SubmitPipelineStateForRendering(PipelineState, this, (uint) Particles.size());
 	}
 }

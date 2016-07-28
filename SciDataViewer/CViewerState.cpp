@@ -104,7 +104,7 @@ void CViewerState::Init()
 	//CSimpleMeshSceneObject * Cube = new CSimpleMeshSceneObject();
 	//Cube->SetShader(Application->DiffuseShader);
 	//Cube->SetMesh(Application->CubeMesh);
-	//RenderPass->AddSceneObject(Cube);
+	//DefaultRenderPass->AddSceneObject(Cube);
 
 	CPointLight * Light = new CPointLight();
 	Light->SetPosition(vec3f(-128, 256, 128));
@@ -127,23 +127,22 @@ void CViewerState::Init()
 	DefaultRenderPass->AddSceneObject(SkyBox);
 #endif
 
+	ParticleSystem = new CParticleSystem(Application->ParticleShader);
+	DefaultRenderPass->AddSceneObject(ParticleSystem);
 
-	//ParticleSystem = new CParticleSystem(Application->ParticleShader);
-	//RenderPass->AddSceneObject(ParticleSystem);
+	for (int x = 1; x < 20; ++ x)
+	for (int y = 1; y < 20; ++ y)
+	for (int z = 1; z < 20; ++ z)
+	{
+		static int const NumColors = 7;
+		static color3f const ColorChoices[] = {Colors::Red, Colors::Green, Colors::Blue, Colors::Cyan, Colors::Magenta, Colors::Yellow, Colors::Orange};
+		CParticle p;
+		p.Color = ColorChoices[rand() % NumColors];
+		p.Position = vec3f((f32) x, (f32) y, (f32) z);
 
-	//for (int x = 1; x < 20; ++ x)
-	//for (int y = 1; y < 20; ++ y)
-	//for (int z = 1; z < 20; ++ z)
-	//{
-	//	static int const NumColors = 7;
-	//	static color3f const ColorChoices[] = {Colors::Red, Colors::Green, Colors::Blue, Colors::Cyan, Colors::Magenta, Colors::Yellow, Colors::Orange};
-	//	CParticle p;
-	//	p.Color = ColorChoices[rand() % NumColors];
-	//	p.Position = vec3f((f32) x, (f32) y, (f32) z);
-
-	//	ParticleSystem->Particles.push_back(p);
-	//}
-	//ParticleSystem->Update();
+		ParticleSystem->Particles.push_back(p);
+	}
+	ParticleSystem->Update();
 
 	WaterSurface = new CWaterSurfaceSceneObject();
 	WaterSurface->SceneColor = SwapColor;

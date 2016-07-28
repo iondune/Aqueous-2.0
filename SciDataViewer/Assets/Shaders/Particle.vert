@@ -1,4 +1,4 @@
-#version 150
+#version 330
 
 in vec2 vPosition;
 in vec3 vInstancePosition;
@@ -21,7 +21,7 @@ void main()
 		CameraRight * vPosition.x * uParticleSize +
 		CameraUp * vPosition.y * uParticleSize;
 
-	Vertex += vInstanceLocation;
+	Vertex += vInstancePosition;
 
 	gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * vec4(Vertex, 1.0);
 	fColor = vInstanceColor;
