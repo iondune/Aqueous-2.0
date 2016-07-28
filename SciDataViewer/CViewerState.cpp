@@ -306,7 +306,7 @@ color4i NormDataToColor(double const Value)
 {
 	int const Index = Clamp<int>((int) (Value * ION_ARRAYSIZE(ch20m151010)), 0, ION_ARRAYSIZE(ch20m151010) - 1);
 	color3f r = ch20m151010[Index];
-	color4f Ret(r[0], r[1], r[2], Value);
+	color4f Ret(r[0], r[1], r[2], (float) Value);
 	Ret.Alpha = (float) Value;
 	return Ret;
 }

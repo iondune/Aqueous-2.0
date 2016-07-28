@@ -67,7 +67,7 @@ void BoneModel::processNode(aiNode * node, const aiScene * scene)
 
 		boneOffsets.resize(skeleton.getNumBones());
 
-		for (int bone = 0; bone < mesh->mNumBones; bone++)
+		for (unsigned int bone = 0; bone < mesh->mNumBones; bone++)
 		{
 			std::string boneName(mesh->mBones[bone]->mName.data);
 			Bone * skelBone = skeleton.getBone(boneName);
@@ -82,15 +82,14 @@ std::vector<VertexBoneData> BoneModel::processMeshBoneData(aiMesh * mesh)
 {
 	std::vector<VertexBoneData> bData;
 	bData.resize(mesh->mNumVertices);
-	for (int bone = 0; bone < mesh->mNumBones; bone++)
+	for (unsigned int bone = 0; bone < mesh->mNumBones; bone++)
 	{
 		std::string boneName(mesh->mBones[bone]->mName.data);
 		Bone * skelBone = skeleton.getBone(boneName);
-		int weight;
-		for (weight = 0; weight < mesh->mBones[bone]->mNumWeights; weight++)
+		for (unsigned int weight = 0; weight < mesh->mBones[bone]->mNumWeights; weight++)
 		{
 			float boneWeight = mesh->mBones[bone]->mWeights[weight].mWeight;
-			float idx = mesh->mBones[bone]->mWeights[weight].mVertexId;
+			unsigned int idx = mesh->mBones[bone]->mWeights[weight].mVertexId;
 			bData[idx].addBoneData(skelBone->getIndex(), boneWeight);
 		}
 

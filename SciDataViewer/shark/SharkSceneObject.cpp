@@ -8,9 +8,10 @@ float getMaxSpeed()
 {
 	return 2;
 }
+
 float getMinSpeed()
 {
-	return 0.2;
+	return 0.2f;
 }
 
 
@@ -20,18 +21,18 @@ float getFrequency(float length, float speed)
 	float maxHz;
 	if (length < 60)
 	{
-		minHz = 1.25;
-		maxHz = 2.25;
+		minHz = 1.25f;
+		maxHz = 2.25f;
 	}
 	else if (length < 90)
 	{
-		minHz = 1.0;
-		maxHz = 1.75;
+		minHz = 1.0f;
+		maxHz = 1.75f;
 	}
 	else
 	{
-		minHz = 0.75;
-		maxHz = 1.20;
+		minHz = 0.75f;
+		maxHz = 1.20f;
 	}
 	return minHz + (maxHz - minHz) * (speed - getMinSpeed()) / (getMaxSpeed() - getMinSpeed());
 
@@ -42,18 +43,18 @@ float getAmplitude(float length, float speed)
 	float maxHz;
 	if (length < 60)
 	{
-		minHz = 1.25;
-		maxHz = 2.25;
+		minHz = 1.25f;
+		maxHz = 2.25f;
 	}
 	else if (length < 90)
 	{
-		minHz = 1.0;
-		maxHz = 1.75;
+		minHz = 1.0f;
+		maxHz = 1.75f;
 	}
 	else
 	{
-		minHz = 0.75;
-		maxHz = 1.20;
+		minHz = 0.75f;
+		maxHz = 1.20f;
 	}
 	//Aimplitude of oscilation is based off of full spine, not just one section
 	float maxA = length / (5 * 2);
@@ -72,8 +73,8 @@ SharkSceneObject::SharkSceneObject(std::string ModelName) :
 	for (int i = 1; i <= NUM_OSC_BONES; i++)
 	{
 		SharkSpineOscilator osc("Spine" + std::to_string(i), i);
-		osc.setPhase(-M_PI / NUM_OSC_BONES*i);
-		osc.setAlpha(0.15 * (i < 3 ? 1.5 : i)); //Model Subcarangiform motion by osiclating the last 2/3 more than the first
+		osc.setPhase((float) -M_PI / NUM_OSC_BONES*i);
+		osc.setAlpha(0.15f * (i < 3 ? 1.5f : i)); //Model Subcarangiform motion by osiclating the last 2/3 more than the first
 
 		oscilators.push_back(osc);
 
@@ -96,7 +97,7 @@ void SharkSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 	//Offer pointers to the bones and binds.
 	std::vector<glm::mat4> offsets = Model.getBoneOffsets();
 	std::vector<Bone> & bones = Model.getAllBones();
-	elapsedTime = std::make_shared<ion::Graphics::CUniformValue<float>>(0);
+	elapsedTime = std::make_shared<ion::Graphics::CUniformValue<float>>(0.f);
 	assert(offsets.size() == bones.size());
 	for (int i = 0; i < bones.size(); i++)
 	{
@@ -121,14 +122,13 @@ void SharkSceneObject::setTime(f64 newTime)
 	this->InternalTime = newTime;
 }
 
-
 void SharkSceneObject::update(KeySpline & spline, f64 dt) {
-	static float targSpeed = 1.0;
-	static float speed = 1.0;
+	static float targSpeed = 1.0f;
+	static float speed = 1.0f;
 
 	InternalTime += speed * dt;
 	static float length = 100;
-	float s = InternalTime;
+	float s = (float) InternalTime;
 	bool smoothTurn = true;
 	//Get spline Transform
 	if (smoothTurn)
@@ -152,7 +152,7 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt) {
 
 
 			//boneTransform.rotate(M_PI/2,tns.forward());
-			boneTransform.rotate(M_PI, glm::vec3(0, 1, 0));
+			boneTransform.rotate((float) M_PI, glm::vec3(0, 1, 0));
 
 			//boneTransform.setRotation()
 			//boneTransform.setPosition(glm::vec3(i,0,0));
@@ -187,7 +187,7 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt) {
 		targSpeed = std::min(getMaxSpeed(), targSpeed);
 		targSpeed = std::max(getMinSpeed(), targSpeed);
 
-		float accel = (targSpeed - speed) * dt;
+		float accel = (targSpeed - speed) * (float) dt;
 
 		speed += accel;
 		//Set Frequency and Amplitude from speed
@@ -198,12 +198,12 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt) {
 		for (std::vector<SharkSpineOscilator>::iterator osc = oscilators.begin(); osc != oscilators.end(); ++osc)
 		{
 			osc->setHz(freq);//Oscilating frequency function of Shark len and speed
-			osc->setAlpha(ampl * (osc->getID() < 4 ? 0.9f : 1.1)); //Model Subcarangiform motion by osiclating the last 2/3 more than the first
+			osc->setAlpha(ampl * (osc->getID() < 4 ? 0.9f : 1.1f)); //Model Subcarangiform motion by osiclating the last 2/3 more than the first
 		}
 
 		//u += dt * speed;
 
-		float t = InternalTime;
+		float t = (float) InternalTime;
 		if (ImGui::SliderFloat("Time", &t, 0.0f, 100.0f))
 		{
 			InternalTime = t;
@@ -214,9 +214,10 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt) {
 	for (std::vector<SharkSpineOscilator>::iterator osc = oscilators.begin(); osc != oscilators.end(); ++osc)
 	{
 		//osc->handleGUI();
-		osc->update(dt);
+		osc->update((float) dt);
 		osc->apply(Model);
 	}
+
 	Model.updateSkeleton();
 	if (boneUniforms.size() == 0)
 	{
@@ -231,10 +232,10 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt) {
 
 		}
 	}
+
 	if (elapsedTime != nullptr)
 	{
-		*elapsedTime = InternalTime;
-
+		*elapsedTime = (float) InternalTime;
 	}
 
 }

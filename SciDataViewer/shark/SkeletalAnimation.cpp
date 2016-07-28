@@ -190,32 +190,32 @@ SkeletalAnimation SkeletalAnimation::importFromAssimp(aiAnimation * aiAnim)
 		sAnim.name = "imported_" + std::to_string(SkeletalAnimation::numImported);
 		SkeletalAnimation::numImported++;
 	}
-	sAnim.tickDuration = aiAnim->mDuration;
-	sAnim.ticksPerSecond = aiAnim->mTicksPerSecond != 0 ? aiAnim->mTicksPerSecond : 25.0f;
-	for (int bone = 0; bone < aiAnim->mNumChannels; bone++)
+	sAnim.tickDuration = (float) aiAnim->mDuration;
+	sAnim.ticksPerSecond = aiAnim->mTicksPerSecond != 0 ? (float) aiAnim->mTicksPerSecond : 25.0f;
+	for (unsigned int bone = 0; bone < aiAnim->mNumChannels; bone++)
 	{
 		aiNodeAnim * nodeAnim = aiAnim->mChannels[bone];
 		BoneAnimation boneAnim(std::string(nodeAnim->mNodeName.data));
-		for (int transKeys = 0; transKeys < nodeAnim->mNumPositionKeys; transKeys++)
+		for (unsigned int transKeys = 0; transKeys < nodeAnim->mNumPositionKeys; transKeys++)
 		{
 			aiVectorKey key = nodeAnim->mPositionKeys[transKeys];
 			PositionKeyFrame frame(
 				glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z),
-				key.mTime);
+				(float) key.mTime);
 			boneAnim.addFrame(frame);
 		}
-		for (int rotKeys = 0; rotKeys < nodeAnim->mNumRotationKeys; rotKeys++)
+		for (unsigned int rotKeys = 0; rotKeys < nodeAnim->mNumRotationKeys; rotKeys++)
 		{
 			aiQuatKey  key = nodeAnim->mRotationKeys[rotKeys];
 			RotationKeyFrame frame(
 				glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z),
-				key.mTime);
+				(float) key.mTime);
 			boneAnim.addFrame(frame);
 		}
-		for (int scaleKeys = 0; scaleKeys < nodeAnim->mNumScalingKeys; scaleKeys++)
+		for (unsigned int scaleKeys = 0; scaleKeys < nodeAnim->mNumScalingKeys; scaleKeys++)
 		{
 			aiVectorKey key = nodeAnim->mScalingKeys[scaleKeys];
-			ScaleKeyFrame frame(glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z), key.mTime);
+			ScaleKeyFrame frame(glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z), (float) key.mTime);
 			boneAnim.addFrame(frame);
 		}
 		std::cout << "adding frames for " << boneAnim.getBoneName() << " " << nodeAnim->mNumPositionKeys << " Translational, " << nodeAnim->mNumRotationKeys << " Rotational, " << nodeAnim->mNumScalingKeys << " Scale keys" << std::endl;

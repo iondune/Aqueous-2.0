@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include <glm/gtx/orthonormalize.hpp>
-#define GLM_FORCE_RADIANS
 
 Transform::Transform() :
 	position(glm::vec3(0)),

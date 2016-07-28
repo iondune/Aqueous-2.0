@@ -42,9 +42,9 @@ void SharkSpineOscilator::SharkSpineOscilator::apply(BoneModel & model)
 void SharkSpineOscilator::SharkSpineOscilator::update(float dt)
 {
 
-	dTau += (targDTau - dTau) * 0.01; //Exponential interpolation
-	alpha += (targAlpha - alpha) * 0.01;
-	phase += (targPhase - phase) * 0.01;
+	dTau += (targDTau - dTau) * 0.01f; //Exponential interpolation
+	alpha += (targAlpha - alpha) * 0.01f;
+	phase += (targPhase - phase) * 0.01f;
 	tau += (Constants32::Pi * 2 * dTau) * dt;
 }
 

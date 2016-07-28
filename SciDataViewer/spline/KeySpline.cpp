@@ -12,16 +12,16 @@
  * @return    the length of the segment.
  */
 float gaussQuad3(float u1, float u2, const Eigen::MatrixXf & Gk, const Eigen::Matrix4f & B) {
-	float w[] = { 5 / 9.0,8 / 9.0,5 / 9.0 };
-	float x[] = { -sqrtf(3 / 5.0),0,sqrtf(3 / 5.0) };
+	float w[] = { 5 / 9.0f, 8 / 9.0f, 5 / 9.0f };
+	float x[] = { -sqrtf(3 / 5.0f),0,sqrtf(3 / 5.0f) };
 	float pointSummation = 0;
 	for (int i = 0; i < 3; i++) {
-		float u = (u2 - u1) / 2.0 * x[i] + (u1 + u2) / 2.0;
+		float u = (u2 - u1) / 2.0f * x[i] + (u1 + u2) / 2.0f;
 		Eigen::Vector4f du;
 		du << 0, 1, 2 * u, 3 * u*u;
 		pointSummation += w[i] * (Gk*B*du).norm();
 	}
-	return pointSummation * (u2 - u1) / 2.0;
+	return pointSummation * (u2 - u1) / 2.0f;
 }
 
 //Calculate the fernet frame of a point.
@@ -187,7 +187,7 @@ void KeySpline::recalculateTable(int discretization) {
 		Gk = G.block<3, 4>(0, k);
 		for (int i = 0; i < n - 1; ++i) {
 			float u = i / (n - 1.0f);
-			float u2 = u + 1.0 / (n - 1);
+			float u2 = u + 1.0f / (n - 1);
 			// Compute spline point at u
 			float ds = gaussQuad3(u, u2, Gk, B);
 			usTable.push_back(std::make_pair(u2 + k, (s += ds)));
@@ -198,7 +198,7 @@ void KeySpline::recalculateTable(int discretization) {
 
 int KeySpline::getNumNodes()
 {
-	return nodePos.size();
+	return (int) nodePos.size();
 }
 
 
