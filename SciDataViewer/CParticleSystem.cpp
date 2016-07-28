@@ -53,7 +53,6 @@ void CParticleSystem::Load(ion::Scene::CRenderPass * RenderPass)
 	PipelineState->SetVertexBuffer(0, VertexBuffer);
 	PipelineState->SetVertexBuffer(1, InstanceBuffer);
 	PipelineState->SetUniform("uParticleSize", BillboardSize);
-	PipelineState->SetFeatureEnabled(EDrawFeature::DisableDepthWrite, true);
 
 	RenderPass->PreparePipelineStateForRendering(PipelineState, this);
 	Loaded[RenderPass] = true;

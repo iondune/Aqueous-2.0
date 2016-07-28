@@ -38,7 +38,7 @@ public:
 	void NormalizeParticlePositions();
 	void UpdateColors();
 
-	ion::Graphics::CUniform<f32> BillboardSize = 0.08f;
+	ion::Graphics::CUniform<f32> BillboardSize = 1.f;
 	float RampLow = -60, RampHigh = -50;
 
 private:

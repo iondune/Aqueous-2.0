@@ -44,6 +44,44 @@ vector<double> LoadData(string const & FileName)
 	return Elements;
 }
 
+vector<vec3f> LoadPointsFromTxt(string const & FileName, bool commas)
+{
+	vector<vec3f> Points;
+
+	std::ifstream file(FileName);
+
+	double lng, lat, elev;
+	char comma;
+
+	if (commas)
+	{
+		while (file >> lng >> comma >> lat >> comma >> elev)
+		{
+			Points.push_back(vec3d(lng - 366227.300, elev - 218.523, lat - 3701807.760));
+			Points.back().X /= 50.f;
+			Points.back().Z /= 50.f;
+			Points.back().Y /= 10.f;
+		}
+	}
+	else
+	{
+		while (file >> lng >> lat >> elev)
+		{
+			Points.push_back(vec3d(lng - 366227.300, elev - 218.523, lat - 3701807.760));
+			Points.back().X /= 50.f;
+			Points.back().Z /= 50.f;
+			Points.back().Y /= 10.f;
+		}
+	}
+
+	if (Points.size() == 0)
+	{
+		cout << FileName << " has no points." << endl;
+	}
+
+	return Points;
+}
+
 void CViewerState::Init()
 {
 	SingletonPointer<ion::CAssetManager> AssetManager;
@@ -130,18 +168,46 @@ void CViewerState::Init()
 	ParticleSystem = new CParticleSystem(Application->ParticleShader);
 	DefaultRenderPass->AddSceneObject(ParticleSystem);
 
-	for (int x = 1; x < 20; ++ x)
-	for (int y = 1; y < 20; ++ y)
-	for (int z = 1; z < 20; ++ z)
+	auto PointsToParticles = [this](string const & FileName, color3i const & Color, bool Commas)
 	{
-		static int const NumColors = 7;
-		static color3f const ColorChoices[] = {Colors::Red, Colors::Green, Colors::Blue, Colors::Cyan, Colors::Magenta, Colors::Yellow, Colors::Orange};
-		CParticle p;
-		p.Color = ColorChoices[rand() % NumColors];
-		p.Position = vec3f((f32) x, (f32) y, (f32) z);
+		vector<vec3f> Points = LoadPointsFromTxt(FileName, Commas);
 
-		ParticleSystem->Particles.push_back(p);
-	}
+		for (size_t i = 0; i < Points.size(); i += 20)
+		{
+			vec3f const & Point = Points[i];
+			CParticle p;
+			p.Color = Color;
+			p.Position = Point;
+
+			ParticleSystem->Particles.push_back(p);
+		}
+	};
+
+	PointsToParticles("Data/CI_Block01_10m_xyz.txt", Colors::Red, false);
+	PointsToParticles("Data/CI_Block02_10m_xyz.txt", Colors::White, true);
+	PointsToParticles("Data/CI_Block03_10m_xyz.txt", Colors::Orange, false);
+	PointsToParticles("Data/CI_Block04_10m_xyz.txt", Colors::Yellow, false);
+	PointsToParticles("Data/CI_Block05_10m_xyz.txt", Colors::Green, false);
+	PointsToParticles("Data/CI_Block06_10m_xyz.txt", Colors::Cyan, false);
+	PointsToParticles("Data/CI_Block07_10m_xyz.txt", Colors::Blue, false);
+	PointsToParticles("Data/CI_Block08_10m_xyz.txt", Colors::Magenta, true);
+	PointsToParticles("Data/CI_Block09_10m_xyz.txt", color3i(128, 128, 0), true);
+	PointsToParticles("Data/CI_Block10_5m_xyz.txt", color3i(128, 128, 128), true);
+	PointsToParticles("Data/CI_Block11_10m_xyz.txt", color3i(0, 128, 128), true);
+	PointsToParticles("Data/CI_Block12_10m_xyz.txt", color3i(128, 0, 128), false);
+
+	//for (int x = 1; x < 20; ++ x)
+	//for (int y = 1; y < 20; ++ y)
+	//for (int z = 1; z < 20; ++ z)
+	//{
+	//	static int const NumColors = 7;
+	//	static color3f const ColorChoices[] = {Colors::Red, Colors::Green, Colors::Blue, Colors::Cyan, Colors::Magenta, Colors::Yellow, Colors::Orange};
+	//	CParticle p;
+	//	p.Color = ColorChoices[rand() % NumColors];
+	//	p.Position = vec3f((f32) x, (f32) y, (f32) z);
+
+	//	ParticleSystem->Particles.push_back(p);
+	//}
 	ParticleSystem->Update();
 
 	WaterSurface = new CWaterSurfaceSceneObject();
@@ -200,29 +266,30 @@ void CViewerState::Init()
 	PointsWindow->ParticleSystem = ParticleSystem;
 
 	//Caustics
-	std::vector<string> CausticFileNames;
-	char bfr[256];
-	for (int i = 0; i < 32; i++)
-	{
-		sprintf(bfr, "Caustics/save.%02d.png", i);
-		CausticFileNames.push_back(string(bfr));
-	}
-	SharedPointer<Graphics::ITexture3D> causticTextures = AssetManager->Load3DTexture(CausticFileNames);
+	//std::vector<string> CausticFileNames;
+	//char bfr[256];
+	//for (int i = 0; i < 32; i++)
+	//{
+	//	sprintf(bfr, "Caustics/save.%02d.png", i);
+	//	CausticFileNames.push_back(string(bfr));
+	//}
+	//SharedPointer<Graphics::ITexture3D> causticTextures = AssetManager->Load3DTexture(CausticFileNames);
+
 	//Shark
 
-	COrthographicCamera caustCam(64, 64, 64, 64);
-	caustCam.SetPosition(vec3f(20, 20, 5));
-	caustCam.SetLookAtTarget(vec3f(0, 0, 0));
-	caustCam.RecalculateViewMatrix();
-	SharedPointer<ion::Graphics::IUniform> uCaustVPMatrix =
-		std::make_shared<ion::Graphics::CUniformValue<glm::mat4>>(caustCam.GetProjectionMatrix() * caustCam.GetViewMatrix());
+	//COrthographicCamera caustCam(64, 64, 64, 64);
+	//caustCam.SetPosition(vec3f(20, 20, 5));
+	//caustCam.SetLookAtTarget(vec3f(0, 0, 0));
+	//caustCam.RecalculateViewMatrix();
+	//SharedPointer<ion::Graphics::IUniform> uCaustVPMatrix =
+	//	std::make_shared<ion::Graphics::CUniformValue<glm::mat4>>(caustCam.GetProjectionMatrix() * caustCam.GetViewMatrix());
 
-	SharkObject = new SharkSceneObject("Assets/Models/leopardSharkUnparented.dae");
-	SharkObject->SetUniform("uCaustVPMatrix", uCaustVPMatrix);
-	SharkObject->SetTexture("uCausticTexture", causticTextures);
-	SharkObject->SetShader(Application->SharkShader);
-	SharkObject->TriggerReload();
-	DefaultRenderPass->AddSceneObject(SharkObject);
+	//SharkObject = new SharkSceneObject("Assets/Models/leopardSharkUnparented.dae");
+	//SharkObject->SetUniform("uCaustVPMatrix", uCaustVPMatrix);
+	//SharkObject->SetTexture("uCausticTexture", causticTextures);
+	//SharkObject->SetShader(Application->SharkShader);
+	//SharkObject->TriggerReload();
+	//DefaultRenderPass->AddSceneObject(SharkObject);
 
 	//Add texture
 	//
@@ -261,7 +328,7 @@ void CViewerState::Update(float const Elapsed)
 	CopyFrameBuffer->ClearColorAndDepth();
 	totalTime += Elapsed;
 	Transform t = Spline2->transformAt(totalTime*0.25f);
-	SharkObject->update(*Spline, 0.033333f);
+	//SharkObject->update(*Spline, 0.033333f);
 
 	//DebugCamera->SetPosition(t.getPosition());
 	//DebugCamera->SetLookAtTarget(vec3f(0,0,0));
