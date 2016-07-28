@@ -46,6 +46,7 @@
     <ClCompile Include="CWindowWidget.cpp">
       <Filter>Widgets</Filter>
     </ClCompile>
+    <ClCompile Include="ColorTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="CPointsWindowWidget.h">
       <Filter>Widgets</Filter>
     </ClInclude>
+    <ClInclude Include="ColorTable.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Spline">

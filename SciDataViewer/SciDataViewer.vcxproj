@@ -47,6 +47,7 @@
   <ItemGroup>
     <ClCompile Include="CApplication.cpp" />
     <ClCompile Include="CDataManager.cpp" />
+    <ClCompile Include="ColorTable.cpp" />
     <ClCompile Include="CParticleSystem.cpp" />
     <ClCompile Include="CViewerState.cpp" />
     <ClCompile Include="CVolumeSceneObject.cpp" />
@@ -71,6 +72,7 @@
     <ClInclude Include="CDataManager.h" />
     <ClInclude Include="CDataSet.h" />
     <ClInclude Include="CDebugWindowWidget.h" />
+    <ClInclude Include="ColorTable.h" />
     <ClInclude Include="CParticleSystem.h" />
     <ClInclude Include="CPointsWindowWidget.h" />
     <ClInclude Include="CViewerState.h" />
