@@ -10,32 +10,32 @@
 class SplineNode
 {
 public:
-   /**
-    * Create a spline node, with a position, and a rotation if
-    * interploation is needed of a model if needed.
-    */
-    SplineNode(const glm::vec3 & position):
-        position(Eigen::Vector3f(position.x, position.y, position.z))
+	/**
+	 * Create a spline node, with a position, and a rotation if
+	 * interploation is needed of a model if needed.
+	 */
+	SplineNode(const glm::vec3 & position) :
+		position(Eigen::Vector3f(position.x, position.y, position.z))
 
-        {
+	{
 
-        }
-    SplineNode(const glm::vec3 & position, const glm::quat & rotation):
-        position(position.x,position.y,position.z),
-        rotation(rotation.w,rotation.x,rotation.y,rotation.z)
-    {
+	}
+	SplineNode(const glm::vec3 & position, const glm::quat & rotation) :
+		position(position.x, position.y, position.z),
+		rotation(rotation.w, rotation.x, rotation.y, rotation.z)
+	{
 
-    }
-    SplineNode(Eigen::Vector3f position, Eigen::Quaternionf rotation):
-    position(position),
-    rotation(rotation){};
-    ~SplineNode(){};
+	}
+	SplineNode(Eigen::Vector3f position, Eigen::Quaternionf rotation) :
+		position(position),
+		rotation(rotation) {};
+	~SplineNode() {};
 
-    const Eigen::Vector3f & getPosition() const{return position;}
-    const Eigen::Quaternionf & getRotation() const{return rotation;}
+	const Eigen::Vector3f & getPosition() const { return position; }
+	const Eigen::Quaternionf & getRotation() const { return rotation; }
 
 private:
-    Eigen::Vector3f position;
-    Eigen::Quaternionf rotation;
+	Eigen::Vector3f position;
+	Eigen::Quaternionf rotation;
 };
 #endif

@@ -109,39 +109,39 @@ static color3f MapColor(f32 const v)
 	}
 	else if (v <= 0.1)
 	{
-		Color[2] = (f32)((v - 0.0) / (0.1 - 0.0));
+		Color[2] = (f32) ((v - 0.0) / (0.1 - 0.0));
 	}
 	else if (0.2 >= v && v >= 0.1)
 	{
-		Color[1] = (f32)((v - 0.1) / (0.2 - 0.1));
+		Color[1] = (f32) ((v - 0.1) / (0.2 - 0.1));
 		Color[2] = 1.f;
 	}
 	else if (0.4 >= v && v >= 0.2)
 	{
 		Color[1] = 1.f;
-		Color[2] = 1.f - (f32)((v - 0.2) / (0.4 - 0.2));
+		Color[2] = 1.f - (f32) ((v - 0.2) / (0.4 - 0.2));
 	}
 	else if (0.6 >= v && v >= 0.4)
 	{
-		Color[0] = (f32)((v - 0.4) / (0.6 - 0.4));
+		Color[0] = (f32) ((v - 0.4) / (0.6 - 0.4));
 		Color[1] = 1.f;
 	}
 	else if (0.8 >= v && v >= 0.6)
 	{
 		Color[0] = 1.f;
-		Color[1] = 1.f - (f32)((v - 0.6) / (0.8 - 0.6));
+		Color[1] = 1.f - (f32) ((v - 0.6) / (0.8 - 0.6));
 	}
 	else if (v <= 1.0)
 	{
 		Color[0] = 1.f;
-		Color[1] = Color[2] = (f32)((v - 0.8) / (1.0 - 0.8));
+		Color[1] = Color[2] = (f32) ((v - 0.8) / (1.0 - 0.8));
 	}
 	else
 	{
 		Color[0] = Color[1] = Color[2] = 1.f;
 	}
 
-	Color[3] = (f32)v;
+	Color[3] = (f32) v;
 
 	return color3f(Color[0], Color[1], Color[2]);// , Color[3]);
 }
@@ -191,7 +191,7 @@ void CParticleSystem::NormalizeParticlePositions()
 	for (auto & Point : Particles)
 	{
 		double va = (Point.Position.Y - colorlow) / (colorhigh - colorlow);
-		Point.Color = MapColor((f32)va);
+		Point.Color = MapColor((f32) va);
 	}
 
 	static double const CutoffSize = 100;
@@ -217,7 +217,7 @@ void CParticleSystem::UpdateColors()
 	for (auto & Point : Particles)
 	{
 		double va = (Point.Data.Y - colorlow) / (colorhigh - colorlow);
-		Point.Color = MapColor((f32)va);
+		Point.Color = MapColor((f32) va);
 	}
 }
 

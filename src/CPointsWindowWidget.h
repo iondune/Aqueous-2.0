@@ -67,7 +67,7 @@ public:
 			int NumLines = (int) DataSet->Size();
 			int display_start, display_end;
 			ImGui::CalcListClipping(NumLines, ImGui::GetTextLineHeight(), &display_start, &display_end);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (display_start)* ImGui::GetTextLineHeight());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (display_start) * ImGui::GetTextLineHeight());
 			for (int i = display_start; i < display_end; i++)
 			{
 				CDataRow const & Row = DataSet->GetRow(i);

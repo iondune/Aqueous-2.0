@@ -27,7 +27,7 @@ public:
 	void OnEvent(IEvent & Event);
 
 private:
-	
+
 	SingletonPointer<CApplication> Application;
 	SingletonPointer<CDataManager> DataManager;
 

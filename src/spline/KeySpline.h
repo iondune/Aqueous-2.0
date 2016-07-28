@@ -18,37 +18,37 @@ class KeySpline
 {
 
 public:
-    
-    KeySpline();
-    ~KeySpline();
-    void setSplineType(SplineType type);
-    void addNode(const SplineNode & node);
-    SharedPointer<ion::Graphics::IVertexBuffer> GetVertexBuffer();
-    SharedPointer<ion::Graphics::IIndexBuffer>  GetIndexBuffer();
 
-    void close(); //Close the spline.
-    float sToU(float s);
-    int getNumNodes();
+	KeySpline();
+	~KeySpline();
+	void setSplineType(SplineType type);
+	void addNode(const SplineNode & node);
+	SharedPointer<ion::Graphics::IVertexBuffer> GetVertexBuffer();
+	SharedPointer<ion::Graphics::IIndexBuffer>  GetIndexBuffer();
 
-    Transform transformAt(float s) const;
-    glm::vec3 normalAt(float s) const;
+	void close(); //Close the spline.
+	float sToU(float s);
+	int getNumNodes();
+
+	Transform transformAt(float s) const;
+	glm::vec3 normalAt(float s) const;
 private:
-    vector<pair<float,float> > usTable;
-    std::vector<Eigen::Vector3f> nodePos;
-    std::vector<Eigen::Quaternionf> nodeRot;
+	vector<pair<float, float> > usTable;
+	std::vector<Eigen::Vector3f> nodePos;
+	std::vector<Eigen::Quaternionf> nodeRot;
 
-    SharedPointer<ion::Graphics::IVertexBuffer> VertexBuffer;
-    SharedPointer<ion::Graphics::IIndexBuffer> IndexBuffer;
+	SharedPointer<ion::Graphics::IVertexBuffer> VertexBuffer;
+	SharedPointer<ion::Graphics::IIndexBuffer> IndexBuffer;
 
-    Eigen::Matrix4f B;
-    SplineType type;
-    
-    bool usTableDirty;
-    
-    bool updateVBO = true;
-    int numSplines;
+	Eigen::Matrix4f B;
+	SplineType type;
 
-    void recalculateTable(int discretization);
+	bool usTableDirty;
+
+	bool updateVBO = true;
+	int numSplines;
+
+	void recalculateTable(int discretization);
 
 
 };

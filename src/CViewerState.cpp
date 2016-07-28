@@ -306,7 +306,7 @@ color4i NormDataToColor(double const Value)
 {
 	int const Index = Clamp<int>((int) (Value * ION_ARRAYSIZE(ch20m151010)), 0, ION_ARRAYSIZE(ch20m151010) - 1);
 	color3f r = ch20m151010[Index];
-	color4f Ret(r[0],r[1],r[2],Value);
+	color4f Ret(r[0], r[1], r[2], Value);
 	Ret.Alpha = (float) Value;
 	return Ret;
 }
@@ -314,7 +314,7 @@ color4i NormDataToColor(double const Value)
 void CViewerState::Init()
 {
 	SingletonPointer<ion::CAssetManager> AssetManager;
-	
+
 	SceneFrameBuffer = Application->Context->CreateFrameBuffer();
 	SceneColor = GraphicsAPI->CreateTexture2D(Application->GetWindow()->GetSize(), ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
 	SceneDepth = GraphicsAPI->CreateTexture2D(Application->GetWindow()->GetSize(), ITexture::EMipMaps::False, ITexture::EFormatComponents::R, ITexture::EInternalFormatType::Depth);
@@ -367,7 +367,7 @@ void CViewerState::Init()
 	DebugCameraControl->SetPhi(-Constants32::Pi / 4.f);
 	AddListener(DebugCameraControl);
 
-	
+
 	//CSimpleMeshSceneObject * Cube = new CSimpleMeshSceneObject();
 	//Cube->SetShader(Application->DiffuseShader);
 	//Cube->SetMesh(Application->CubeMesh);
@@ -469,21 +469,21 @@ void CViewerState::Init()
 	//Caustics
 	std::vector<string> CausticFileNames;
 	char bfr[256];
-	for(int i = 0; i < 32; i++)
+	for (int i = 0; i < 32; i++)
 	{
-		sprintf(bfr,"Caustics/save.%02d.png",i);
+		sprintf(bfr, "Caustics/save.%02d.png", i);
 		CausticFileNames.push_back(string(bfr));
 	}
 	SharedPointer<Graphics::ITexture3D> causticTextures = AssetManager->Load3DTexture(CausticFileNames);
 	//Shark
-	
-	COrthographicCamera caustCam(64,64,64,64);
-	caustCam.SetPosition(vec3f(20,20,5));
-	caustCam.SetLookAtTarget(vec3f(0,0,0));
+
+	COrthographicCamera caustCam(64, 64, 64, 64);
+	caustCam.SetPosition(vec3f(20, 20, 5));
+	caustCam.SetLookAtTarget(vec3f(0, 0, 0));
 	caustCam.RecalculateViewMatrix();
-	SharedPointer<ion::Graphics::IUniform> uCaustVPMatrix = 
+	SharedPointer<ion::Graphics::IUniform> uCaustVPMatrix =
 		std::make_shared<ion::Graphics::CUniformValue<glm::mat4>>(caustCam.GetProjectionMatrix() * caustCam.GetViewMatrix());
-	
+
 	SharkObject = new SharkSceneObject("Assets/Models/leopardSharkUnparented.dae");
 	SharkObject->SetUniform("uCaustVPMatrix", uCaustVPMatrix);
 	SharkObject->SetTexture("uCausticTexture", causticTextures);
@@ -496,29 +496,29 @@ void CViewerState::Init()
 
 	//Spline
 	Spline = new KeySpline();
-	glm::vec3 offset (0,0,0);
-	Spline->addNode(SplineNode(offset+glm::vec3(-3,0,5)));
-   Spline->addNode(SplineNode(offset+glm::vec3(1,0,2)));
-   Spline->addNode(SplineNode(offset+glm::vec3(2,0,-4)));
-   Spline->addNode(SplineNode(offset+glm::vec3(-3,0,-8)));
-	Spline->addNode(SplineNode(offset+glm::vec3(-3,0,5)));
-   Spline->addNode(SplineNode(offset+glm::vec3(1,0,2)));
-   Spline->addNode(SplineNode(offset+glm::vec3(2,0,-4)));
-   Spline->addNode(SplineNode(offset+glm::vec3(-3,0,-8)));
-	Spline->addNode(SplineNode(offset+glm::vec3(-3,0,5)));
-   Spline->addNode(SplineNode(offset+glm::vec3(1,0,2)));
-   Spline->addNode(SplineNode(offset+glm::vec3(2,0,-4)));
-   Spline->addNode(SplineNode(offset+glm::vec3(-3,0,-8)));
-  
-   Spline->addNode(SplineNode(glm::vec3(0,0,-10)));
+	glm::vec3 offset(0, 0, 0);
+	Spline->addNode(SplineNode(offset + glm::vec3(-3, 0, 5)));
+	Spline->addNode(SplineNode(offset + glm::vec3(1, 0, 2)));
+	Spline->addNode(SplineNode(offset + glm::vec3(2, 0, -4)));
+	Spline->addNode(SplineNode(offset + glm::vec3(-3, 0, -8)));
+	Spline->addNode(SplineNode(offset + glm::vec3(-3, 0, 5)));
+	Spline->addNode(SplineNode(offset + glm::vec3(1, 0, 2)));
+	Spline->addNode(SplineNode(offset + glm::vec3(2, 0, -4)));
+	Spline->addNode(SplineNode(offset + glm::vec3(-3, 0, -8)));
+	Spline->addNode(SplineNode(offset + glm::vec3(-3, 0, 5)));
+	Spline->addNode(SplineNode(offset + glm::vec3(1, 0, 2)));
+	Spline->addNode(SplineNode(offset + glm::vec3(2, 0, -4)));
+	Spline->addNode(SplineNode(offset + glm::vec3(-3, 0, -8)));
 
-   Spline2 = new KeySpline();
-	glm::vec3 offset2 (0,5,0);
-	Spline2->addNode(SplineNode(offset2+glm::vec3(-3,0,-8)));
-	Spline2->addNode(SplineNode(offset2+glm::vec3(-3,0,5)));
-   Spline2->addNode(SplineNode(offset2+glm::vec3(1,0,2)));
-   Spline2->addNode(SplineNode(offset2+glm::vec3(2,0,-4)));
-   Spline2->addNode(SplineNode(offset2+glm::vec3(-3,0,-8)));
+	Spline->addNode(SplineNode(glm::vec3(0, 0, -10)));
+
+	Spline2 = new KeySpline();
+	glm::vec3 offset2(0, 5, 0);
+	Spline2->addNode(SplineNode(offset2 + glm::vec3(-3, 0, -8)));
+	Spline2->addNode(SplineNode(offset2 + glm::vec3(-3, 0, 5)));
+	Spline2->addNode(SplineNode(offset2 + glm::vec3(1, 0, 2)));
+	Spline2->addNode(SplineNode(offset2 + glm::vec3(2, 0, -4)));
+	Spline2->addNode(SplineNode(offset2 + glm::vec3(-3, 0, -8)));
 
 }
 
@@ -527,7 +527,7 @@ void CViewerState::Update(float const Elapsed)
 	SceneFrameBuffer->ClearColorAndDepth();
 	CopyFrameBuffer->ClearColorAndDepth();
 	totalTime += Elapsed;
-	Transform t= Spline2->transformAt(totalTime*0.25f);
+	Transform t = Spline2->transformAt(totalTime*0.25f);
 	SharkObject->update(*Spline, 0.033333f);
 
 	//DebugCamera->SetPosition(t.getPosition());
@@ -584,7 +584,7 @@ void CViewerState::OnEvent(IEvent & Event)
 	if (InstanceOf<SKeyboardEvent>(Event))
 	{
 		SKeyboardEvent & KeyboardEvent = As<SKeyboardEvent>(Event);
-		
+
 		if (! KeyboardEvent.Pressed)
 		{
 			switch (KeyboardEvent.Key)

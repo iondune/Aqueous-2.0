@@ -14,7 +14,7 @@ public:
 	void Run();
 	void OnEvent(IEvent & Event);
 	void Close();
-	
+
 	ion::CWindow * GetWindow();
 
 	SharedPointer<ion::Graphics::IShaderProgram> DiffuseShader;
@@ -31,7 +31,7 @@ public:
 	bool Recording = false;
 
 private:
-	
+
 	void InitWindow();
 	void LoadAssets();
 

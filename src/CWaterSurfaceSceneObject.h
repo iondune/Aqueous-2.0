@@ -14,7 +14,7 @@ public:
 
 	void Load(ion::Scene::CRenderPass * RenderPass);
 	void Draw(ion::Scene::CRenderPass * RenderPass);
-	
+
 	void GUI();
 	void ToggleGUI();
 

@@ -4,91 +4,134 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="CApplication.cpp" />
     <ClCompile Include="CViewerState.cpp" />
-    <ClCompile Include="CParticleSystem.cpp" />
-    <ClCompile Include="CWindowWidget.cpp" />
-    <ClCompile Include="CDataSet.cpp" />
-    <ClCompile Include="CDataManager.cpp" />
-    <ClCompile Include="CWaterSurfaceSceneObject.cpp" />
-    <ClCompile Include="CVolumeSceneObject.cpp" />
     <ClCompile Include="shark\Model.cpp">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClCompile>
     <ClCompile Include="shark\SharkSceneObject.cpp">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClCompile>
     <ClCompile Include="shark\SharkSpineOscilator.cpp">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClCompile>
     <ClCompile Include="shark\SkeletalAnimation.cpp">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClCompile>
     <ClCompile Include="shark\Skeleton.cpp">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClCompile>
     <ClCompile Include="shark\Transform.cpp">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClCompile>
     <ClCompile Include="spline\KeySpline.cpp">
-      <Filter>spline</Filter>
+      <Filter>Spline</Filter>
     </ClCompile>
     <ClCompile Include="spline\SplineSceneObject.cpp">
-      <Filter>spline</Filter>
+      <Filter>Spline</Filter>
+    </ClCompile>
+    <ClCompile Include="CDataManager.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="CDataSet.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="CParticleSystem.cpp">
+      <Filter>SceneObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="CVolumeSceneObject.cpp">
+      <Filter>SceneObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="CWaterSurfaceSceneObject.cpp">
+      <Filter>SceneObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="CWindowWidget.cpp">
+      <Filter>Widgets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
     <ClInclude Include="CViewerState.h" />
-    <ClInclude Include="CParticleSystem.h" />
-    <ClInclude Include="CWindowWidget.h" />
-    <ClInclude Include="CCameraWindowWidget.h" />
-    <ClInclude Include="CPointsWindowWidget.h" />
-    <ClInclude Include="CDebugWindowWidget.h" />
-    <ClInclude Include="CDataSet.h" />
-    <ClInclude Include="CDataLoader.h" />
-    <ClInclude Include="CDataLoaderCSV.h" />
-    <ClInclude Include="CDataManager.h" />
-    <ClInclude Include="CWaterSurfaceSceneObject.h" />
-    <ClInclude Include="CVolumeSceneObject.h" />
     <ClInclude Include="shark\Model.h">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClInclude>
     <ClInclude Include="shark\SharkSceneObject.h">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClInclude>
     <ClInclude Include="shark\SharkSpineOscilator.h">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClInclude>
     <ClInclude Include="shark\SkeletalAnimation.h">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClInclude>
     <ClInclude Include="shark\Skeleton.h">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClInclude>
     <ClInclude Include="shark\Transform.h">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClInclude>
     <ClInclude Include="shark\VertexBoneData.h">
-      <Filter>shark</Filter>
+      <Filter>Shark</Filter>
     </ClInclude>
     <ClInclude Include="spline\KeySpline.h">
-      <Filter>spline</Filter>
+      <Filter>Spline</Filter>
     </ClInclude>
     <ClInclude Include="spline\SplineNode.h">
-      <Filter>spline</Filter>
+      <Filter>Spline</Filter>
     </ClInclude>
     <ClInclude Include="spline\SplineSceneObject.h">
-      <Filter>spline</Filter>
+      <Filter>Spline</Filter>
     </ClInclude>
     <ClInclude Include="spline\SplineType.h">
-      <Filter>spline</Filter>
+      <Filter>Spline</Filter>
+    </ClInclude>
+    <ClInclude Include="CDataSet.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CDataLoader.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CDataLoaderCSV.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CDataManager.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="CDebugWindowWidget.h">
+      <Filter>Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="CCameraWindowWidget.h">
+      <Filter>Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="CParticleSystem.h">
+      <Filter>SceneObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="CVolumeSceneObject.h">
+      <Filter>SceneObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="CWaterSurfaceSceneObject.h">
+      <Filter>SceneObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="CWindowWidget.h">
+      <Filter>Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="CPointsWindowWidget.h">
+      <Filter>Widgets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="shark">
+    <Filter Include="Spline">
+      <UniqueIdentifier>{ce7cb6ab-e375-43af-b8ac-7ea54efffd4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shark">
       <UniqueIdentifier>{236569cd-3439-4b40-b689-0ed2258a2c34}</UniqueIdentifier>
     </Filter>
-    <Filter Include="spline">
-      <UniqueIdentifier>{ce7cb6ab-e375-43af-b8ac-7ea54efffd4d}</UniqueIdentifier>
+    <Filter Include="Data">
+      <UniqueIdentifier>{ae1ddff5-dfba-4fc9-93b1-1e802c403d29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Widgets">
+      <UniqueIdentifier>{1d9096cc-a137-4742-8b7b-9f4493c992c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneObjects">
+      <UniqueIdentifier>{d2476ebe-2ff8-44c6-96d8-a2d20c853c09}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
