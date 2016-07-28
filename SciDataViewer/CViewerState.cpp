@@ -111,6 +111,7 @@ void CViewerState::Init()
 	Light->SetRadius(150.f);
 	DefaultRenderPass->AddLight(Light);
 
+#ifdef ION_CONFIG_RELEASE
 	SharedPointer<ITextureCubeMap> SkyBoxTexture = AssetManager->LoadCubeMapTexture(
 		"TropicalSunnyDayLeft2048.png",
 		"TropicalSunnyDayRight2048.png",
@@ -124,7 +125,7 @@ void CViewerState::Init()
 	SkyBox->SetShader(Application->SkyBoxShader);
 	SkyBox->SetTexture("uTexture", SkyBoxTexture);
 	DefaultRenderPass->AddSceneObject(SkyBox);
-
+#endif
 
 
 	//ParticleSystem = new CParticleSystem(Application->ParticleShader);
@@ -265,9 +266,14 @@ void CViewerState::Update(float const Elapsed)
 
 	//DebugCamera->SetPosition(t.getPosition());
 	//DebugCamera->SetLookAtTarget(vec3f(0,0,0));
+
 	DebugCameraControl->Update(Elapsed);
 
-	SkyBox->SetPosition(DefaultRenderPass->GetActiveCamera()->GetPosition());
+	if (SkyBox)
+	{
+		SkyBox->SetPosition(DefaultRenderPass->GetActiveCamera()->GetPosition());
+	}
+
 	GUI();
 }
 
