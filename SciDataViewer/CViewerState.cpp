@@ -50,6 +50,11 @@ vector<vec3f> LoadPointsFromTxt(string const & FileName, bool commas)
 
 	std::ifstream file(FileName);
 
+	if (! file.is_open())
+	{
+		cerr << FileName << " could not be opened." << endl;
+	}
+
 	double lng, lat, elev;
 	char comma;
 
@@ -183,18 +188,18 @@ void CViewerState::Init()
 		}
 	};
 
-	PointsToParticles("Data/CI_Block01_10m_xyz.txt", Colors::Red, false);
-	PointsToParticles("Data/CI_Block02_10m_xyz.txt", Colors::White, true);
-	PointsToParticles("Data/CI_Block03_10m_xyz.txt", Colors::Orange, false);
-	PointsToParticles("Data/CI_Block04_10m_xyz.txt", Colors::Yellow, false);
-	PointsToParticles("Data/CI_Block05_10m_xyz.txt", Colors::Green, false);
-	PointsToParticles("Data/CI_Block06_10m_xyz.txt", Colors::Cyan, false);
-	PointsToParticles("Data/CI_Block07_10m_xyz.txt", Colors::Blue, false);
-	PointsToParticles("Data/CI_Block08_10m_xyz.txt", Colors::Magenta, true);
-	PointsToParticles("Data/CI_Block09_10m_xyz.txt", color3i(128, 128, 0), true);
-	PointsToParticles("Data/CI_Block10_5m_xyz.txt", color3i(128, 128, 128), true);
-	PointsToParticles("Data/CI_Block11_10m_xyz.txt", color3i(0, 128, 128), true);
-	PointsToParticles("Data/CI_Block12_10m_xyz.txt", color3i(128, 0, 128), false);
+	PointsToParticles("Data/CI_Block01_5mall_xyz.txt", Colors::Red, false);
+	PointsToParticles("Data/CI_Block02_5mall_xyz.txt", Colors::White, true);
+	PointsToParticles("Data/CI_Block03_5mall_xyz.txt", Colors::Orange, false);
+	PointsToParticles("Data/CI_Block04_5mall_xyz.txt", Colors::Yellow, true);
+	PointsToParticles("Data/CI_Block05_5mall_xyz.txt", Colors::Green, false);
+	PointsToParticles("Data/CI_Block06_5mall_xyz.txt", Colors::Cyan, false);
+	PointsToParticles("Data/CI_Block07_5mall_xyz.txt", Colors::Blue, false);
+	PointsToParticles("Data/CI_Block08_5mall_xyz.txt", Colors::Magenta, true);
+	PointsToParticles("Data/CI_Block09_5mall_xyz.txt", color3i(128, 128, 0), true);
+	PointsToParticles("Data/CI_Block10_5mall_xyz.txt", color3i(128, 128, 128), true);
+	PointsToParticles("Data/CI_Block11_5mall_xyz.txt", color3i(0, 128, 128), true);
+	PointsToParticles("Data/CI_Block12_5mall_xyz.txt", color3i(128, 0, 128), false);
 
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)
