@@ -63,6 +63,7 @@
     <ClCompile Include="shark\Transform.cpp" />
     <ClCompile Include="spline\KeySpline.cpp" />
     <ClCompile Include="spline\SplineSceneObject.cpp" />
+    <ClCompile Include="UTMtoLatLong.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
@@ -90,6 +91,7 @@
     <ClInclude Include="spline\SplineNode.h" />
     <ClInclude Include="spline\SplineSceneObject.h" />
     <ClInclude Include="spline\SplineType.h" />
+    <ClInclude Include="UTMtoLatLong.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

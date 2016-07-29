@@ -9,6 +9,7 @@
 #include "CWaterSurfaceSceneObject.h"
 #include "CVolumeSceneObject.h"
 #include "ColorTable.h"
+#include "UTMtoLatLong.h"
 
 
 using namespace ion;
@@ -55,27 +56,25 @@ vector<vec3f> LoadPointsFromTxt(string const & FileName, bool commas)
 		cerr << FileName << " could not be opened." << endl;
 	}
 
-	double lng, lat, elev;
+	double northing, easting, elev;
 	char comma;
 
 	if (commas)
 	{
-		while (file >> lng >> comma >> lat >> comma >> elev)
+		while (file >> northing >> comma >> easting >> comma >> elev)
 		{
-			Points.push_back(vec3d(lng - 366227.300, elev - 218.523, lat - 3701807.760));
-			Points.back().X /= 50.f;
-			Points.back().Z /= 50.f;
-			Points.back().Y /= 10.f;
+			vec2d const latlong = UTMToLatLon(northing, easting, 11, true);
+			Points.push_back(vec3d(latlong.X, latlong.Y, elev));
+			Points.back().Z /= 10.f;
 		}
 	}
 	else
 	{
-		while (file >> lng >> lat >> elev)
+		while (file >> northing >> easting >> elev)
 		{
-			Points.push_back(vec3d(lng - 366227.300, elev - 218.523, lat - 3701807.760));
-			Points.back().X /= 50.f;
-			Points.back().Z /= 50.f;
-			Points.back().Y /= 10.f;
+			vec2d const latlong = UTMToLatLon(northing, easting, 11, true);
+			Points.push_back(vec3d(latlong.X, latlong.Y, elev));
+			Points.back().Z /= 10.f;
 		}
 	}
 
@@ -182,7 +181,7 @@ void CViewerState::Init()
 			vec3f const & Point = Points[i];
 			CParticle p;
 			p.Color = Color;
-			p.Position = Point;
+			p.Position = vec3f((Point.X - 33.3) * 800, -Point.Z / 5.0, (Point.Y + 118.3) * 800);
 
 			ParticleSystem->Particles.push_back(p);
 		}

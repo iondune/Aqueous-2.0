@@ -47,6 +47,7 @@
       <Filter>Widgets</Filter>
     </ClCompile>
     <ClCompile Include="ColorTable.cpp" />
+    <ClCompile Include="UTMtoLatLong.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
@@ -118,6 +119,7 @@
       <Filter>Widgets</Filter>
     </ClInclude>
     <ClInclude Include="ColorTable.h" />
+    <ClInclude Include="UTMtoLatLong.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Spline">
