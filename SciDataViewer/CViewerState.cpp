@@ -16,7 +16,7 @@ using namespace ion;
 using namespace ion::Graphics;
 using namespace ion::Scene;
 
-vector<double> LoadData(string const & FileName)
+vector<double> LoadOxymapsCSVData(string const & FileName)
 {
 	vector<double> Elements;
 
@@ -56,7 +56,7 @@ vector<vec3f> LoadPointsFromTxt(string const & FileName, bool commas)
 		cerr << FileName << " could not be opened." << endl;
 	}
 
-	double northing, easting, elev;
+	double northing = 0, easting = 0, elev = 0;
 	char comma;
 
 	if (commas)
@@ -65,7 +65,6 @@ vector<vec3f> LoadPointsFromTxt(string const & FileName, bool commas)
 		{
 			vec2d const latlong = UTMToLatLon(northing, easting, 11, true);
 			Points.push_back(vec3d(latlong.X, latlong.Y, elev));
-			Points.back().Z /= 10.f;
 		}
 	}
 	else
@@ -74,7 +73,6 @@ vector<vec3f> LoadPointsFromTxt(string const & FileName, bool commas)
 		{
 			vec2d const latlong = UTMToLatLon(northing, easting, 11, true);
 			Points.push_back(vec3d(latlong.X, latlong.Y, elev));
-			Points.back().Z /= 10.f;
 		}
 	}
 
@@ -181,7 +179,7 @@ void CViewerState::Init()
 			vec3f const & Point = Points[i];
 			CParticle p;
 			p.Color = Color;
-			p.Position = vec3f((Point.X - 33.3) * 800, -Point.Z / 5.0, (Point.Y + 118.3) * 800);
+			p.Position = vec3f((Point.X - 33.3) * 800, -Point.Z / 50.0, (Point.Y + 118.3) * 800);
 
 			ParticleSystem->Particles.push_back(p);
 		}
@@ -221,7 +219,7 @@ void CViewerState::Init()
 	Volume = new CVolumeSceneObject();
 	vec3u VolumeSize = vec3u(14, 23, 28);
 	SharedPointer<Graphics::ITexture3D> VolumeData = GraphicsAPI->CreateTexture3D(VolumeSize, ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
-	vector<double> DataNorm = LoadData("Data/oxyMaps.csv");
+	vector<double> DataNorm = LoadOxymapsCSVData("Data/oxyMaps.csv");
 	byte * Data = new byte[28 * 23 * 14 * 4];
 	for (int k = 0; k < 28; ++ k)
 	{
