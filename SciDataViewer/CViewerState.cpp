@@ -170,7 +170,7 @@ void CViewerState::Init()
 	ParticleSystem = new CParticleSystem(Application->ParticleShader);
 	DefaultRenderPass->AddSceneObject(ParticleSystem);
 
-	auto PointsToParticles = [this](string const & FileName, color3i const & Color, bool Commas)
+	auto PointsToParticles = [this](string const & FileName, color3i const & Color, bool Commas) -> vector<vec3f>
 	{
 		vector<vec3f> Points = LoadPointsFromTxt(FileName, Commas);
 
@@ -179,24 +179,84 @@ void CViewerState::Init()
 			vec3f const & Point = Points[i];
 			CParticle p;
 			p.Color = Color;
-			p.Position = vec3f((Point.X - 33.3) * 800, -Point.Z / 50.0, (Point.Y + 118.3) * 800);
+			p.Position = vec3f((Point.X - 33.3f) * 800, -Point.Z / 50.0f, (Point.Y + 118.3f) * 800);
 
 			ParticleSystem->Particles.push_back(p);
 		}
+
+		return Points;
 	};
 
-	PointsToParticles("Data/CI_Block01_5mall_xyz.txt", Colors::Red, false);
-	PointsToParticles("Data/CI_Block02_5mall_xyz.txt", Colors::White, true);
-	PointsToParticles("Data/CI_Block03_5mall_xyz.txt", Colors::Orange, false);
-	PointsToParticles("Data/CI_Block04_5mall_xyz.txt", Colors::Yellow, true);
-	PointsToParticles("Data/CI_Block05_5mall_xyz.txt", Colors::Green, false);
-	PointsToParticles("Data/CI_Block06_5mall_xyz.txt", Colors::Cyan, false);
-	PointsToParticles("Data/CI_Block07_5mall_xyz.txt", Colors::Blue, false);
-	PointsToParticles("Data/CI_Block08_5mall_xyz.txt", Colors::Magenta, true);
-	PointsToParticles("Data/CI_Block09_5mall_xyz.txt", color3i(128, 128, 0), true);
-	PointsToParticles("Data/CI_Block10_5mall_xyz.txt", color3i(128, 128, 128), true);
-	PointsToParticles("Data/CI_Block11_5mall_xyz.txt", color3i(0, 128, 128), true);
-	PointsToParticles("Data/CI_Block12_5mall_xyz.txt", color3i(128, 0, 128), false);
+	vector<vec3f> AllPoints;
+
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block01_5mall_xyz.txt", Colors::Red, false));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block02_5mall_xyz.txt", Colors::White, true));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block03_5mall_xyz.txt", Colors::Orange, false));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block04_5mall_xyz.txt", Colors::Yellow, true));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block05_5mall_xyz.txt", Colors::Green, false));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block06_5mall_xyz.txt", Colors::Cyan, false));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block07_5mall_xyz.txt", Colors::Blue, false));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block08_5mall_xyz.txt", Colors::Magenta, true));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block09_5mall_xyz.txt", color3i(128, 128, 0), true));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block10_5mall_xyz.txt", color3i(128, 128, 128), true));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block11_5mall_xyz.txt", color3i(0, 128, 128), true));
+	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block12_5mall_xyz.txt", color3i(128, 0, 128), false));
+
+	static uint const ImageSize = 1024;
+
+	struct SPixelBucket
+	{
+		int Count = 0;
+		float Sum = 0;
+	};
+
+	SPixelBucket * ImageBuffer = new SPixelBucket[ImageSize * ImageSize];
+
+	for (auto const & Point : AllPoints)
+	{
+		float const ImageXCorner = 33.2f;
+		float const ImageYCorner = -118.7f;
+		float const ImageXSize = 0.4f;
+		float const ImageYSize = 0.4f;
+
+		int const IndexX = (int) (((Point.X - ImageXCorner) / ImageXSize) * ImageSize);
+		int const IndexY = (int) (((Point.Y - ImageYCorner) / ImageYSize) * ImageSize);
+
+		if (IndexX >= 0 && IndexX < ImageSize &&
+			IndexY >= 0 && IndexY < ImageSize)
+		{
+			ImageBuffer[ImageSize * IndexX + IndexY].Sum += Point.Z;
+			ImageBuffer[ImageSize * IndexX + IndexY].Count ++;
+		}
+	}
+
+	byte * ImageData = new byte[ImageSize * ImageSize * 3];
+	for (int i = 0; i < ImageSize; ++ i)
+	{
+		for (int j = 0; j < ImageSize; ++ j)
+		{
+			int const Index = i + j * ImageSize;
+
+			if (ImageBuffer[Index].Count > 0)
+			{
+				float const Value = ImageBuffer[Index].Sum / ImageBuffer[Index].Count;
+				int const Pixel = Clamp<int>((int) (Value * 0.2f), 0, 255);
+
+				ImageData[Index * 3 + 0] = Pixel;
+				ImageData[Index * 3 + 1] = Pixel;
+				ImageData[Index * 3 + 2] = Pixel;
+			}
+			else
+			{
+				ImageData[Index * 3 + 0] = 255;
+				ImageData[Index * 3 + 1] = 0;
+				ImageData[Index * 3 + 2] = 255;
+			}
+		}
+	}
+
+	CImage * Image = new CImage(ImageData, vec2u(ImageSize), 3);
+	Image->Write("Output.png");
 
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)
