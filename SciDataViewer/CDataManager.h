@@ -23,3 +23,6 @@ private:
 	{}
 
 };
+
+vector<double> LoadOxymapsCSVData(string const & FileName);
+vector<vec3f> LoadPointsFromXYZTxt(string const & FileName, bool commas);

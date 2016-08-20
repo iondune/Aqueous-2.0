@@ -55,6 +55,8 @@
     <ClCompile Include="CWaterSurfaceSceneObject.cpp" />
     <ClCompile Include="CWindowWidget.cpp" />
     <ClCompile Include="CDataSet.cpp" />
+    <ClCompile Include="LoadOxymapsCSVData.cpp" />
+    <ClCompile Include="LoadPointsFromXYZTxt.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="shark\Model.cpp" />
     <ClCompile Include="shark\SharkSceneObject.cpp" />

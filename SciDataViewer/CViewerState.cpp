@@ -17,73 +17,6 @@ using namespace ion;
 using namespace ion::Graphics;
 using namespace ion::Scene;
 
-vector<double> LoadOxymapsCSVData(string const & FileName)
-{
-	vector<double> Elements;
-
-	string const FileContents = File::ReadAsString(FileName);
-	vector<string> const ElementStrings = String::Explode(FileContents, ',');
-	std::transform(ElementStrings.begin(), ElementStrings.end(), std::back_inserter(Elements), [](string const & s) -> double
-	{
-		return atof(s.c_str());
-	});
-
-	double const Max = *std::max_element(Elements.begin(), Elements.end());
-	double Min = Max;
-	std::for_each(Elements.begin(), Elements.end(), [&Min](double const & Element)
-	{
-		if (Element != 0)
-		{
-			Min = Minimum(Element, Min);
-		}
-	});
-
-	std::for_each(Elements.begin(), Elements.end(), [Max, Min](double & Element)
-	{
-		Element = Clamp((Element - Min) / (Max - Min), 0.0, 1.0);
-	});
-
-	return Elements;
-}
-
-vector<vec3f> LoadPointsFromTxt(string const & FileName, bool commas)
-{
-	vector<vec3f> Points;
-
-	std::ifstream file(FileName);
-
-	if (! file.is_open())
-	{
-		cerr << FileName << " could not be opened." << endl;
-	}
-
-	double northing = 0, easting = 0, elev = 0;
-	char comma;
-
-	if (commas)
-	{
-		while (file >> northing >> comma >> easting >> comma >> elev)
-		{
-			vec2d const latlong = UTMToLatLon(northing, easting, 11, true);
-			Points.push_back(vec3d(latlong.X, latlong.Y, elev));
-		}
-	}
-	else
-	{
-		while (file >> northing >> easting >> elev)
-		{
-			vec2d const latlong = UTMToLatLon(northing, easting, 11, true);
-			Points.push_back(vec3d(latlong.X, latlong.Y, elev));
-		}
-	}
-
-	if (Points.size() == 0)
-	{
-		cout << FileName << " has no points." << endl;
-	}
-
-	return Points;
-}
 
 void CViewerState::Init()
 {
@@ -173,7 +106,7 @@ void CViewerState::Init()
 
 	auto PointsToParticles = [this](string const & FileName, color3i const & Color, bool Commas) -> vector<vec3f>
 	{
-		vector<vec3f> Points = LoadPointsFromTxt(FileName, Commas);
+		vector<vec3f> Points = LoadPointsFromXYZTxt(FileName, Commas);
 
 		for (size_t i = 0; i < Points.size(); i += 20)
 		{

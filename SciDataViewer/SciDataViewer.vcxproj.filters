@@ -47,8 +47,16 @@
       <Filter>Widgets</Filter>
     </ClCompile>
     <ClCompile Include="ColorTable.cpp" />
-    <ClCompile Include="UTMtoLatLong.cpp" />
     <ClCompile Include="CBathymetryRasterizer.cpp" />
+    <ClCompile Include="LoadOxymapsCSVData.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadPointsFromXYZTxt.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="UTMtoLatLong.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
@@ -120,8 +128,10 @@
       <Filter>Widgets</Filter>
     </ClInclude>
     <ClInclude Include="ColorTable.h" />
-    <ClInclude Include="UTMtoLatLong.h" />
     <ClInclude Include="CBathymetryRasterizer.h" />
+    <ClInclude Include="UTMtoLatLong.h">
+      <Filter>Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Spline">
