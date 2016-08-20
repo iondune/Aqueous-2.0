@@ -41,10 +41,10 @@ void CBathymetryRasterizer::CopySourcePointsToBuckets()
 
 	for (auto const & Point : SourceElevationPostings)
 	{
-		float const ImageXCorner = 33.15f;
-		float const ImageYCorner = -118.7f;
-		float const ImageXSize = 0.5f;
-		float const ImageYSize = 0.5f;
+		float const ImageXCorner = 29.15f;
+		float const ImageYCorner = -122.7f;
+		float const ImageXSize = 8.0f;
+		float const ImageYSize = 8.0f;
 
 		int const IndexX = (int) (((Point.X - ImageXCorner) / ImageXSize) * ImageSize);
 		int const IndexY = (int) (((Point.Y - ImageYCorner) / ImageYSize) * ImageSize);
@@ -254,7 +254,8 @@ void CBathymetryRasterizer::RasterizeImage()
 			{
 				float const Value = Buckets[Index].Sum / Buckets[Index].Count;
 				float const Intensity = 0.23f;
-				int const Pixel = 255 - Clamp<int>((int) (Value * Intensity), 0, 255);
+				float const Bottom = 0;
+				int const Pixel = 255 - Clamp<int>((int) (Value * Intensity - Bottom), 0, 255);
 
 				LowPixel = Min(LowPixel, Pixel);
 				HighPixel = Max(HighPixel, Pixel);

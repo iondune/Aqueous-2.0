@@ -106,7 +106,8 @@ void CViewerState::Init()
 
 	auto PointsToParticles = [this](string const & FileName, color3i const & Color, bool Commas) -> vector<vec3f>
 	{
-		vector<vec3f> Points = LoadPointsFromXYZTxt(FileName, Commas);
+		//vector<vec3f> Points = LoadPointsFromXYZTxt(FileName, Commas);
+		vector<vec3f> Points = LoadPointsFromESRIASCII(FileName);
 
 		for (size_t i = 0; i < Points.size(); i += 20)
 		{
@@ -126,22 +127,26 @@ void CViewerState::Init()
 	vector<vec3f> AllPoints;
 
 	sw.Start();
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block01_5mall_xyz.txt", Colors::Red, false));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block02_5mall_xyz.txt", Colors::White, true));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block03_5mall_xyz.txt", Colors::Orange, false));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block04_5mall_xyz.txt", Colors::Yellow, true));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block05_5mall_xyz.txt", Colors::Green, false));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block06_5mall_xyz.txt", Colors::Cyan, false));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block07_5mall_xyz.txt", Colors::Blue, false));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block08_5mall_xyz.txt", Colors::Magenta, true));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block09_5mall_xyz.txt", color3i(128, 128, 0), true));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block10_5mall_xyz.txt", color3i(128, 128, 128), true));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block11_5mall_xyz.txt", color3i(0, 128, 128), true));
-	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block12_5mall_xyz.txt", color3i(128, 0, 128), false));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block01_5mall_xyz.txt", Colors::Red, false));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block02_5mall_xyz.txt", Colors::White, true));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block03_5mall_xyz.txt", Colors::Orange, false));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block04_5mall_xyz.txt", Colors::Yellow, true));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block05_5mall_xyz.txt", Colors::Green, false));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block06_5mall_xyz.txt", Colors::Cyan, false));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block07_5mall_xyz.txt", Colors::Blue, false));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block08_5mall_xyz.txt", Colors::Magenta, true));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block09_5mall_xyz.txt", color3i(128, 128, 0), true));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block10_5mall_xyz.txt", color3i(128, 128, 128), true));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block11_5mall_xyz.txt", color3i(0, 128, 128), true));
+	//AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block12_5mall_xyz.txt", color3i(128, 0, 128), false));
+
+	AddAtEnd(AllPoints, PointsToParticles("Data/GEBCO2014_-122.3058_30.5922_-115.9466_36.0291_30Sec_ESRIASCII.asc", color3i(128, 0, 128), false));
+
 	Log::Info("Load points from files took %.3f", sw.Stop());
 
 	CBathymetryRasterizer br;
 	br.SourceElevationPostings = AllPoints;
+	br.ImageSize = 768;
 	br.ConvertAndRasterize();
 
 	//for (int x = 1; x < 20; ++ x)
