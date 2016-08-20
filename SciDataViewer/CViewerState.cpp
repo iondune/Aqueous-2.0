@@ -10,6 +10,7 @@
 #include "CVolumeSceneObject.h"
 #include "ColorTable.h"
 #include "UTMtoLatLong.h"
+#include "CBathymetryRasterizer.h"
 
 
 using namespace ion;
@@ -187,8 +188,11 @@ void CViewerState::Init()
 		return Points;
 	};
 
+	CStopWatch sw;
+
 	vector<vec3f> AllPoints;
 
+	sw.Start();
 	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block01_5mall_xyz.txt", Colors::Red, false));
 	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block02_5mall_xyz.txt", Colors::White, true));
 	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block03_5mall_xyz.txt", Colors::Orange, false));
@@ -201,62 +205,11 @@ void CViewerState::Init()
 	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block10_5mall_xyz.txt", color3i(128, 128, 128), true));
 	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block11_5mall_xyz.txt", color3i(0, 128, 128), true));
 	AddAtEnd(AllPoints, PointsToParticles("Data/CI_Block12_5mall_xyz.txt", color3i(128, 0, 128), false));
+	Log::Info("Load points from files took %.3f", sw.Stop());
 
-	static uint const ImageSize = 1024;
-
-	struct SPixelBucket
-	{
-		int Count = 0;
-		float Sum = 0;
-	};
-
-	SPixelBucket * ImageBuffer = new SPixelBucket[ImageSize * ImageSize];
-
-	for (auto const & Point : AllPoints)
-	{
-		float const ImageXCorner = 33.2f;
-		float const ImageYCorner = -118.7f;
-		float const ImageXSize = 0.4f;
-		float const ImageYSize = 0.4f;
-
-		int const IndexX = (int) (((Point.X - ImageXCorner) / ImageXSize) * ImageSize);
-		int const IndexY = (int) (((Point.Y - ImageYCorner) / ImageYSize) * ImageSize);
-
-		if (IndexX >= 0 && IndexX < ImageSize &&
-			IndexY >= 0 && IndexY < ImageSize)
-		{
-			ImageBuffer[ImageSize * IndexX + IndexY].Sum += Point.Z;
-			ImageBuffer[ImageSize * IndexX + IndexY].Count ++;
-		}
-	}
-
-	byte * ImageData = new byte[ImageSize * ImageSize * 3];
-	for (int i = 0; i < ImageSize; ++ i)
-	{
-		for (int j = 0; j < ImageSize; ++ j)
-		{
-			int const Index = i + j * ImageSize;
-
-			if (ImageBuffer[Index].Count > 0)
-			{
-				float const Value = ImageBuffer[Index].Sum / ImageBuffer[Index].Count;
-				int const Pixel = Clamp<int>((int) (Value * 0.2f), 0, 255);
-
-				ImageData[Index * 3 + 0] = Pixel;
-				ImageData[Index * 3 + 1] = Pixel;
-				ImageData[Index * 3 + 2] = Pixel;
-			}
-			else
-			{
-				ImageData[Index * 3 + 0] = 255;
-				ImageData[Index * 3 + 1] = 0;
-				ImageData[Index * 3 + 2] = 255;
-			}
-		}
-	}
-
-	CImage * Image = new CImage(ImageData, vec2u(ImageSize), 3);
-	Image->Write("Output.png");
+	CBathymetryRasterizer br;
+	br.SourceElevationPostings = AllPoints;
+	br.ConvertAndRasterize();
 
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)

@@ -46,6 +46,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CApplication.cpp" />
+    <ClCompile Include="CBathymetryRasterizer.cpp" />
     <ClCompile Include="CDataManager.cpp" />
     <ClCompile Include="ColorTable.cpp" />
     <ClCompile Include="CParticleSystem.cpp" />
@@ -67,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
+    <ClInclude Include="CBathymetryRasterizer.h" />
     <ClInclude Include="CCameraWindowWidget.h" />
     <ClInclude Include="CDataLoader.h" />
     <ClInclude Include="CDataLoaderCSV.h" />
