@@ -247,7 +247,7 @@ void CViewerState::Init()
 	//
 
 	//Spline
-	Spline = new CKeySpline();
+	Spline = std::make_shared<CKeySpline>();
 	glm::vec3 offset(0, 0, 0);
 	Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, 5)));
 	Spline->AddNode(SSplineNode(offset + glm::vec3(1, 0, 2)));
@@ -264,7 +264,7 @@ void CViewerState::Init()
 
 	Spline->AddNode(SSplineNode(glm::vec3(0, 0, -10)));
 
-	Spline2 = new CKeySpline();
+	Spline2 = std::make_shared<CKeySpline>();
 	glm::vec3 offset2(0, 5, 0);
 	Spline2->AddNode(SSplineNode(offset2 + glm::vec3(-3, 0, -8)));
 	Spline2->AddNode(SSplineNode(offset2 + glm::vec3(-3, 0, 5)));
@@ -272,6 +272,9 @@ void CViewerState::Init()
 	Spline2->AddNode(SSplineNode(offset2 + glm::vec3(2, 0, -4)));
 	Spline2->AddNode(SSplineNode(offset2 + glm::vec3(-3, 0, -8)));
 
+	splineObject = std::make_shared<CSplineSceneObject>(Spline);
+	splineObject->SetShader(Application->DebugShader);
+	DefaultRenderPass->AddSceneObject(splineObject.get());
 }
 
 void CViewerState::Update(float const Elapsed)

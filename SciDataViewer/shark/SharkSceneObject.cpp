@@ -149,6 +149,7 @@ void SharkSceneObject::update(CKeySpline & spline, f64 dt) {
 				  //Swizzel the positions
 			boneTransform.setPosition(glm::vec3(tns.getPosition().z, tns.getPosition().y, tns.getPosition().x));
 			boneTransform.lookAlong(glm::vec3(-tns.forward().x, tns.forward().y, tns.forward().z));
+			//boneTransform.lookAlong(glm::vec3(tns.up().x, tns.up().y, tns.up().z));
 
 
 			//boneTransform.rotate(M_PI/2,tns.forward());

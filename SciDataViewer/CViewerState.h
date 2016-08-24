@@ -4,6 +4,7 @@
 #include <ionEngine.h>
 #include "shark/SharkSceneObject.h"
 #include "spline/CKeySpline.h"
+#include "spline/CSplineSceneObject.h"
 
 class CApplication;
 class CDataManager;
@@ -55,7 +56,8 @@ private:
 	ion::Scene::CSimpleMeshSceneObject * SkyBox = nullptr;
 
 	SharkSceneObject * SharkObject = nullptr;
-	CKeySpline * Spline, *Spline2;
+	SharedPointer<CSplineSceneObject> splineObject = nullptr;
+	SharedPointer<CKeySpline> Spline, Spline2;
 	float totalTime;
 
 
