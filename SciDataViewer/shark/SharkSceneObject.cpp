@@ -175,13 +175,19 @@ void SharkSceneObject::update(CKeySpline & spline, f64 dt) {
 
 
 
-	ImGui::Begin("Shark");
+	ImGui::Begin("Shark Settings");
+	ImGui::SetWindowCollapsed(true, ImGuiSetCond_Once);
+	ImGui::SetWindowPos(ImVec2(20, 100), ImGuiSetCond_Once);
+	ImGui::SetWindowSize(ImVec2(500, 70), ImGuiSetCond_Once);
 	ImGui::SliderFloat("length (cm)", &length, 30, 121, "%.3f", 1.0f);
 	//ApplyScaleFactor(glm::vec3(length/100.f/Model.getWidth()));
 	ImGui::End();
 
-	ImGui::Begin("Movement");
+	ImGui::Begin("Shark Movement");
 	{
+		ImGui::SetWindowCollapsed(true, ImGuiSetCond_Once);
+		ImGui::SetWindowPos(ImVec2(20, 180), ImGuiSetCond_Once);
+		ImGui::SetWindowSize(ImVec2(500, 100), ImGuiSetCond_Once);
 		ImGui::InputFloat("Speed", &targSpeed, 0.01f, 1.0f);
 		float maxSpeed = getMaxSpeed();
 		//Clamp the target speed value
