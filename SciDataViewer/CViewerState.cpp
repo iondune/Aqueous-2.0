@@ -283,7 +283,7 @@ void CViewerState::Update(float const Elapsed)
 	CopyFrameBuffer->ClearColorAndDepth();
 	totalTime += Elapsed;
 	Transform t = Spline2->TransformAt(totalTime*0.25f);
-	SharkObject->update(*Spline, 0.033333f);
+	SharkObject->update(*Spline, Elapsed);
 
 	//DebugCamera->SetPosition(t.getPosition());
 	//DebugCamera->SetLookAtTarget(vec3f(0,0,0));
