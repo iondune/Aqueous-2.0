@@ -22,12 +22,6 @@
     <ClCompile Include="shark\Transform.cpp">
       <Filter>Shark</Filter>
     </ClCompile>
-    <ClCompile Include="spline\KeySpline.cpp">
-      <Filter>Spline</Filter>
-    </ClCompile>
-    <ClCompile Include="spline\SplineSceneObject.cpp">
-      <Filter>Spline</Filter>
-    </ClCompile>
     <ClCompile Include="CDataManager.cpp">
       <Filter>Data</Filter>
     </ClCompile>
@@ -60,6 +54,12 @@
     <ClCompile Include="LoadPointsFromESRIASCII.cpp">
       <Filter>Data</Filter>
     </ClCompile>
+    <ClCompile Include="spline\CSplineSceneObject.cpp">
+      <Filter>Spline</Filter>
+    </ClCompile>
+    <ClCompile Include="spline\CKeySpline.cpp">
+      <Filter>Spline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
@@ -84,18 +84,6 @@
     </ClInclude>
     <ClInclude Include="shark\VertexBoneData.h">
       <Filter>Shark</Filter>
-    </ClInclude>
-    <ClInclude Include="spline\KeySpline.h">
-      <Filter>Spline</Filter>
-    </ClInclude>
-    <ClInclude Include="spline\SplineNode.h">
-      <Filter>Spline</Filter>
-    </ClInclude>
-    <ClInclude Include="spline\SplineSceneObject.h">
-      <Filter>Spline</Filter>
-    </ClInclude>
-    <ClInclude Include="spline\SplineType.h">
-      <Filter>Spline</Filter>
     </ClInclude>
     <ClInclude Include="CDataSet.h">
       <Filter>Data</Filter>
@@ -134,6 +122,15 @@
     <ClInclude Include="CBathymetryRasterizer.h" />
     <ClInclude Include="UTMtoLatLong.h">
       <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="spline\CSplineSceneObject.h">
+      <Filter>Spline</Filter>
+    </ClInclude>
+    <ClInclude Include="spline\SSplineNode.h">
+      <Filter>Spline</Filter>
+    </ClInclude>
+    <ClInclude Include="spline\CKeySpline.h">
+      <Filter>Spline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

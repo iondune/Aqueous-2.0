@@ -1,41 +1,45 @@
-#ifndef __SPLINENODE_H__
-#define __SPLINENODE_H__
+
+#pragma once
 
 #define EIGEN_DONT_VECTORIZE
 #define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
+#include <Eigen/Dense>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-#include <Eigen/Dense>
-class SplineNode
+
+class SSplineNode
 {
 public:
+
 	/**
 	 * Create a spline node, with a position, and a rotation if
 	 * interploation is needed of a model if needed.
 	 */
-	SplineNode(const glm::vec3 & position) :
+	SSplineNode(const glm::vec3 & position) :
 		position(Eigen::Vector3f(position.x, position.y, position.z))
+	{}
 
-	{
-
-	}
-	SplineNode(const glm::vec3 & position, const glm::quat & rotation) :
+	SSplineNode(const glm::vec3 & position, const glm::quat & rotation) :
 		position(position.x, position.y, position.z),
 		rotation(rotation.w, rotation.x, rotation.y, rotation.z)
-	{
+	{}
 
-	}
-	SplineNode(Eigen::Vector3f position, Eigen::Quaternionf rotation) :
+	SSplineNode(Eigen::Vector3f position, Eigen::Quaternionf rotation) :
 		position(position),
-		rotation(rotation) {};
-	~SplineNode() {};
+		rotation(rotation)
+	{}
 
-	const Eigen::Vector3f & getPosition() const { return position; }
-	const Eigen::Quaternionf & getRotation() const { return rotation; }
+	~SSplineNode()
+	{}
+
+	const Eigen::Vector3f & GetPosition() const { return position; }
+	const Eigen::Quaternionf & GetRotation() const { return rotation; }
 
 private:
+
 	Eigen::Vector3f position;
 	Eigen::Quaternionf rotation;
+
 };
-#endif

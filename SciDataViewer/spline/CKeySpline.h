@@ -1,39 +1,48 @@
-#ifndef __KEYSPLINE__H__
-#define __KEYSPLINE__H__
+
+#pragma once
 
 #define EIGEN_DONT_VECTORIZE
 #define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT
 #include <Eigen/Dense>
-#include "SplineNode.h"
-#include <vector>
-#include "glm/glm.hpp"
-#include "SplineType.h"
-#include "shark/Transform.h"
+
 #include <ionCore.h>
 #include <ionGraphics.h>
 
-using namespace std;
+#include <glm/glm.hpp>
+#include "shark/Transform.h"
 
-class KeySpline
+#include "SSplineNode.h"
+
+
+enum class ESplineType
+{
+	Catmull,
+	BSpline
+};
+
+class CKeySpline
 {
 
 public:
 
-	KeySpline();
-	~KeySpline();
-	void setSplineType(SplineType type);
-	void addNode(const SplineNode & node);
+	CKeySpline();
+	~CKeySpline();
+
+	void SetSplineType(ESplineType const type);
+	void AddNode(SSplineNode const & node);
 	SharedPointer<ion::Graphics::IVertexBuffer> GetVertexBuffer();
 	SharedPointer<ion::Graphics::IIndexBuffer>  GetIndexBuffer();
 
-	void close(); //Close the spline.
-	float sToU(float s);
-	int getNumNodes();
+	void Close();
+	float sToU(float const s);
+	int GetNumNodes();
 
-	Transform transformAt(float s) const;
-	glm::vec3 normalAt(float s) const;
+	Transform TransformAt(float const s) const;
+	glm::vec3 NormalAt(float const s) const;
+
 private:
-	vector<pair<float, float> > usTable;
+
+	vector<pair<float, float>> usTable;
 	std::vector<Eigen::Vector3f> nodePos;
 	std::vector<Eigen::Quaternionf> nodeRot;
 
@@ -41,16 +50,13 @@ private:
 	SharedPointer<ion::Graphics::IIndexBuffer> IndexBuffer;
 
 	Eigen::Matrix4f B;
-	SplineType type;
+	ESplineType type;
 
 	bool usTableDirty;
 
 	bool updateVBO = true;
 	int numSplines;
 
-	void recalculateTable(int discretization);
-
+	void RecalculateTable(int const discretization);
 
 };
-
-#endif

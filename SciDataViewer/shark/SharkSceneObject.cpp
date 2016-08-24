@@ -122,7 +122,7 @@ void SharkSceneObject::setTime(f64 newTime)
 	this->InternalTime = newTime;
 }
 
-void SharkSceneObject::update(KeySpline & spline, f64 dt) {
+void SharkSceneObject::update(CKeySpline & spline, f64 dt) {
 	static float targSpeed = 1.0f;
 	static float speed = 1.0f;
 
@@ -140,7 +140,7 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt) {
 
 			float stepU = s - (float) i*(10 * (length / 100) / Model.getWidth()) / NUM_OSC_BONES;
 			stepU = spline.sToU(stepU);
-			Transform tns = spline.transformAt(stepU);
+			Transform tns = spline.TransformAt(stepU);
 			//Model.transform.setPosition(tns.getPosition());
 			//Model.transform.setRotation(tns.getRotation());
 			Transform boneTransform;
@@ -168,7 +168,7 @@ void SharkSceneObject::update(KeySpline & spline, f64 dt) {
 	else
 	{
 		float stepU = spline.sToU(s);
-		Transform tns = spline.transformAt(stepU);
+		Transform tns = spline.TransformAt(stepU);
 		SetTransformation(tns.getMatrix());
 	}
 
