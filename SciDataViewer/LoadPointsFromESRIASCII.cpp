@@ -16,10 +16,10 @@ vector<vec3f> LoadPointsFromESRIASCII(string const & FileName)
 	int ncols;
 	int nrows;
 
-	float xllcorner;
-	float yllcorner;
-	float dx;
-	float dy;
+	double xllcorner;
+	double yllcorner;
+	double dx;
+	double dy;
 
 	int NODATA;
 	int Data;
@@ -34,12 +34,12 @@ vector<vec3f> LoadPointsFromESRIASCII(string const & FileName)
 	file >> dump >> dy;
 	file >> dump >> NODATA;
 
-	for (int i = 0; i < nrows; ++ i)
+	for (int j = 0; j < nrows; ++ j)
 	{
-		for (int j = 0; j < ncols; ++ j)
+		for (int i = 0; i < ncols; ++ i)
 		{
 			file >> Data;
-			Points.push_back(vec3f(yllcorner + dy * i, xllcorner + dx * j, (float) -Data));
+			Points.push_back(vec3d(yllcorner + dy * (nrows - 1 - j), xllcorner + dx * i, (double) -Data));
 		}
 	}
 

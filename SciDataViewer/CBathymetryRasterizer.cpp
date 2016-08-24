@@ -41,13 +41,8 @@ void CBathymetryRasterizer::CopySourcePointsToBuckets()
 
 	for (auto const & Point : SourceElevationPostings)
 	{
-		float const ImageXCorner = 33.435f;
-		float const ImageYCorner = -118.5f;
-		float const ImageXSize = 0.03f;
-		float const ImageYSize = 0.03f;
-
-		int const IndexX = (int) (((Point.X - ImageXCorner) / ImageXSize) * ImageSize);
-		int const IndexY = (int) (((Point.Y - ImageYCorner) / ImageYSize) * ImageSize);
+		int const IndexX = (int) (((Point.X - RegionXCorner) / RegionXSize) * ImageSize);
+		int const IndexY = (int) (((Point.Y - RegionYCorner) / RegionYSize) * ImageSize);
 
 		if (IndexX >= 0 && IndexX < ImageSize &&
 			IndexY >= 0 && IndexY < ImageSize)
@@ -277,7 +272,7 @@ void CBathymetryRasterizer::RasterizeImage()
 
 	CImage * Image = new CImage(ImageData, vec2u(ImageSize), 3);
 	Image->FlipY();
-	Image->Write("Output.png");
+	Image->Write(OutputName);
 
 	Log::Info("Rasterize to image took %.3f", sw.Stop());
 }

@@ -11,6 +11,11 @@ public:
 
 	vector<vec3f> SourceElevationPostings;
 	int ImageSize = 4096;
+	float RegionXCorner = 33.435f;
+	float RegionYCorner = -118.5f;
+	float RegionXSize = 0.03f;
+	float RegionYSize = 0.03f;
+	string OutputName = "Output.png";
 
 	void ConvertAndRasterize();
 
