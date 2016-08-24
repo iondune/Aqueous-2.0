@@ -48,8 +48,11 @@
     <ClCompile Include="CApplication.cpp" />
     <ClCompile Include="CBathymetryRasterizer.cpp" />
     <ClCompile Include="CDataManager.cpp" />
+    <ClCompile Include="CGeometryClipmapsSceneObject.cpp" />
+    <ClCompile Include="CGeometryClipmapsSceneObject.SLayer.cpp" />
     <ClCompile Include="ColorTable.cpp" />
     <ClCompile Include="CParticleSystem.cpp" />
+    <ClCompile Include="CToroidalUpdater.cpp" />
     <ClCompile Include="CViewerState.cpp" />
     <ClCompile Include="CVolumeSceneObject.cpp" />
     <ClCompile Include="CWaterSurfaceSceneObject.cpp" />
@@ -78,9 +81,11 @@
     <ClInclude Include="CDataManager.h" />
     <ClInclude Include="CDataSet.h" />
     <ClInclude Include="CDebugWindowWidget.h" />
+    <ClInclude Include="CGeometryClipmapsSceneObject.h" />
     <ClInclude Include="ColorTable.h" />
     <ClInclude Include="CParticleSystem.h" />
     <ClInclude Include="CPointsWindowWidget.h" />
+    <ClInclude Include="CToroidalUpdater.h" />
     <ClInclude Include="CViewerState.h" />
     <ClInclude Include="CVolumeSceneObject.h" />
     <ClInclude Include="CWaterSurfaceSceneObject.h" />

@@ -123,6 +123,7 @@ void CApplication::LoadAssets()
 	QuadCopyShader = AssetManager->LoadShader("QuadCopy");
 	SharkShader = AssetManager->LoadShader("DiffuseShark");
 	DebugShader = AssetManager->LoadShader("Debug");
+	GeometryClipmapsShader = AssetManager->LoadShader("GeometryClipmaps");
 
 	CubeMesh = CGeometryCreator::CreateCube();
 }

@@ -8,6 +8,7 @@
 
 #include "CWaterSurfaceSceneObject.h"
 #include "CVolumeSceneObject.h"
+#include "CGeometryClipmapsSceneObject.h"
 #include "ColorTable.h"
 #include "UTMtoLatLong.h"
 #include "CBathymetryRasterizer.h"
@@ -152,7 +153,6 @@ void CViewerState::Init()
 
 	CBathymetryRasterizer br_catalina;
 	br_catalina.SourceElevationPostings = CatalinaPoints;
-	br_catalina.ImageSize = 768;
 	br_catalina.OutputName = "Catlina.png";
 	br_catalina.RegionXCorner = 33.15f;
 	br_catalina.RegionYCorner = -118.7f;
@@ -219,6 +219,34 @@ void CViewerState::Init()
 	Volume->SetScale(vec3f(16.f));
 	//Volume->SetPosition(vec3f(1280.f, -1600.f, 1280.f));
 	VolumeRenderPass->AddSceneObject(Volume);
+
+
+	class SimpleHeight : public CGeometryClipmapsSceneObject::IHeightInput
+	{
+
+	public:
+
+		float GetTerrainHeight(vec2i const & Position)
+		{
+			float const Input = (float) (Length(vec2f(Position)));
+
+			return 0;// -cos(Input * 0.01f) * 15 - cos(Input * 0.5f) * 2;
+		}
+
+		color3f GetTerrainColor(vec2i const & Position)
+		{
+			return color3f(abs(fmodf((float) Position.X * 0.1f, 1.f)), abs(fmodf((float) Position.Y * 0.1f, 1.f)), 0.5f);
+		}
+
+	};
+
+	GeometryClipmapsObject = new CGeometryClipmapsSceneObject();
+	GeometryClipmapsObject->Shader = Application->GeometryClipmapsShader;
+	GeometryClipmapsObject->UseCameraPosition = true;
+	GeometryClipmapsObject->HeightInput = new SimpleHeight();
+	DefaultRenderPass->AddSceneObject(GeometryClipmapsObject);
+	GeometryClipmapsObject->Load(DefaultRenderPass);
+	GeometryClipmapsObject->SetWireframeEnabled(true);
 
 
 	CSimpleMeshSceneObject * PostProcessObject = new CSimpleMeshSceneObject();

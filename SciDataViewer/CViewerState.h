@@ -11,6 +11,7 @@ class CDataManager;
 class CParticleSystem;
 class CWaterSurfaceSceneObject;
 class CVolumeSceneObject;
+class CGeometryClipmapsSceneObject;
 
 class CCameraWindowWidget;
 class CPointsWindowWidget;
@@ -53,6 +54,7 @@ private:
 	CParticleSystem * ParticleSystem = nullptr;
 	CWaterSurfaceSceneObject * WaterSurface = nullptr;
 	CVolumeSceneObject * Volume = nullptr;
+	CGeometryClipmapsSceneObject * GeometryClipmapsObject = nullptr;
 	ion::Scene::CSimpleMeshSceneObject * SkyBox = nullptr;
 
 	SharkSceneObject * SharkObject = nullptr;

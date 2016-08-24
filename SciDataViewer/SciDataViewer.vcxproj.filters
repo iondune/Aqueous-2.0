@@ -60,6 +60,15 @@
     <ClCompile Include="spline\CKeySpline.cpp">
       <Filter>Spline</Filter>
     </ClCompile>
+    <ClCompile Include="CGeometryClipmapsSceneObject.cpp">
+      <Filter>SceneObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="CGeometryClipmapsSceneObject.SLayer.cpp">
+      <Filter>SceneObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="CToroidalUpdater.cpp">
+      <Filter>SceneObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CApplication.h" />
@@ -131,6 +140,12 @@
     </ClInclude>
     <ClInclude Include="spline\CKeySpline.h">
       <Filter>Spline</Filter>
+    </ClInclude>
+    <ClInclude Include="CGeometryClipmapsSceneObject.h">
+      <Filter>SceneObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="CToroidalUpdater.h">
+      <Filter>SceneObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
