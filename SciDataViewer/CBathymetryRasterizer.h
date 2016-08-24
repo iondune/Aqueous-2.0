@@ -19,6 +19,9 @@ public:
 
 	void ConvertAndRasterize();
 
+	bool IsPointInBounds(vec2f const & Position);
+	float GetHeightAtPoint(vec2f const & Position);
+
 protected:
 
 	struct SPixelBucket

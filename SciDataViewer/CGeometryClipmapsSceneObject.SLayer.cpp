@@ -119,8 +119,8 @@ int CGeometryClipmapsSceneObject::SLayer::SendSample(int const x1, int const y1,
 				if (Owner->HeightInput)
 				{
 					Height = Owner->HeightInput->GetTerrainHeight(Tile);
-					Normal = Owner->HeightInput->GetTerrainNormal(Tile);
 					Color = Owner->HeightInput->GetTerrainColor(Tile);
+					Normal = Owner->HeightInput->GetTerrainNormal(Tile);
 				}
 
 				HeightData[Index] = Height;

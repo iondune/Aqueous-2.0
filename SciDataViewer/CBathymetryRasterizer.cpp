@@ -16,6 +16,45 @@ void CBathymetryRasterizer::ConvertAndRasterize()
 	RasterizeImage();
 }
 
+bool CBathymetryRasterizer::IsPointInBounds(vec2f const & Position)
+{
+	if ((Position.X >= RegionXCorner && Position.X <= RegionXCorner + RegionXSize) &&
+		(Position.Y >= RegionYCorner && Position.Y <= RegionYCorner + RegionYSize))
+	{
+		vec2f RealIndex = vec2f(
+			(Position.X - RegionXCorner) / RegionXSize,
+			(Position.Y - RegionYCorner) / RegionYSize);
+
+		int i = Clamp((int) (RealIndex.X * ImageSize), 0, ImageSize - 1);
+		int j = Clamp((int) (RealIndex.Y * ImageSize), 0, ImageSize - 1);
+
+		auto Bucket = Helper_GetBucket(i, j);
+
+		if (Bucket && Bucket->Count)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+float CBathymetryRasterizer::GetHeightAtPoint(vec2f const & Position)
+{
+	vec2f RealIndex = vec2f(
+		(Position.X - RegionXCorner) / RegionXSize,
+		(Position.Y - RegionYCorner) / RegionYSize);
+
+	int i = Clamp((int) (RealIndex.X * ImageSize), 0, ImageSize - 1);
+	int j = Clamp((int) (RealIndex.Y * ImageSize), 0, ImageSize - 1);
+
+	auto Bucket = Helper_GetBucket(i, j);
+	if (Bucket && Bucket->Count)
+		return Bucket->GetValue();
+	else
+		return -1;
+}
+
 CBathymetryRasterizer::SPixelBucket * CBathymetryRasterizer::Helper_GetBucket(int const i, int const j)
 {
 	if (i >= 0 && i < ImageSize &&

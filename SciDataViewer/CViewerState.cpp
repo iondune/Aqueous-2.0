@@ -145,30 +145,30 @@ void CViewerState::Init()
 
 	Log::Info("Load points from files took %.3f", sw.Stop());
 
-	CBathymetryRasterizer br_hires;
-	br_hires.SourceElevationPostings = HiResPoints;
-	br_hires.ImageSize = 768;
-	br_hires.OutputName = "HiRes.png";
-	br_hires.ConvertAndRasterize();
+	CBathymetryRasterizer * br_hires = new CBathymetryRasterizer();
+	br_hires->SourceElevationPostings = HiResPoints;
+	br_hires->ImageSize = 768;
+	br_hires->OutputName = "HiRes.png";
+	br_hires->ConvertAndRasterize();
 
-	CBathymetryRasterizer br_catalina;
-	br_catalina.SourceElevationPostings = CatalinaPoints;
-	br_catalina.OutputName = "Catlina.png";
-	br_catalina.RegionXCorner = 33.15f;
-	br_catalina.RegionYCorner = -118.7f;
-	br_catalina.RegionXSize = 0.5f;
-	br_catalina.RegionYSize = 0.5f;
-	br_catalina.ConvertAndRasterize();
+	CBathymetryRasterizer * br_catalina = new CBathymetryRasterizer();
+	br_catalina->SourceElevationPostings = CatalinaPoints;
+	br_catalina->OutputName = "Catlina.png";
+	br_catalina->RegionXCorner = 33.15f;
+	br_catalina->RegionYCorner = -118.7f;
+	br_catalina->RegionXSize = 0.5f;
+	br_catalina->RegionYSize = 0.5f;
+	br_catalina->ConvertAndRasterize();
 
-	CBathymetryRasterizer br_region;
-	br_region.SourceElevationPostings = RegionPoints;
-	br_region.ImageSize = 768;
-	br_region.OutputName = "Region.png";
-	br_region.RegionXCorner = 29.15f;
-	br_region.RegionYCorner = -122.7f;
-	br_region.RegionXSize = 8.0f;
-	br_region.RegionYSize = 8.0f;
-	br_region.ConvertAndRasterize();
+	CBathymetryRasterizer * br_region = new CBathymetryRasterizer();
+	br_region->SourceElevationPostings = RegionPoints;
+	br_region->ImageSize = 768;
+	br_region->OutputName = "Region.png";
+	br_region->RegionXCorner = 29.15f;
+	br_region->RegionYCorner = -122.7f;
+	br_region->RegionXSize = 8.0f;
+	br_region->RegionYSize = 8.0f;
+	br_region->ConvertAndRasterize();
 
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)
@@ -226,16 +226,34 @@ void CViewerState::Init()
 
 	public:
 
+		vector<CBathymetryRasterizer *> Layers;
+
+		float LastHeight = 0;
+
 		float GetTerrainHeight(vec2i const & Position)
 		{
-			float const Input = (float) (Length(vec2f(Position)));
+			LastHeight = 0;
 
-			return 0;// -cos(Input * 0.01f) * 15 - cos(Input * 0.5f) * 2;
+			vec2f Pos = vec2f(Position) / 1600.f + vec2f(33.3f, -118.3f);
+
+			for (auto Layer : Layers)
+			{
+				if (Layer->IsPointInBounds(Pos))
+				{
+					LastHeight = -Layer->GetHeightAtPoint(Pos) / 40.f;
+					break;
+				}
+			}
+
+			return LastHeight;
+
+			//float const Input = (float) (Length(vec2f(Position)));
+			//return -cos(Input * 0.01f) * 15 - cos(Input * 0.5f) * 2;
 		}
 
 		color3f GetTerrainColor(vec2i const & Position)
 		{
-			return color3f(abs(fmodf((float) Position.X * 0.1f, 1.f)), abs(fmodf((float) Position.Y * 0.1f, 1.f)), 0.5f);
+			return LastHeight > 0 ? Colors::Green : Colors::Blue;
 		}
 
 	};
@@ -243,7 +261,11 @@ void CViewerState::Init()
 	GeometryClipmapsObject = new CGeometryClipmapsSceneObject();
 	GeometryClipmapsObject->Shader = Application->GeometryClipmapsShader;
 	GeometryClipmapsObject->UseCameraPosition = true;
-	GeometryClipmapsObject->HeightInput = new SimpleHeight();
+	SimpleHeight * HeightInput = new SimpleHeight();
+	HeightInput->Layers.push_back(br_hires);
+	HeightInput->Layers.push_back(br_catalina);
+	HeightInput->Layers.push_back(br_region);
+	GeometryClipmapsObject->HeightInput = HeightInput;
 	DefaultRenderPass->AddSceneObject(GeometryClipmapsObject);
 	GeometryClipmapsObject->Load(DefaultRenderPass);
 	GeometryClipmapsObject->SetWireframeEnabled(true);
