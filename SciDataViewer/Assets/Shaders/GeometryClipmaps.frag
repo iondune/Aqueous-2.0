@@ -10,6 +10,7 @@ uniform sampler2D uHeightMap;
 
 uniform int uSamplingMode;
 uniform int uDebugDisplay;
+uniform int uScaleFactor;
 
 
 #define LIGHT_MAX 3
@@ -76,6 +77,65 @@ vec4 textureBicubic(sampler2D tex, vec2 texCoords)
 		sy);
 }
 
+float getHeightAt(vec2 Offset)
+{
+	vec2 texSize = textureSize(uHeightMap, 0);
+	vec2 invTexSize = 1.0 / texSize;
+
+	return textureBicubic(uHeightMap, fTexCoords + Offset * invTexSize).r;
+}
+
+
+float getOcclusion(float Offset)
+{
+	float occlusion = 0;
+	float here = getHeightAt(vec2(0, 0));
+	float step;
+
+	// Offset /= float(uScaleFactor);
+
+	step = getHeightAt(vec2(Offset, 0));
+	if (step > here)
+		occlusion += step - here;
+	step = getHeightAt(vec2(-Offset, 0));
+	if (step > here)
+		occlusion += step - here;
+	step = getHeightAt(vec2(0, Offset));
+	if (step > here)
+		occlusion += step - here;
+	step = getHeightAt(vec2(0, -Offset));
+	if (step > here)
+		occlusion += step - here;
+
+	Offset *= 2;
+	step = getHeightAt(vec2(Offset, 0));
+	if (step > here)
+		occlusion += step - here;
+	step = getHeightAt(vec2(-Offset, 0));
+	if (step > here)
+		occlusion += step - here;
+	step = getHeightAt(vec2(0, Offset));
+	if (step > here)
+		occlusion += step - here;
+	step = getHeightAt(vec2(0, -Offset));
+	if (step > here)
+		occlusion += step - here;
+
+	Offset *= 2;
+	step = getHeightAt(vec2(Offset, 0));
+	if (step > here)
+		occlusion += step - here;
+	step = getHeightAt(vec2(-Offset, 0));
+	if (step > here)
+		occlusion += step - here;
+	step = getHeightAt(vec2(0, Offset));
+	if (step > here)
+		occlusion += step - here;
+	step = getHeightAt(vec2(0, -Offset));
+	if (step > here)
+		occlusion += step - here;
+	return occlusion / float(uScaleFactor);
+}
 
 void main()
 {
@@ -123,5 +183,5 @@ void main()
 	// Material params
 	const float Ambient = 0.4;
 	const float Diffuse = 0.6;
-	outColor = vec4(vec3(Ambient + Diffuse * Lighting) * Color, 1.0);
+	outColor = vec4(vec3(Ambient + Diffuse * Lighting) * Color * vec3(1.0 - getOcclusion(0.2) * 0.1), 1.0);
 }

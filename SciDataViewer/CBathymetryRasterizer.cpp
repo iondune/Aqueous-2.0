@@ -1,6 +1,8 @@
 
 #include "CBathymetryRasterizer.h"
 
+#include <ionScience.h>
+
 using namespace ion;
 
 
@@ -41,18 +43,44 @@ bool CBathymetryRasterizer::IsPointInBounds(vec2f const & Position)
 
 float CBathymetryRasterizer::GetHeightAtPoint(vec2f const & Position)
 {
-	vec2f RealIndex = vec2f(
+	vec2f const RealIndex = vec2f(
 		(Position.X - RegionXCorner) / RegionXSize,
-		(Position.Y - RegionYCorner) / RegionYSize);
+		(Position.Y - RegionYCorner) / RegionYSize) * (float) ImageSize;
 
-	int i = Clamp((int) (RealIndex.X * ImageSize), 0, ImageSize - 1);
-	int j = Clamp((int) (RealIndex.Y * ImageSize), 0, ImageSize - 1);
+	int i = Clamp((int) RealIndex.X, 0, ImageSize - 1);
+	int j = Clamp((int) RealIndex.Y, 0, ImageSize - 1);
 
 	auto Bucket = Helper_GetBucket(i, j);
 	if (Bucket && Bucket->Count)
-		return Bucket->GetValue();
+	{
+		float Value = Bucket->GetValue();
+
+		float Data[2][2] =
+		{
+			{ Value, Value },
+			{ Value, Value },
+		};
+
+		for (int m = 0; m < 2; ++ m)
+		{
+			for (int n = 0; n < 2; ++ n)
+			{
+				auto Bucket = Helper_GetBucket(i + m, j + n);
+				if (Bucket && Bucket->Count)
+				{
+					Data[m][n] = Bucket->GetValue();
+				}
+			}
+		}
+
+		float integral;
+		return BilinearInterpolate(Data, modf(RealIndex.X, &integral), modf(RealIndex.Y, &integral));
+	}
 	else
-		return -1;
+	{
+		return std::numeric_limits<float>::quiet_NaN();
+	}
+
 }
 
 CBathymetryRasterizer::SPixelBucket * CBathymetryRasterizer::Helper_GetBucket(int const i, int const j)

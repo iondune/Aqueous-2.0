@@ -91,6 +91,7 @@ void CGeometryClipmapsSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetUniform("uDebugDisplay", uDebugDisplay);
 
 		PipelineState->SetUniform("uScale", Layer->uScale);
+		PipelineState->SetUniform("uScaleFactor", Layer->uScaleFactor);
 		PipelineState->SetUniform("uTranslation", Layer->uTranslation);
 
 		PipelineState->SetTexture("uHeightMap", Layer->HeightMap);
@@ -310,6 +311,7 @@ void CGeometryClipmapsSceneObject::Draw(ion::Scene::CRenderPass * RenderPass)
 			(float) Layer->ScaleFactor,
 			1,
 			(float) Layer->ScaleFactor);
+		Layer->uScaleFactor = Layer->ScaleFactor;
 	}
 
 	for (auto Layer : Layers)

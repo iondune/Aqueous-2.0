@@ -86,6 +86,11 @@ void CViewerState::Init()
 	Light->SetRadius(150.f);
 	DefaultRenderPass->AddLight(Light);
 
+	CDirectionalLight * DirectionLight = new CDirectionalLight();
+	DirectionLight->SetPosition(vec3f(-128, 256, 128));
+	DirectionLight->SetDirection(vec3f(-3, -20, 4).GetNormalized());
+	DefaultRenderPass->AddLight(DirectionLight);
+
 #ifdef ION_CONFIG_RELEASE
 	SharedPointer<ITextureCubeMap> SkyBoxTexture = AssetManager->LoadCubeMapTexture(
 		"TropicalSunnyDayLeft2048.png",
@@ -125,23 +130,23 @@ void CViewerState::Init()
 	CStopWatch sw;
 	sw.Start();
 
-	vector<vec3f> RegionPoints = LoadPointsFromESRIASCII("Data/GEBCO2014_-122.3058_30.5922_-115.9466_36.0291_30Sec_ESRIASCII.asc");
+	//vector<vec3f> RegionPoints = LoadPointsFromESRIASCII("Data/GEBCO2014_-122.3058_30.5922_-115.9466_36.0291_30Sec_ESRIASCII.asc");
 
 	vector<vec3f> HiResPoints = PointsToParticles("Data/CI_Block02_2m_xyz.txt", Colors::White, true);
 
-	vector<vec3f> CatalinaPoints;
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block01_5mall_xyz.txt", false));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block02_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block03_5mall_xyz.txt", false));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block04_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block05_5mall_xyz.txt", false));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block06_5mall_xyz.txt", false));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block07_5mall_xyz.txt", false));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block08_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block09_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block10_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block11_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block12_5mall_xyz.txt", false));
+	//vector<vec3f> CatalinaPoints;
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block01_5mall_xyz.txt", false));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block02_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block03_5mall_xyz.txt", false));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block04_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block05_5mall_xyz.txt", false));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block06_5mall_xyz.txt", false));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block07_5mall_xyz.txt", false));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block08_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block09_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block10_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block11_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block12_5mall_xyz.txt", false));
 
 	Log::Info("Load points from files took %.3f", sw.Stop());
 
@@ -152,23 +157,23 @@ void CViewerState::Init()
 	br_hires->ConvertAndRasterize();
 
 	CBathymetryRasterizer * br_catalina = new CBathymetryRasterizer();
-	br_catalina->SourceElevationPostings = CatalinaPoints;
+	//br_catalina->SourceElevationPostings = CatalinaPoints;
 	br_catalina->OutputName = "Catlina.png";
 	br_catalina->RegionXCorner = 33.15f;
 	br_catalina->RegionYCorner = -118.7f;
 	br_catalina->RegionXSize = 0.5f;
 	br_catalina->RegionYSize = 0.5f;
-	br_catalina->ConvertAndRasterize();
+	//br_catalina->ConvertAndRasterize();
 
 	CBathymetryRasterizer * br_region = new CBathymetryRasterizer();
-	br_region->SourceElevationPostings = RegionPoints;
+	//br_region->SourceElevationPostings = RegionPoints;
 	br_region->ImageSize = 768;
 	br_region->OutputName = "Region.png";
 	br_region->RegionXCorner = 29.15f;
 	br_region->RegionYCorner = -122.7f;
 	br_region->RegionXSize = 8.0f;
 	br_region->RegionYSize = 8.0f;
-	br_region->ConvertAndRasterize();
+	//br_region->ConvertAndRasterize();
 
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)
@@ -234,13 +239,13 @@ void CViewerState::Init()
 		{
 			LastHeight = 0;
 
-			vec2f Pos = vec2f(Position) / 1600.f + vec2f(33.3f, -118.3f);
+			vec2f const Pos = vec2f(Position) / 19200.f + vec2f(33.445f, -118.4865f);
 
 			for (auto Layer : Layers)
 			{
 				if (Layer->IsPointInBounds(Pos))
 				{
-					LastHeight = -Layer->GetHeightAtPoint(Pos) / 40.f;
+					LastHeight = -Layer->GetHeightAtPoint(Pos) / 10.f;
 					break;
 				}
 			}
@@ -253,7 +258,7 @@ void CViewerState::Init()
 
 		color3f GetTerrainColor(vec2i const & Position)
 		{
-			return LastHeight > 0 ? Colors::Green : Colors::Blue;
+			return Colors::White;// LastHeight > 0 ? Colors::Green : Colors::Blue;
 		}
 
 	};
@@ -263,12 +268,13 @@ void CViewerState::Init()
 	GeometryClipmapsObject->UseCameraPosition = true;
 	SimpleHeight * HeightInput = new SimpleHeight();
 	HeightInput->Layers.push_back(br_hires);
-	HeightInput->Layers.push_back(br_catalina);
-	HeightInput->Layers.push_back(br_region);
+	//HeightInput->Layers.push_back(br_catalina);
+	//HeightInput->Layers.push_back(br_region);
 	GeometryClipmapsObject->HeightInput = HeightInput;
 	DefaultRenderPass->AddSceneObject(GeometryClipmapsObject);
-	GeometryClipmapsObject->Load(DefaultRenderPass);
-	GeometryClipmapsObject->SetWireframeEnabled(true);
+
+	//GeometryClipmapsObject->Load(DefaultRenderPass);
+	//GeometryClipmapsObject->SetWireframeEnabled(true);
 
 
 	CSimpleMeshSceneObject * PostProcessObject = new CSimpleMeshSceneObject();

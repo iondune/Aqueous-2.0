@@ -25,9 +25,9 @@ public:
 
 	IHeightInput * HeightInput = nullptr;
 
-	static int const GeometrySize = 64;
+	static int const GeometrySize = 128;
 	static int const HeightmapResolution = GeometrySize + 2;
-	static int const LayerCount = 6;
+	static int const LayerCount = 9;
 
 	int DrawLevel = 0;
 
@@ -70,6 +70,7 @@ public:
 		// Uniforms sent to shader
 		ion::Graphics::CUniform<vec3f> uScale;
 		ion::Graphics::CUniform<vec3f> uTranslation;
+		ion::Graphics::CUniform<int> uScaleFactor;
 		ion::Graphics::CUniform<vec2i> uDataOffset;
 
 		SLayer(CGeometryClipmapsSceneObject * Owner, int const i, ion::Scene::CRenderPass * RenderPass);

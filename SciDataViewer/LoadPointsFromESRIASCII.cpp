@@ -39,7 +39,7 @@ vector<vec3f> LoadPointsFromESRIASCII(string const & FileName)
 		for (int i = 0; i < ncols; ++ i)
 		{
 			file >> Data;
-			Points.push_back(vec3d(yllcorner + dy * (nrows - 1 - j), xllcorner + dx * i, (double) -Data));
+			Points.push_back(vec3d(yllcorner + dy * (nrows - 1 - j), xllcorner + dx * i, (double) Data));
 		}
 	}
 
