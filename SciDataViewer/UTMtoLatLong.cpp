@@ -38,5 +38,5 @@ vec2d UTMToLatLon(double const utmX, double const utmY, int const utmZone, bool 
 
 	return vec2d(
 		((lat + (1 + e2cuadrada * pow(Cos(lat), 2) - (3.0 / 2.0) * e2cuadrada * Sin(lat) * Cos(lat) * (tao - lat)) * (tao - lat)) * (180.0 / Constants64::Pi)) + diflat,
-		((delt * (180.0 / Constants64::Pi)) + s) + diflon) + vec2d(7e-4, 7e-4);
+		((delt * (180.0 / Constants64::Pi)) + s) + diflon) + vec2d(6e-4, 6e-4);
 }
