@@ -1,5 +1,6 @@
 
 #include "CBathymetryRasterizer.h"
+#include "CatalinaOutline.h"
 
 #include <ionScience.h>
 
@@ -305,6 +306,10 @@ void CBathymetryRasterizer::RasterizeImage()
 	int LowPixel = 255;
 	int HighPixel = 0;
 
+	vector<vec2f> Outline = CatalinaOutline;
+	std::reverse(Outline.begin(), Outline.end());
+	vector<STriangle2D> const Triangles = TriangulateEarClipping(Outline);
+
 	byte * ImageData = new byte[ImageSize * ImageSize * 3];
 	for (int i = 0; i < ImageSize; ++ i)
 	{
@@ -323,14 +328,34 @@ void CBathymetryRasterizer::RasterizeImage()
 				HighPixel = Max(HighPixel, Pixel);
 
 				ImageData[Index * 3 + 0] = Pixel;
-				ImageData[Index * 3 + 1] = Pixel;
-				ImageData[Index * 3 + 2] = Pixel;
+				ImageData[Index * 3 + 1] = 0;
+				ImageData[Index * 3 + 2] = 0;
 			}
 			else
 			{
-				ImageData[Index * 3 + 0] = 255;
+				ImageData[Index * 3 + 0] = 0;
 				ImageData[Index * 3 + 1] = 0;
 				ImageData[Index * 3 + 2] = 255;
+			}
+
+			bool InsideTriangle = false;
+			vec2f const Point = vec2f(
+				RegionXCorner + ((float) i / (float) (ImageSize - 1)) * RegionXSize,
+				RegionYCorner + ((float) j / (float) (ImageSize - 1)) * RegionYSize
+			);
+
+			for (auto const & Triangle : Triangles)
+			{
+				if (ion::IsPointInTriangle(Triangle.A.YX(), Triangle.B.YX(), Triangle.C.YX(), Point))
+				{
+					InsideTriangle = true;
+					break;
+				}
+			}
+
+			if (InsideTriangle)
+			{
+				ImageData[Index * 3 + 1] = 255;
 			}
 		}
 	}

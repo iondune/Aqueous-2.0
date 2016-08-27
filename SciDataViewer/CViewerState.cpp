@@ -12,12 +12,42 @@
 #include "ColorTable.h"
 #include "UTMtoLatLong.h"
 #include "CBathymetryRasterizer.h"
+#include "CatalinaOutline.h"
 
 
 using namespace ion;
 using namespace ion::Graphics;
 using namespace ion::Scene;
 
+
+ion::Scene::CSimpleMesh * CreatePolygonMesh()
+{
+	ion::Scene::CSimpleMesh * Mesh = new ion::Scene::CSimpleMesh();
+
+	vector<vec2f> Outline = CatalinaOutline;
+	std::reverse(Outline.begin(), Outline.end());
+	vector<STriangle2D> const Triangles = TriangulateEarClipping(Outline);
+
+	for (size_t i = 0; i < Triangles.size(); i ++)
+	{
+		uint const Start = (uint) Mesh->Vertices.size();
+		vec3f const Normal = vec3f(0, 1, 0);
+
+		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].A.Y - 33.3f) * 800, 0, (Triangles[i].A.X + 118.3f) * 800), Normal));
+		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].B.Y - 33.3f) * 800, 0, (Triangles[i].B.X + 118.3f) * 800), Normal));
+		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].C.Y - 33.3f) * 800, 0, (Triangles[i].C.X + 118.3f) * 800), Normal));
+		//Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f(Triangles[i].B.X, 0, Triangles[i].B.Y), Normal));
+		//Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f(Triangles[i].C.X, 0, Triangles[i].C.Y), Normal));
+
+		CSimpleMesh::STriangle Triangle;
+		Triangle.Indices[0] = Start + 0;
+		Triangle.Indices[1] = Start + 1;
+		Triangle.Indices[2] = Start + 2;
+		Mesh->Triangles.push_back(Triangle);
+	}
+
+	return Mesh;
+}
 
 void CViewerState::Init()
 {
@@ -127,26 +157,38 @@ void CViewerState::Init()
 		return Points;
 	};
 
+	size_t ndx = 0;
+	size_t Sum = CatalinaOutline.size() - 1;
+	for (auto const & CatPt : CatalinaOutline)
+	{
+		CParticle p;
+		p.Color = color3f(0.f, 1.f, (float) ndx / (float) Sum);
+		p.Position = vec3f((CatPt.Y - 33.3f) * 800, 0.0f, (CatPt.X + 118.3f) * 800);
+
+		ParticleSystem->Particles.push_back(p);
+		ndx ++;
+	}
+
 	CStopWatch sw;
 	sw.Start();
 
-	//vector<vec3f> RegionPoints = LoadPointsFromESRIASCII("Data/GEBCO2014_-122.3058_30.5922_-115.9466_36.0291_30Sec_ESRIASCII.asc");
+	vector<vec3f> RegionPoints = LoadPointsFromESRIASCII("Data/GEBCO2014_-122.3058_30.5922_-115.9466_36.0291_30Sec_ESRIASCII.asc");
 
-	vector<vec3f> HiResPoints = PointsToParticles("Data/CI_Block02_2m_xyz.txt", Colors::White, true);
+	vector<vec3f> HiResPoints = PointsToParticles("Data/CI_Block02_2m_xyz.txt", Colors::Orange, true);
 
-	//vector<vec3f> CatalinaPoints;
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block01_5mall_xyz.txt", false));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block02_5mall_xyz.txt", true));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block03_5mall_xyz.txt", false));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block04_5mall_xyz.txt", true));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block05_5mall_xyz.txt", false));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block06_5mall_xyz.txt", false));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block07_5mall_xyz.txt", false));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block08_5mall_xyz.txt", true));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block09_5mall_xyz.txt", true));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block10_5mall_xyz.txt", true));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block11_5mall_xyz.txt", true));
-	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block12_5mall_xyz.txt", false));
+	vector<vec3f> CatalinaPoints;
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block01_5mall_xyz.txt", false));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block02_5mall_xyz.txt", true));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block03_5mall_xyz.txt", false));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block04_5mall_xyz.txt", true));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block05_5mall_xyz.txt", false));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block06_5mall_xyz.txt", false));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block07_5mall_xyz.txt", false));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block08_5mall_xyz.txt", true));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block09_5mall_xyz.txt", true));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block10_5mall_xyz.txt", true));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block11_5mall_xyz.txt", true));
+	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block12_5mall_xyz.txt", false));
 
 	Log::Info("Load points from files took %.3f", sw.Stop());
 
@@ -157,23 +199,24 @@ void CViewerState::Init()
 	br_hires->ConvertAndRasterize();
 
 	CBathymetryRasterizer * br_catalina = new CBathymetryRasterizer();
-	//br_catalina->SourceElevationPostings = CatalinaPoints;
+	br_catalina->SourceElevationPostings = CatalinaPoints;
+	br_catalina->ImageSize = 1024;
 	br_catalina->OutputName = "Catlina.png";
 	br_catalina->RegionXCorner = 33.15f;
 	br_catalina->RegionYCorner = -118.7f;
 	br_catalina->RegionXSize = 0.5f;
 	br_catalina->RegionYSize = 0.5f;
-	//br_catalina->ConvertAndRasterize();
+	br_catalina->ConvertAndRasterize();
 
 	CBathymetryRasterizer * br_region = new CBathymetryRasterizer();
-	//br_region->SourceElevationPostings = RegionPoints;
+	br_region->SourceElevationPostings = RegionPoints;
 	br_region->ImageSize = 768;
 	br_region->OutputName = "Region.png";
 	br_region->RegionXCorner = 29.15f;
 	br_region->RegionYCorner = -122.7f;
 	br_region->RegionXSize = 8.0f;
 	br_region->RegionYSize = 8.0f;
-	//br_region->ConvertAndRasterize();
+	br_region->ConvertAndRasterize();
 
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)
@@ -237,15 +280,15 @@ void CViewerState::Init()
 
 		float GetTerrainHeight(vec2i const & Position)
 		{
-			LastHeight = 0;
+			LastHeight = -128;
 
-			vec2f const Pos = vec2f(Position) / 19200.f + vec2f(33.445f, -118.4865f);
+			vec2f const Pos = vec2f(Position) / (19200.f * 25.f) + vec2f(33.445f, -118.4865f);
 
 			for (auto Layer : Layers)
 			{
 				if (Layer->IsPointInBounds(Pos))
 				{
-					LastHeight = -Layer->GetHeightAtPoint(Pos) / 10.f;
+					LastHeight = -Layer->GetHeightAtPoint(Pos) * 20.f;
 					break;
 				}
 			}
@@ -267,13 +310,14 @@ void CViewerState::Init()
 	GeometryClipmapsObject->Shader = Application->GeometryClipmapsShader;
 	GeometryClipmapsObject->UseCameraPosition = true;
 	SimpleHeight * HeightInput = new SimpleHeight();
-	HeightInput->Layers.push_back(br_hires);
+	//HeightInput->Layers.push_back(br_hires);
 	//HeightInput->Layers.push_back(br_catalina);
 	//HeightInput->Layers.push_back(br_region);
 	GeometryClipmapsObject->HeightInput = HeightInput;
+	GeometryClipmapsObject->SetScale(vec3f(0.1f, 1.f, 0.1f));
 	DefaultRenderPass->AddSceneObject(GeometryClipmapsObject);
 
-	//GeometryClipmapsObject->Load(DefaultRenderPass);
+	GeometryClipmapsObject->Load(DefaultRenderPass);
 	//GeometryClipmapsObject->SetWireframeEnabled(true);
 
 
@@ -352,6 +396,13 @@ void CViewerState::Init()
 	splineObject = std::make_shared<CSplineSceneObject>(Spline);
 	splineObject->SetShader(Application->DebugShader);
 	DefaultRenderPass->AddSceneObject(splineObject.get());
+
+
+	CSimpleMeshSceneObject * SceneObject4 = new CSimpleMeshSceneObject();
+	SceneObject4->SetShader(Application->DiffuseShader);
+	//SceneObject4->SetFeatureEnabled(EDrawFeature::Wireframe, true);
+	SceneObject4->SetMesh(CreatePolygonMesh());
+	DefaultRenderPass->AddSceneObject(SceneObject4);
 }
 
 void CViewerState::Update(float const Elapsed)

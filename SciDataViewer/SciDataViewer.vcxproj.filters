@@ -23,10 +23,10 @@
       <Filter>Shark</Filter>
     </ClCompile>
     <ClCompile Include="CDataManager.cpp">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClCompile>
     <ClCompile Include="CDataSet.cpp">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClCompile>
     <ClCompile Include="CParticleSystem.cpp">
       <Filter>SceneObjects</Filter>
@@ -43,16 +43,16 @@
     <ClCompile Include="ColorTable.cpp" />
     <ClCompile Include="CBathymetryRasterizer.cpp" />
     <ClCompile Include="LoadOxymapsCSVData.cpp">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClCompile>
     <ClCompile Include="LoadPointsFromXYZTxt.cpp">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClCompile>
     <ClCompile Include="UTMtoLatLong.cpp">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClCompile>
     <ClCompile Include="LoadPointsFromESRIASCII.cpp">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClCompile>
     <ClCompile Include="spline\CSplineSceneObject.cpp">
       <Filter>Spline</Filter>
@@ -95,16 +95,16 @@
       <Filter>Shark</Filter>
     </ClInclude>
     <ClInclude Include="CDataSet.h">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClInclude>
     <ClInclude Include="CDataLoader.h">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClInclude>
     <ClInclude Include="CDataLoaderCSV.h">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClInclude>
     <ClInclude Include="CDataManager.h">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClInclude>
     <ClInclude Include="CDebugWindowWidget.h">
       <Filter>Widgets</Filter>
@@ -130,7 +130,7 @@
     <ClInclude Include="ColorTable.h" />
     <ClInclude Include="CBathymetryRasterizer.h" />
     <ClInclude Include="UTMtoLatLong.h">
-      <Filter>Data</Filter>
+      <Filter>Data Management</Filter>
     </ClInclude>
     <ClInclude Include="spline\CSplineSceneObject.h">
       <Filter>Spline</Filter>
@@ -147,6 +147,9 @@
     <ClInclude Include="CToroidalUpdater.h">
       <Filter>SceneObjects</Filter>
     </ClInclude>
+    <ClInclude Include="CatalinaOutline.h">
+      <Filter>Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Spline">
@@ -155,14 +158,17 @@
     <Filter Include="Shark">
       <UniqueIdentifier>{236569cd-3439-4b40-b689-0ed2258a2c34}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Data">
-      <UniqueIdentifier>{ae1ddff5-dfba-4fc9-93b1-1e802c403d29}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Widgets">
       <UniqueIdentifier>{1d9096cc-a137-4742-8b7b-9f4493c992c5}</UniqueIdentifier>
     </Filter>
     <Filter Include="SceneObjects">
       <UniqueIdentifier>{d2476ebe-2ff8-44c6-96d8-a2d20c853c09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data Management">
+      <UniqueIdentifier>{ae1ddff5-dfba-4fc9-93b1-1e802c403d29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{4c12cc30-1c21-4307-bb7d-f1adef08e91e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
