@@ -33,9 +33,9 @@ ion::Scene::CSimpleMesh * CreatePolygonMesh()
 		uint const Start = (uint) Mesh->Vertices.size();
 		vec3f const Normal = vec3f(0, 1, 0);
 
-		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].A.Y - 33.3f) * 800, 0, (Triangles[i].A.X + 118.3f) * 800), Normal));
-		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].B.Y - 33.3f) * 800, 0, (Triangles[i].B.X + 118.3f) * 800), Normal));
-		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].C.Y - 33.3f) * 800, 0, (Triangles[i].C.X + 118.3f) * 800), Normal));
+		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].A.X - 33.3f) * 800, 0, (Triangles[i].A.Y + 118.3f) * 800), Normal));
+		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].B.X - 33.3f) * 800, 0, (Triangles[i].B.Y + 118.3f) * 800), Normal));
+		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].C.X - 33.3f) * 800, 0, (Triangles[i].C.Y + 118.3f) * 800), Normal));
 		//Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f(Triangles[i].B.X, 0, Triangles[i].B.Y), Normal));
 		//Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f(Triangles[i].C.X, 0, Triangles[i].C.Y), Normal));
 
@@ -163,7 +163,7 @@ void CViewerState::Init()
 	{
 		CParticle p;
 		p.Color = color3f(0.f, 1.f, (float) ndx / (float) Sum);
-		p.Position = vec3f((CatPt.Y - 33.3f) * 800, 0.0f, (CatPt.X + 118.3f) * 800);
+		p.Position = vec3f((CatPt.X - 33.3f) * 800, 0.0f, (CatPt.Y + 118.3f) * 800);
 
 		ParticleSystem->Particles.push_back(p);
 		ndx ++;

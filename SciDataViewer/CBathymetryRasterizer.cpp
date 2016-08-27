@@ -346,7 +346,7 @@ void CBathymetryRasterizer::RasterizeImage()
 
 			for (auto const & Triangle : Triangles)
 			{
-				if (ion::IsPointInTriangle(Triangle.A.YX(), Triangle.B.YX(), Triangle.C.YX(), Point))
+				if (ion::IsPointInTriangle(Triangle.A, Triangle.B, Triangle.C, Point))
 				{
 					InsideTriangle = true;
 					break;
