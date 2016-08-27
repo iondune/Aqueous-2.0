@@ -7,15 +7,16 @@
 using namespace ion;
 
 
+CBathymetryRasterizer::CBathymetryRasterizer()
+{
+	Buckets = new SPixelBucket[ImageSize * ImageSize];
+}
+
 void CBathymetryRasterizer::ConvertAndRasterize()
 {
-	static uint const ImageSize = 4096;
-
-	Buckets = new SPixelBucket[ImageSize * ImageSize];
-
 	CopySourcePointsToBuckets();
-	//ClassifyGroups();
-	//FillGroups();
+	ClassifyGroups();
+	FillGroups();
 	RasterizeImage();
 }
 
@@ -169,6 +170,39 @@ void CBathymetryRasterizer::ClassifyGroups()
 	CStopWatch sw;
 	sw.Start();
 
+	vector<STriangle2D> Triangles;
+	AddAtEnd(Triangles, TriangulateEarClipping(CatalinaOutline));
+	AddAtEnd(Triangles, TriangulateEarClipping(BirdRock));
+
+	for (int i = 0; i < ImageSize; ++ i)
+	{
+		for (int j = 0; j < ImageSize; ++ j)
+		{
+			bool InsideTriangle = false;
+			vec2f const Point = vec2f(
+				RegionXCorner + ((float) i / (float) (ImageSize - 1)) * RegionXSize,
+				RegionYCorner + ((float) j / (float) (ImageSize - 1)) * RegionYSize
+			);
+
+			for (auto const & Triangle : Triangles)
+			{
+				if (ion::IsPointInTriangle(Triangle.A, Triangle.C, Triangle.B, Point))
+				{
+					InsideTriangle = true;
+					break;
+				}
+			}
+
+			if (InsideTriangle)
+			{
+				auto Bucket = Helper_GetBucket(i, j);
+				Bucket->Tag = -1;
+				Bucket->Count = 1;
+				Bucket->Sum = 0;
+			}
+		}
+	}
+
 	int tag = 1;
 	TagGroups = new STagInfo[ImageSize * ImageSize]();
 	for (int i = 0; i < ImageSize; ++ i)
@@ -194,6 +228,10 @@ void CBathymetryRasterizer::ClassifyGroups()
 	Log::Info("Classify groups took %.3f", sw.Stop());
 }
 
+void CBathymetryRasterizer::DetectBridgeGroups()
+{
+}
+
 vector<vec2i> CBathymetryRasterizer::Helper_GetAllMatchingGroup(int const Tag)
 {
 	vector<vec2i> Group;
@@ -213,9 +251,8 @@ vector<vec2i> CBathymetryRasterizer::Helper_GetAllMatchingGroup(int const Tag)
 	return Group;
 }
 
-void CBathymetryRasterizer::Helper_EstimatePixelValue(vec2i const & index)
+void CBathymetryRasterizer::Helper_EstimatePixelValue(vec2i const & index, int const KernelSize)
 {
-	static int const KernelSize = 64;
 	static int const HalfKernel = KernelSize / 2;
 
 	float Estimate = 0;
@@ -229,7 +266,7 @@ void CBathymetryRasterizer::Helper_EstimatePixelValue(vec2i const & index)
 			if (i != 0 || j != 0)
 			{
 				SPixelBucket * Bucket = Helper_GetBucket(index.X + i, index.Y + j);
-				if (Bucket && Bucket->Count)
+				if (Bucket && Bucket->Count && ! Bucket->Approximate)
 				{
 					float Weight = 1 + Sqrt((float) Sq(HalfKernel - Abs(i)) + (float) Sq(HalfKernel - Abs(j))) * 5.0f;
 					Estimate += Bucket->GetValue() * Weight;
@@ -240,11 +277,12 @@ void CBathymetryRasterizer::Helper_EstimatePixelValue(vec2i const & index)
 		}
 	}
 
-	if (NumSamples > 16)
+	if (NumSamples > 4)
 	{
 		SPixelBucket * Bucket = Helper_GetBucket(index);
 		Bucket->Count = 1;
 		Bucket->Sum = Estimate / (float) Count;
+		Bucket->Approximate = true;
 	}
 }
 
@@ -258,12 +296,14 @@ void CBathymetryRasterizer::Helper_ReconstructTagGroup(STagInfo & Group, int con
 	// Also potentially just don't use any approximate values at all for hole filling
 	//
 
+	int KernelSize = 4;
+
 	vector<vec2i> Queue = Helper_GetAllMatchingGroup(Tag);
-	while (Queue.size())
+	while (Queue.size() && KernelSize <= 512)
 	{
 		for (auto const & Spot : Queue)
 		{
-			Helper_EstimatePixelValue(Spot);
+			Helper_EstimatePixelValue(Spot, KernelSize);
 		}
 
 		for (auto it = Queue.begin(); it != Queue.end(); )
@@ -277,6 +317,8 @@ void CBathymetryRasterizer::Helper_ReconstructTagGroup(STagInfo & Group, int con
 				it ++;
 			}
 		}
+
+		KernelSize *= 2;
 	}
 }
 
@@ -288,7 +330,7 @@ void CBathymetryRasterizer::FillGroups()
 	int tag = 1;
 	while (TagGroups[tag].count)
 	{
-		if (TagGroups[tag].count < 16384)
+		//if (TagGroups[tag].count < 98)
 		{
 			Helper_ReconstructTagGroup(TagGroups[tag], tag);
 		}
@@ -305,10 +347,6 @@ void CBathymetryRasterizer::RasterizeImage()
 
 	int LowPixel = 255;
 	int HighPixel = 0;
-
-	vector<STriangle2D> Triangles;
-	AddAtEnd(Triangles, TriangulateEarClipping(CatalinaOutline));
-	AddAtEnd(Triangles, TriangulateEarClipping(BirdRock));
 
 	byte * ImageData = new byte[ImageSize * ImageSize * 3];
 	for (int i = 0; i < ImageSize; ++ i)
@@ -338,22 +376,7 @@ void CBathymetryRasterizer::RasterizeImage()
 				ImageData[Index * 3 + 2] = 255;
 			}
 
-			bool InsideTriangle = false;
-			vec2f const Point = vec2f(
-				RegionXCorner + ((float) i / (float) (ImageSize - 1)) * RegionXSize,
-				RegionYCorner + ((float) j / (float) (ImageSize - 1)) * RegionYSize
-			);
-
-			for (auto const & Triangle : Triangles)
-			{
-				if (ion::IsPointInTriangle(Triangle.A, Triangle.C, Triangle.B, Point))
-				{
-					InsideTriangle = true;
-					break;
-				}
-			}
-
-			if (InsideTriangle)
+			if (Buckets[Index].Tag == -1)
 			{
 				ImageData[Index * 3 + 1] = 255;
 			}

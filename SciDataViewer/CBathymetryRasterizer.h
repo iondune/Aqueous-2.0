@@ -17,7 +17,14 @@ public:
 	float RegionYSize = 0.03f;
 	string OutputName = "Output.png";
 
+	CBathymetryRasterizer();
+
 	void ConvertAndRasterize();
+
+	void ClassifyGroups();
+	void DetectBridgeGroups();
+	void FillGroups();
+	void RasterizeImage();
 
 	bool IsPointInBounds(vec2f const & Position);
 	float GetHeightAtPoint(vec2f const & Position);
@@ -29,6 +36,7 @@ protected:
 		int Count = 0;
 		float Sum = 0;
 		int Tag = 0;
+		bool Approximate = false;
 
 		float GetValue() const
 		{
@@ -45,6 +53,7 @@ protected:
 		int count = 0;
 		int start_x = -1;
 		int start_y = -1;
+		bool IsBridge = false;
 	};
 	STagInfo * TagGroups = nullptr;
 
@@ -53,13 +62,9 @@ protected:
 
 	int Helper_CheckBucketTag(vector<vec2i> & Queue, int const u, int const v, int const tag);
 	int Helper_FillBucketTags(int const i, int const j, int const tag);
-	void ClassifyGroups();
 
 	vector<vec2i> Helper_GetAllMatchingGroup(int const Tag);
-	void Helper_EstimatePixelValue(vec2i const & index);
+	void Helper_EstimatePixelValue(vec2i const & index, int const KernelSize);
 	void Helper_ReconstructTagGroup(STagInfo & Group, int const Tag);
-	void FillGroups();
-
-	void RasterizeImage();
 
 };

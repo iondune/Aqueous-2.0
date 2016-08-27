@@ -204,7 +204,7 @@ void CViewerState::Init()
 	br_catalina->RegionYCorner = -118.7f;
 	br_catalina->RegionXSize = 0.5f;
 	br_catalina->RegionYSize = 0.5f;
-	br_catalina->ConvertAndRasterize();
+	//br_catalina->ConvertAndRasterize();
 
 	CBathymetryRasterizer * br_region = new CBathymetryRasterizer();
 	br_region->SourceElevationPostings = RegionPoints;
@@ -214,7 +214,7 @@ void CViewerState::Init()
 	br_region->RegionYCorner = -122.7f;
 	br_region->RegionXSize = 8.0f;
 	br_region->RegionYSize = 8.0f;
-	br_region->ConvertAndRasterize();
+	//br_region->ConvertAndRasterize();
 
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)
@@ -308,7 +308,7 @@ void CViewerState::Init()
 	GeometryClipmapsObject->Shader = Application->GeometryClipmapsShader;
 	GeometryClipmapsObject->UseCameraPosition = true;
 	SimpleHeight * HeightInput = new SimpleHeight();
-	//HeightInput->Layers.push_back(br_hires);
+	HeightInput->Layers.push_back(br_hires);
 	//HeightInput->Layers.push_back(br_catalina);
 	//HeightInput->Layers.push_back(br_region);
 	GeometryClipmapsObject->HeightInput = HeightInput;
