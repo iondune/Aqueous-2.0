@@ -315,7 +315,7 @@ void CBathymetryRasterizer::RasterizeImage()
 	{
 		for (int j = 0; j < ImageSize; ++ j)
 		{
-			int const Index = i + j * ImageSize;
+			int const Index = ImageSize * i + j;
 
 			if (Buckets[Index].Count > 0)
 			{
