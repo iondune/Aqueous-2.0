@@ -306,9 +306,9 @@ void CBathymetryRasterizer::RasterizeImage()
 	int LowPixel = 255;
 	int HighPixel = 0;
 
-	vector<vec2f> Outline = CatalinaOutline;
-	//std::reverse(Outline.begin(), Outline.end());
-	vector<STriangle2D> const Triangles = TriangulateEarClipping(Outline);
+	vector<STriangle2D> Triangles;
+	AddAtEnd(Triangles, TriangulateEarClipping(CatalinaOutline));
+	AddAtEnd(Triangles, TriangulateEarClipping(BirdRock));
 
 	byte * ImageData = new byte[ImageSize * ImageSize * 3];
 	for (int i = 0; i < ImageSize; ++ i)

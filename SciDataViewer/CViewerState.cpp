@@ -20,13 +20,11 @@ using namespace ion::Graphics;
 using namespace ion::Scene;
 
 
-ion::Scene::CSimpleMesh * CreatePolygonMesh()
+ion::Scene::CSimpleMesh * CreatePolygonMesh(vector<vec2f> const & Points)
 {
 	ion::Scene::CSimpleMesh * Mesh = new ion::Scene::CSimpleMesh();
 
-	vector<vec2f> Outline = CatalinaOutline;
-	//std::reverse(Outline.begin(), Outline.end());
-	vector<STriangle2D> const Triangles = TriangulateEarClipping(Outline);
+	vector<STriangle2D> const Triangles = TriangulateEarClipping(Points);
 
 	for (size_t i = 0; i < Triangles.size(); i ++)
 	{
@@ -36,8 +34,6 @@ ion::Scene::CSimpleMesh * CreatePolygonMesh()
 		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].A.X - 33.3f) * 800, 0, (Triangles[i].A.Y + 118.3f) * 800), Normal));
 		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].B.X - 33.3f) * 800, 0, (Triangles[i].B.Y + 118.3f) * 800), Normal));
 		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].C.X - 33.3f) * 800, 0, (Triangles[i].C.Y + 118.3f) * 800), Normal));
-		//Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f(Triangles[i].B.X, 0, Triangles[i].B.Y), Normal));
-		//Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f(Triangles[i].C.X, 0, Triangles[i].C.Y), Normal));
 
 		CSimpleMesh::STriangle Triangle;
 		Triangle.Indices[0] = Start + 0;
@@ -403,8 +399,14 @@ void CViewerState::Init()
 	CSimpleMeshSceneObject * SceneObject4 = new CSimpleMeshSceneObject();
 	SceneObject4->SetShader(Application->DiffuseShader);
 	//SceneObject4->SetFeatureEnabled(EDrawFeature::Wireframe, true);
-	SceneObject4->SetMesh(CreatePolygonMesh());
+	SceneObject4->SetMesh(CreatePolygonMesh(CatalinaOutline));
 	DefaultRenderPass->AddSceneObject(SceneObject4);
+
+	CSimpleMeshSceneObject * SceneObject5 = new CSimpleMeshSceneObject();
+	SceneObject5->SetShader(Application->DiffuseShader);
+	//SceneObject4->SetFeatureEnabled(EDrawFeature::Wireframe, true);
+	SceneObject5->SetMesh(CreatePolygonMesh(BirdRock));
+	DefaultRenderPass->AddSceneObject(SceneObject5);
 }
 
 void CViewerState::Update(float const Elapsed)
