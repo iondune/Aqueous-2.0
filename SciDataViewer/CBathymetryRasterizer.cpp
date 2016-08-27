@@ -307,7 +307,7 @@ void CBathymetryRasterizer::RasterizeImage()
 	int HighPixel = 0;
 
 	vector<vec2f> Outline = CatalinaOutline;
-	std::reverse(Outline.begin(), Outline.end());
+	//std::reverse(Outline.begin(), Outline.end());
 	vector<STriangle2D> const Triangles = TriangulateEarClipping(Outline);
 
 	byte * ImageData = new byte[ImageSize * ImageSize * 3];
@@ -346,7 +346,7 @@ void CBathymetryRasterizer::RasterizeImage()
 
 			for (auto const & Triangle : Triangles)
 			{
-				if (ion::IsPointInTriangle(Triangle.A, Triangle.B, Triangle.C, Point))
+				if (ion::IsPointInTriangle(Triangle.A, Triangle.C, Triangle.B, Point))
 				{
 					InsideTriangle = true;
 					break;

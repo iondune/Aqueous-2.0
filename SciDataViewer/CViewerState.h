@@ -35,6 +35,7 @@ private:
 
 	SingletonPointer<ion::CSceneManager> SceneManager;
 	SingletonPointer<ion::CAssetManager> AssetManager;
+	SingletonPointer<ion::CGUIManager> GUIManager;
 	SingletonPointer<ion::CGraphicsAPI> GraphicsAPI;
 
 	ion::Scene::CRenderPass * DefaultRenderPass = nullptr;
@@ -62,6 +63,7 @@ private:
 	SharedPointer<CKeySpline> Spline, Spline2;
 	float totalTime;
 
+	vector<pair<vec3f, string>> Text3D;
 
 	CCameraWindowWidget * CameraWindow = nullptr;
 	CPointsWindowWidget * PointsWindow = nullptr;

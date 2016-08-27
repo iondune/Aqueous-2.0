@@ -25,7 +25,7 @@ ion::Scene::CSimpleMesh * CreatePolygonMesh()
 	ion::Scene::CSimpleMesh * Mesh = new ion::Scene::CSimpleMesh();
 
 	vector<vec2f> Outline = CatalinaOutline;
-	std::reverse(Outline.begin(), Outline.end());
+	//std::reverse(Outline.begin(), Outline.end());
 	vector<STriangle2D> const Triangles = TriangulateEarClipping(Outline);
 
 	for (size_t i = 0; i < Triangles.size(); i ++)
@@ -159,13 +159,15 @@ void CViewerState::Init()
 
 	size_t ndx = 0;
 	size_t Sum = CatalinaOutline.size() - 1;
-	for (auto const & CatPt : CatalinaOutline)
+	for (vec2f const & CatPt : CatalinaOutline)
 	{
 		CParticle p;
 		p.Color = color3f(0.f, 1.f, (float) ndx / (float) Sum);
 		p.Position = vec3f((CatPt.X - 33.3f) * 800, 0.0f, (CatPt.Y + 118.3f) * 800);
 
+		Text3D.push_back(make_pair(p.Position, String::Build("%d", ndx)));
 		ParticleSystem->Particles.push_back(p);
+
 		ndx ++;
 	}
 
@@ -465,6 +467,16 @@ void CViewerState::GUI()
 	PointsWindow->DrawIfVisible();
 	WaterSurface->GUI();
 	Volume->GUI();
+
+	for (auto Pair : Text3D)
+	{
+		bool InFront;
+		vec2i Coords = DebugCamera->GetScreenCoordinates(Pair.first, Application->GetWindow()->GetSize(), &InFront);
+		if (InFront)
+		{
+			GUIManager->Text(Coords, Colors::White, Pair.second.c_str());
+		}
+	}
 }
 
 void CViewerState::OnEvent(IEvent & Event)
