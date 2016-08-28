@@ -16,7 +16,8 @@ void CBathymetryRasterizer::ConvertAndRasterize()
 {
 	CopySourcePointsToBuckets();
 	ClassifyGroups();
-	FillGroups();
+	DetectBridgeGroups();
+	//FillGroups();
 	RasterizeImage();
 }
 
@@ -230,6 +231,72 @@ void CBathymetryRasterizer::ClassifyGroups()
 
 void CBathymetryRasterizer::DetectBridgeGroups()
 {
+	CStopWatch sw;
+	sw.Start();
+
+	static vector<vec2i> const Neighbors =
+	{
+		vec2i(-1, 0),
+		vec2i(1, 0),
+		vec2i(0, -1),
+		vec2i(0, 1),
+	};
+
+	int Tag = 1;
+	while (TagGroups[Tag].count)
+	{
+		vector<vec2i> const Group = Helper_GetAllMatchingGroup(Tag);
+
+		bool NextToData = false;
+		bool NextToLand = false;
+		vec2i LandPt, DataPt;
+
+		for (auto Tile : Group)
+		{
+			for (auto Neighbor : Neighbors)
+			{
+				auto Bucket = Helper_GetBucket(Tile + Neighbor);
+
+				if (Bucket)
+				{
+					if (Bucket->Count > 0)
+					{
+						NextToData = true;
+						DataPt = Tile;
+						if (NextToLand)
+						{
+							break;
+						}
+					}
+
+					if (Bucket->Tag == -1)
+					{
+						NextToLand = true;
+						LandPt = Tile;
+						if (NextToData)
+						{
+							break;
+						}
+					}
+				}
+			}
+
+			if (NextToData && NextToLand)
+			{
+				break;
+			}
+		}
+
+		if (NextToData && NextToLand)
+		{
+			TagGroups[Tag].IsBridge = true;
+			Log::Info("      Tag group %d is bridge because {%d, %d} next to Data and {%d, %d} next to Land", Tag, DataPt.X, DataPt.Y, LandPt.X, LandPt.Y);
+		}
+
+		Tag ++;
+	}
+
+	Log::Info("Detect bridge groups took %.3f", sw.Stop());
 }
 
 vector<vec2i> CBathymetryRasterizer::Helper_GetAllMatchingGroup(int const Tag)
@@ -253,7 +320,7 @@ vector<vec2i> CBathymetryRasterizer::Helper_GetAllMatchingGroup(int const Tag)
 
 void CBathymetryRasterizer::Helper_EstimatePixelValue(vec2i const & index, int const KernelSize)
 {
-	static int const HalfKernel = KernelSize / 2;
+	int const HalfKernel = KernelSize / 2;
 
 	float Estimate = 0;
 	float Count = 0;
@@ -318,7 +385,18 @@ void CBathymetryRasterizer::Helper_ReconstructTagGroup(STagInfo & Group, int con
 			}
 		}
 
-		KernelSize *= 2;
+		//if (KernelSize < 32)
+		//{
+			KernelSize += 2;
+		//}
+		//else if (KernelSize < 64)
+		//{
+		//	KernelSize += 4;
+		//}
+		//else
+		//{
+		//	KernelSize += 64;
+		//}
 	}
 }
 
@@ -379,6 +457,14 @@ void CBathymetryRasterizer::RasterizeImage()
 			if (Buckets[Index].Tag == -1)
 			{
 				ImageData[Index * 3 + 1] = 255;
+			}
+			else if (Buckets[Index].Tag > 0)
+			{
+				if (TagGroups[Buckets[Index].Tag].IsBridge)
+				{
+					ImageData[Index * 3 + 0] = 255;
+					ImageData[Index * 3 + 2] = 128;
+				}
 			}
 		}
 	}
