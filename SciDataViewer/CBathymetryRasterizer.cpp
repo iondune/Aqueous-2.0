@@ -187,7 +187,7 @@ void CBathymetryRasterizer::ClassifyGroups()
 
 			for (auto const & Triangle : Triangles)
 			{
-				if (ion::IsPointInTriangle(Triangle.A, Triangle.C, Triangle.B, Point))
+				if (ion::IsPointInOrOnTriangle(Triangle.A, Triangle.C, Triangle.B, Point))
 				{
 					InsideTriangle = true;
 					break;
