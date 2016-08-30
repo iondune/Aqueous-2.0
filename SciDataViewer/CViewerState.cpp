@@ -172,7 +172,7 @@ void CViewerState::Init()
 
 	vector<vec3f> RegionPoints = LoadPointsFromESRIASCII("Data/GEBCO2014_-122.3058_30.5922_-115.9466_36.0291_30Sec_ESRIASCII.asc");
 
-	vector<vec3f> HiResPoints = PointsToParticles("Data/CI_Block02_2m_xyz.txt", Colors::Orange, true);
+	//vector<vec3f> HiResPoints = PointsToParticles("Data/CI_Block02_2m_xyz.txt", Colors::Orange, true);
 
 	vector<vec3f> CatalinaPoints;
 	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block01_5mall_xyz.txt", false));
@@ -191,10 +191,12 @@ void CViewerState::Init()
 	Log::Info("Load points from files took %.3f", sw.Stop());
 
 	CBathymetryRasterizer * br_hires = new CBathymetryRasterizer();
-	br_hires->SourceElevationPostings = HiResPoints;
+	//br_hires->SourceElevationPostings = HiResPoints;
 	br_hires->ImageSize = 768;
 	br_hires->OutputName = "HiRes.png";
-	br_hires->ConvertAndRasterize();
+	//br_hires->ConvertAndRasterize();
+	//br_hires->WriteToFile("HiRes.bin");
+	br_hires->ReadFromFile("HiRes.bin");
 
 	CBathymetryRasterizer * br_catalina = new CBathymetryRasterizer();
 	br_catalina->SourceElevationPostings = CatalinaPoints;

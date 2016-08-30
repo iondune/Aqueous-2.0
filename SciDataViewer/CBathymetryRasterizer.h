@@ -30,6 +30,9 @@ public:
 	bool IsPointInBounds(vec2f const & Position);
 	float GetHeightAtPoint(vec2f const & Position);
 
+	void WriteToFile(string const & FileName);
+	void ReadFromFile(string const & FileName);
+
 protected:
 
 	struct SPixelBucket

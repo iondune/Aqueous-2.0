@@ -88,6 +88,34 @@ float CBathymetryRasterizer::GetHeightAtPoint(vec2f const & Position)
 
 }
 
+void CBathymetryRasterizer::WriteToFile(string const & FileName)
+{
+	FILE * file = nullptr;
+	file = fopen(FileName.c_str(), "wb");
+
+	fwrite(& ImageSize, sizeof(ImageSize), 1, file);
+	fwrite(& RegionXCorner, sizeof(RegionXCorner), 1, file);
+	fwrite(& RegionYCorner, sizeof(RegionYCorner), 1, file);
+	fwrite(& RegionXSize, sizeof(RegionXSize), 1, file);
+	fwrite(& RegionYSize, sizeof(RegionYSize), 1, file);
+
+	fwrite(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
+}
+
+void CBathymetryRasterizer::ReadFromFile(string const & FileName)
+{
+	FILE * file = nullptr;
+	file = fopen(FileName.c_str(), "rb");
+
+	fread(& ImageSize, sizeof(ImageSize), 1, file);
+	fread(& RegionXCorner, sizeof(RegionXCorner), 1, file);
+	fread(& RegionYCorner, sizeof(RegionYCorner), 1, file);
+	fread(& RegionXSize, sizeof(RegionXSize), 1, file);
+	fread(& RegionYSize, sizeof(RegionYSize), 1, file);
+
+	fread(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
+}
+
 CBathymetryRasterizer::SPixelBucket * CBathymetryRasterizer::Helper_GetBucket(int const i, int const j)
 {
 	if (i >= 0 && i < ImageSize &&
