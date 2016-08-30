@@ -18,7 +18,7 @@ void CBathymetryRasterizer::ConvertAndRasterize()
 	ClassifyGroups();
 	DetectBridgeGroups();
 	FillBridgeGroups();
-	//FillGroups();
+	FillGroups();
 	RasterizeImage();
 }
 
@@ -554,7 +554,7 @@ void CBathymetryRasterizer::FillGroups()
 	int tag = 1;
 	while (TagGroups[tag].count)
 	{
-		//if (TagGroups[tag].count < 98)
+		if (TagGroups[tag].count < 96 && ! TagGroups[tag].IsBridge)
 		{
 			Helper_ReconstructTagGroup(TagGroups[tag], tag);
 		}
