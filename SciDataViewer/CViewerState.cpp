@@ -275,12 +275,13 @@ void CViewerState::Init()
 		vector<CBathymetryRasterizer *> Layers;
 
 		float LastHeight = 0;
+		float Scale = 1;
 
 		float GetTerrainHeight(vec2i const & Position)
 		{
 			LastHeight = -128;
 
-			vec2f const Pos = vec2f(Position) / (19200.f * 25.f) + vec2f(33.445f, -118.4865f);
+			vec2f const Pos = vec2f(Position) * Scale / (19200.f * 25.f) + vec2f(33.445f, -118.4865f);
 
 			for (auto Layer : Layers)
 			{
@@ -307,12 +308,14 @@ void CViewerState::Init()
 	GeometryClipmapsObject = new CGeometryClipmapsSceneObject();
 	GeometryClipmapsObject->Shader = Application->GeometryClipmapsShader;
 	GeometryClipmapsObject->UseCameraPosition = true;
+	float const ClipmapsScale = 20.f;
 	SimpleHeight * HeightInput = new SimpleHeight();
+	HeightInput->Scale = ClipmapsScale;
 	HeightInput->Layers.push_back(br_hires);
 	//HeightInput->Layers.push_back(br_catalina);
 	//HeightInput->Layers.push_back(br_region);
 	GeometryClipmapsObject->HeightInput = HeightInput;
-	GeometryClipmapsObject->SetScale(vec3f(0.1f, 1.f, 0.1f));
+	GeometryClipmapsObject->SetScale(vec3f(ClipmapsScale, 1.f, ClipmapsScale));
 	DefaultRenderPass->AddSceneObject(GeometryClipmapsObject);
 
 	GeometryClipmapsObject->Load(DefaultRenderPass);

@@ -183,5 +183,6 @@ void main()
 	// Material params
 	const float Ambient = 0.4;
 	const float Diffuse = 0.6;
-	outColor = vec4(vec3(Ambient + Diffuse * Lighting) * Color * vec3(1.0 - getOcclusion(0.2) * 0.1), 1.0);
+	// outColor = vec4(vec3(Ambient + Diffuse * Lighting) * Color * vec3(1.0 - getOcclusion(0.2 / 20.0) * 0.000), 1.0);
+	outColor = vec4(vec3(1.0 - getOcclusion(0.2 / 20.0) * 0.1), 1.0);
 }

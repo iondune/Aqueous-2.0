@@ -51,13 +51,14 @@ float CBathymetryRasterizer::GetHeightAtPoint(vec2f const & Position)
 		(Position.X - RegionXCorner) / RegionXSize,
 		(Position.Y - RegionYCorner) / RegionYSize) * (float) ImageSize;
 
-	int i = Clamp((int) RealIndex.X, 0, ImageSize - 1);
-	int j = Clamp((int) RealIndex.Y, 0, ImageSize - 1);
+	int const i = Clamp((int) RealIndex.X, 0, ImageSize - 1);
+	int const j = Clamp((int) RealIndex.Y, 0, ImageSize - 1);
 
 	auto Bucket = Helper_GetBucket(i, j);
 	if (Bucket && Bucket->Count)
 	{
-		float Value = Bucket->GetValue();
+		float const Value = Bucket->GetValue();
+		return Value;
 
 		float Data[2][2] =
 		{

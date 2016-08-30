@@ -122,10 +122,11 @@ void CGeometryClipmapsSceneObject::Draw(ion::Scene::CRenderPass * RenderPass)
 
 	if (UseCameraPosition)
 	{
-		vec3f CameraPosition = ActiveCamera->GetPosition();
+		vec3f TransformedPosition = ActiveCamera->GetPosition();
+		TransformedPosition.Transform(glm::inverse(Transformation.Get()), 1.f);
 		ActiveCameraPosition = vec2i(
-			(int) std::floor(CameraPosition.X),
-			(int) std::floor(CameraPosition.Z));
+			(int) std::floor(TransformedPosition.X),
+			(int) std::floor(TransformedPosition.Z));
 	}
 
 	///////////////////////////////////////////////////////////
