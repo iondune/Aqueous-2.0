@@ -23,6 +23,7 @@ public:
 
 	void ClassifyGroups();
 	void DetectBridgeGroups();
+	void FillBridgeGroups();
 	void FillGroups();
 	void RasterizeImage();
 
@@ -65,6 +66,7 @@ protected:
 
 	vector<vec2i> Helper_GetAllMatchingGroup(int const Tag);
 	void Helper_EstimatePixelValue(vec2i const & index, int const KernelSize);
+	void Helper_EstimatePixelValueBridge(vec2i const & index, int const KernelSize, int const MinSamples);
 	void Helper_ReconstructTagGroup(STagInfo & Group, int const Tag);
 
 };

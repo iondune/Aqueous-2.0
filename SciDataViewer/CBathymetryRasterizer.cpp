@@ -17,6 +17,7 @@ void CBathymetryRasterizer::ConvertAndRasterize()
 	CopySourcePointsToBuckets();
 	ClassifyGroups();
 	DetectBridgeGroups();
+	FillBridgeGroups();
 	//FillGroups();
 	RasterizeImage();
 }
@@ -299,6 +300,59 @@ void CBathymetryRasterizer::DetectBridgeGroups()
 	Log::Info("Detect bridge groups took %.3f", sw.Stop());
 }
 
+void CBathymetryRasterizer::FillBridgeGroups()
+{
+	CStopWatch sw;
+	sw.Start();
+
+	static vector<vec2i> const Neighbors =
+	{
+		vec2i(-1, 0),
+		vec2i(1, 0),
+		vec2i(0, -1),
+		vec2i(0, 1),
+	};
+
+	int Tag = 1;
+	while (TagGroups[Tag].count)
+	{
+		if (TagGroups[Tag].IsBridge)
+		{
+			vector<vec2i> Queue = Helper_GetAllMatchingGroup(Tag);
+
+			int KernelSize = 4;
+			int MinSamples = 2;
+
+			while (Queue.size() && KernelSize <= 512)
+			{
+				for (auto const & Spot : Queue)
+				{
+					Helper_EstimatePixelValueBridge(Spot, KernelSize, MinSamples);
+				}
+
+				for (auto it = Queue.begin(); it != Queue.end(); )
+				{
+					if (Helper_GetBucket(*it)->Count > 0)
+					{
+						it = Queue.erase(it);
+					}
+					else
+					{
+						it ++;
+					}
+				}
+				
+				KernelSize += 2;
+				MinSamples = 4;
+			}
+		}
+
+		Tag ++;
+	}
+
+	Log::Info("Fill bridge groups took %.3f", sw.Stop());
+}
+
 vector<vec2i> CBathymetryRasterizer::Helper_GetAllMatchingGroup(int const Tag)
 {
 	vector<vec2i> Group;
@@ -353,6 +407,69 @@ void CBathymetryRasterizer::Helper_EstimatePixelValue(vec2i const & index, int c
 	}
 }
 
+void CBathymetryRasterizer::Helper_EstimatePixelValueBridge(vec2i const & index, int const KernelSize, int const MinSamples)
+{
+	static vector<pair<float, float>> BathyEstimates;
+	static vector<float> LandDistances;
+
+	BathyEstimates.clear();
+	LandDistances.clear();
+
+	int const HalfKernel = KernelSize / 2;
+
+	for (int i = -HalfKernel; i <= HalfKernel; ++ i)
+	{
+		for (int j = -HalfKernel; j <= HalfKernel; ++ j)
+		{
+			if (i != 0 || j != 0)
+			{
+				float const Distance = (float) Sq(i) + (float) Sq(j);
+
+				SPixelBucket * Bucket = Helper_GetBucket(index.X + i, index.Y + j);
+
+				if (Bucket && Bucket->Count && ! Bucket->Approximate && Bucket->Tag == 0)
+				{
+					BathyEstimates.push_back(make_pair(Distance, Bucket->GetValue()));
+				}
+
+				if (Bucket && Bucket->Tag == -1)
+				{
+					LandDistances.push_back(Distance);
+				}
+			}
+		}
+	}
+
+	if ((int) BathyEstimates.size() >= MinSamples && (int) LandDistances.size() >= MinSamples)
+	{
+		std::sort(BathyEstimates.begin(), BathyEstimates.end());
+		std::sort(LandDistances.begin(), LandDistances.end());
+
+		BathyEstimates.resize(MinSamples);
+		LandDistances.resize(MinSamples);
+
+		float Weight = 0;
+		float Sum = 0;
+
+		for (auto Estimate : BathyEstimates)
+		{
+			float const w = 1.f / Sqrt(Estimate.first);
+			Weight += w;
+			Sum += Estimate.second * w;
+		}
+
+		for (auto Distance : LandDistances)
+		{
+			Weight += 1.f / Sqrt(Distance);
+		}
+
+		SPixelBucket * Bucket = Helper_GetBucket(index);
+		Bucket->Count = 1;
+		Bucket->Sum = Sum / Weight;
+		Bucket->Approximate = true;
+	}
+}
+
 void CBathymetryRasterizer::Helper_ReconstructTagGroup(STagInfo & Group, int const Tag)
 {
 	//
@@ -387,7 +504,7 @@ void CBathymetryRasterizer::Helper_ReconstructTagGroup(STagInfo & Group, int con
 
 		//if (KernelSize < 32)
 		//{
-			KernelSize += 2;
+			KernelSize *= 2;
 		//}
 		//else if (KernelSize < 64)
 		//{
@@ -458,14 +575,15 @@ void CBathymetryRasterizer::RasterizeImage()
 			{
 				ImageData[Index * 3 + 1] = 255;
 			}
-			else if (Buckets[Index].Tag > 0)
-			{
-				if (TagGroups[Buckets[Index].Tag].IsBridge)
-				{
-					ImageData[Index * 3 + 0] = 255;
-					ImageData[Index * 3 + 2] = 128;
-				}
-			}
+			//else if (Buckets[Index].Tag > 0)
+			//{
+			//	if (TagGroups[Buckets[Index].Tag].IsBridge)
+			//	{
+			//		ImageData[Index * 3 + 1] = ImageData[Index * 3 + 0];
+			//		ImageData[Index * 3 + 0] = 0;
+			//		ImageData[Index * 3 + 2] = 128;
+			//	}
+			//}
 		}
 	}
 
