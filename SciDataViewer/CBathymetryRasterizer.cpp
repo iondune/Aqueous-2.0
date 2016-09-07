@@ -12,13 +12,16 @@ CBathymetryRasterizer::CBathymetryRasterizer()
 	Buckets = new SPixelBucket[ImageSize * ImageSize];
 }
 
-void CBathymetryRasterizer::ConvertAndRasterize()
+void CBathymetryRasterizer::ConvertAndRasterize(bool const Processing)
 {
 	CopySourcePointsToBuckets();
-	ClassifyGroups();
-	DetectBridgeGroups();
-	FillBridgeGroups();
-	FillGroups();
+	if (Processing)
+	{
+		ClassifyGroups();
+		DetectBridgeGroups();
+		FillBridgeGroups();
+		FillGroups();
+	}
 	RasterizeImage();
 }
 

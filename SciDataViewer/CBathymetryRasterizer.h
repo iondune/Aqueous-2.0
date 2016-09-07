@@ -19,7 +19,7 @@ public:
 
 	CBathymetryRasterizer();
 
-	void ConvertAndRasterize();
+	void ConvertAndRasterize(bool const Processing);
 
 	void ClassifyGroups();
 	void DetectBridgeGroups();

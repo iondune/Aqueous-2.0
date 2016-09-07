@@ -170,23 +170,23 @@ void CViewerState::Init()
 	CStopWatch sw;
 	sw.Start();
 
-	vector<vec3f> RegionPoints = LoadPointsFromESRIASCII("Data/GEBCO2014_-122.3058_30.5922_-115.9466_36.0291_30Sec_ESRIASCII.asc");
+	//vector<vec3f> RegionPoints = LoadPointsFromESRIASCII("Data/GEBCO2014_-122.3058_30.5922_-115.9466_36.0291_30Sec_ESRIASCII.asc");
 
 	//vector<vec3f> HiResPoints = PointsToParticles("Data/CI_Block02_2m_xyz.txt", Colors::Orange, true);
 
-	vector<vec3f> CatalinaPoints;
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block01_5mall_xyz.txt", false));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block02_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block03_5mall_xyz.txt", false));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block04_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block05_5mall_xyz.txt", false));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block06_5mall_xyz.txt", false));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block07_5mall_xyz.txt", false));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block08_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block09_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block10_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block11_5mall_xyz.txt", true));
-	AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block12_5mall_xyz.txt", false));
+	//vector<vec3f> CatalinaPoints;
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block01_5mall_xyz.txt", false));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block02_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block03_5mall_xyz.txt", false));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block04_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block05_5mall_xyz.txt", false));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block06_5mall_xyz.txt", false));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block07_5mall_xyz.txt", false));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block08_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block09_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block10_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block11_5mall_xyz.txt", true));
+	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block12_5mall_xyz.txt", false));
 
 	Log::Info("Load points from files took %.3f", sw.Stop());
 
@@ -194,29 +194,29 @@ void CViewerState::Init()
 	//br_hires->SourceElevationPostings = HiResPoints;
 	br_hires->ImageSize = 768;
 	br_hires->OutputName = "HiRes.png";
-	//br_hires->ConvertAndRasterize();
+	//br_hires->ConvertAndRasterize(true);
 	//br_hires->WriteToFile("HiRes.bin");
 	br_hires->ReadFromFile("HiRes.bin");
 
 	CBathymetryRasterizer * br_catalina = new CBathymetryRasterizer();
-	br_catalina->SourceElevationPostings = CatalinaPoints;
+	//br_catalina->SourceElevationPostings = CatalinaPoints;
 	br_catalina->ImageSize = 1024;
 	br_catalina->OutputName = "Catlina.png";
 	br_catalina->RegionXCorner = 33.15f;
 	br_catalina->RegionYCorner = -118.7f;
 	br_catalina->RegionXSize = 0.5f;
 	br_catalina->RegionYSize = 0.5f;
-	//br_catalina->ConvertAndRasterize();
+	//br_catalina->ConvertAndRasterize(true);
 
 	CBathymetryRasterizer * br_region = new CBathymetryRasterizer();
-	br_region->SourceElevationPostings = RegionPoints;
-	br_region->ImageSize = 768;
+	//br_region->SourceElevationPostings = RegionPoints;
+	br_region->ImageSize = 4096;
 	br_region->OutputName = "Region.png";
 	br_region->RegionXCorner = 29.15f;
 	br_region->RegionYCorner = -122.7f;
 	br_region->RegionXSize = 8.0f;
 	br_region->RegionYSize = 8.0f;
-	//br_region->ConvertAndRasterize();
+	//br_region->ConvertAndRasterize(false);
 
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)
@@ -350,7 +350,7 @@ void CViewerState::Init()
 		sprintf(bfr, "Caustics/save.%02d.png", i);
 		CausticFileNames.push_back(string(bfr));
 	}
-	SharedPointer<Graphics::ITexture3D> causticTextures = AssetManager->Load3DTexture(CausticFileNames);
+	//SharedPointer<Graphics::ITexture3D> causticTextures = AssetManager->Load3DTexture(CausticFileNames);
 
 	// Shark
 	COrthographicCamera caustCam(64, 64, 64, 64);
@@ -360,12 +360,12 @@ void CViewerState::Init()
 	SharedPointer<ion::Graphics::IUniform> uCaustVPMatrix =
 		std::make_shared<ion::Graphics::CUniformValue<glm::mat4>>(caustCam.GetProjectionMatrix() * caustCam.GetViewMatrix());
 
-	SharkObject = new SharkSceneObject("Assets/Models/leopardSharkUnparented.dae");
-	SharkObject->SetUniform("uCaustVPMatrix", uCaustVPMatrix);
-	SharkObject->SetTexture("uCausticTexture", causticTextures);
-	SharkObject->SetShader(Application->SharkShader);
-	SharkObject->TriggerReload();
-	DefaultRenderPass->AddSceneObject(SharkObject);
+	//SharkObject = new SharkSceneObject("Assets/Models/leopardSharkUnparented.dae");
+	//SharkObject->SetUniform("uCaustVPMatrix", uCaustVPMatrix);
+	//SharkObject->SetTexture("uCausticTexture", causticTextures);
+	//SharkObject->SetShader(Application->SharkShader);
+	//SharkObject->TriggerReload();
+	//DefaultRenderPass->AddSceneObject(SharkObject);
 
 	//Add texture
 	//
@@ -420,7 +420,7 @@ void CViewerState::Update(float const Elapsed)
 	CopyFrameBuffer->ClearColorAndDepth();
 	totalTime += Elapsed;
 	Transform t = Spline2->TransformAt(totalTime*0.25f);
-	SharkObject->update(*Spline, Elapsed);
+	//SharkObject->update(*Spline, Elapsed);
 
 	//DebugCamera->SetPosition(t.getPosition());
 	//DebugCamera->SetLookAtTarget(vec3f(0,0,0));
