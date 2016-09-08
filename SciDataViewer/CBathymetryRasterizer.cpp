@@ -61,7 +61,6 @@ double CBathymetryRasterizer::GetHeightAtPoint(vec2d const & Position)
 	if (Bucket && Bucket->Count)
 	{
 		double const Value = Bucket->GetValue();
-		return Value;
 
 		double Data[2][2] =
 		{
