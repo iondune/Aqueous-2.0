@@ -4,6 +4,16 @@
 #include <ionEngine.h>
 
 
+class ITerrainHeightSource
+{
+
+public:
+
+	virtual bool IsPointInBounds(vec2f const & Position) = 0;
+	virtual float GetHeightAtPoint(vec2f const & Position) = 0;
+
+};
+
 class CBathymetryRasterizer
 {
 
@@ -71,5 +81,40 @@ protected:
 	void Helper_EstimatePixelValue(vec2i const & index, int const KernelSize);
 	void Helper_EstimatePixelValueBridge(vec2i const & index, int const KernelSize, int const MinSamples);
 	void Helper_ReconstructTagGroup(STagInfo & Group, int const Tag);
+
+};
+
+class CTopographyRasterizer
+{
+
+public:
+
+	struct SPixelBucket
+	{
+		float Value = 0;
+		bool Interior = false;
+	};
+	SPixelBucket * Buckets = nullptr;
+
+	vector<vec2f> SourceLongLatPostings;
+	int ImageSize = 4096;
+	float RegionXCorner = 33.435f;
+	float RegionYCorner = -118.5f;
+	float RegionXSize = 0.03f;
+	float RegionYSize = 0.03f;
+	string OutputName = "Output.png";
+
+	void FillInteriorPoints();
+	void RasterizeImage();
+
+	void WriteToFile(string const & FileName);
+	void ReadFromFile(string const & FileName);
+
+protected:
+
+	SPixelBucket * Helper_GetBucket(int const i, int const j);
+	SPixelBucket * Helper_GetBucket(vec2i const & index);
+
+	float Helper_ClosestEdgeDistance(vec2f const & Point);
 
 };

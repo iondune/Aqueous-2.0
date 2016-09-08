@@ -218,6 +218,18 @@ void CViewerState::Init()
 	br_region->RegionYSize = 8.0f;
 	//br_region->ConvertAndRasterize(false);
 
+
+	CTopographyRasterizer * tr_catalina = new CTopographyRasterizer();
+	tr_catalina->SourceLongLatPostings = CatalinaOutline;
+	tr_catalina->ImageSize = 2048;
+	tr_catalina->OutputName = "CatalinaTopo.png";
+	tr_catalina->RegionXCorner = 33.15f;
+	tr_catalina->RegionYCorner = -118.7f;
+	tr_catalina->RegionXSize = 0.5f;
+	tr_catalina->RegionYSize = 0.5f;
+	tr_catalina->FillInteriorPoints();
+	tr_catalina->RasterizeImage();
+
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)
 	//for (int z = 1; z < 20; ++ z)

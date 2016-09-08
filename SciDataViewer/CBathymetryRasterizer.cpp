@@ -627,3 +627,171 @@ void CBathymetryRasterizer::RasterizeImage()
 
 	Log::Info("Rasterize to image took %.3f", sw.Stop());
 }
+
+float LineSegmentToPointDistance(vec2f const & v, vec2f const & w, vec2f const & p)
+{
+	// Return minimum distance between line segment vw and point p
+	const float l2 = LengthSq(v - w);  // i.e. |w-v|^2 -  avoid a sqrt
+	if (l2 == 0.0) return Length(p - v);   // v == w case
+											// Consider the line extending the segment, parameterized as v + t (w - v).
+											// We find projection of point p onto the line. 
+											// It falls where t = [(p-v) . (w-v)] / |w-v|^2
+											// We clamp t from [0,1] to handle points outside the segment vw.
+	const float t = Max(0.f, Min(1.f, Dot(p - v, w - v) / l2));
+	vec2f const projection = v + t * (w - v);  // Projection falls on the segment
+	return Length(p - projection);
+}
+
+void CTopographyRasterizer::FillInteriorPoints()
+{
+	Buckets = new SPixelBucket[ImageSize * ImageSize];
+
+	vector<STriangle2D> Triangles;
+	AddAtEnd(Triangles, TriangulateEarClipping(CatalinaOutline));
+
+	float ActualMax = 0;
+
+	for (int i = 0; i < ImageSize; ++ i)
+	{
+		for (int j = 0; j < ImageSize; ++ j)
+		{
+			bool InsideTriangle = false;
+			vec2f const Point = vec2f(
+				RegionXCorner + ((float) i / (float) (ImageSize - 1)) * RegionXSize,
+				RegionYCorner + ((float) j / (float) (ImageSize - 1)) * RegionYSize
+			);
+
+			for (auto const & Triangle : Triangles)
+			{
+				if (ion::IsPointInOrOnTriangle(Triangle.A, Triangle.C, Triangle.B, Point))
+				{
+					InsideTriangle = true;
+					break;
+				}
+			}
+
+			if (InsideTriangle)
+			{
+				auto Bucket = Helper_GetBucket(i, j);
+				Bucket->Interior = true;
+				Bucket->Value = Helper_ClosestEdgeDistance(Point);
+
+				ActualMax = Max(ActualMax, Bucket->Value);
+			}
+		}
+	}
+
+	float const IdealMax = 255.f;
+
+	for (int i = 0; i < ImageSize; ++ i)
+	{
+		for (int j = 0; j < ImageSize; ++ j)
+		{
+			auto Bucket = Helper_GetBucket(i, j);
+			Bucket->Value /= ActualMax;
+			Bucket->Value = pow(Bucket->Value, 0.65f);
+			Bucket->Value *= IdealMax;
+		}
+	}
+}
+
+void CTopographyRasterizer::RasterizeImage()
+{
+	CStopWatch sw;
+	sw.Start();
+
+	int LowPixel = 255;
+	int HighPixel = 0;
+
+	byte * ImageData = new byte[ImageSize * ImageSize * 3];
+	for (int i = 0; i < ImageSize; ++ i)
+	{
+		for (int j = 0; j < ImageSize; ++ j)
+		{
+			int const Index = ImageSize * i + j;
+
+			float const Value = Buckets[Index].Value;
+			float const Intensity = 1.0f;
+			int const Pixel = Clamp<int>((int) (Value * Intensity), 0, 255);
+
+			LowPixel = Min(LowPixel, Pixel);
+			HighPixel = Max(HighPixel, Pixel);
+
+			ImageData[Index * 3 + 0] = Pixel;
+			ImageData[Index * 3 + 1] = Pixel;
+			ImageData[Index * 3 + 2] = Pixel;
+			
+		}
+	}
+
+	Log::Info("Low value: %d High Value: %d", LowPixel, HighPixel);
+
+	CImage * Image = new CImage(ImageData, vec2u(ImageSize), 3);
+	Image->FlipY();
+	Image->Write(OutputName);
+
+	Log::Info("Rasterize to image took %.3f", sw.Stop());
+}
+
+void CTopographyRasterizer::WriteToFile(string const & FileName)
+{
+	FILE * file = nullptr;
+	file = fopen(FileName.c_str(), "wb");
+
+	fwrite(& ImageSize, sizeof(ImageSize), 1, file);
+	fwrite(& RegionXCorner, sizeof(RegionXCorner), 1, file);
+	fwrite(& RegionYCorner, sizeof(RegionYCorner), 1, file);
+	fwrite(& RegionXSize, sizeof(RegionXSize), 1, file);
+	fwrite(& RegionYSize, sizeof(RegionYSize), 1, file);
+
+	fwrite(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
+}
+
+void CTopographyRasterizer::ReadFromFile(string const & FileName)
+{
+	FILE * file = nullptr;
+	file = fopen(FileName.c_str(), "rb");
+
+	fread(& ImageSize, sizeof(ImageSize), 1, file);
+	fread(& RegionXCorner, sizeof(RegionXCorner), 1, file);
+	fread(& RegionYCorner, sizeof(RegionYCorner), 1, file);
+	fread(& RegionXSize, sizeof(RegionXSize), 1, file);
+	fread(& RegionYSize, sizeof(RegionYSize), 1, file);
+
+	fread(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
+}
+
+CTopographyRasterizer::SPixelBucket * CTopographyRasterizer::Helper_GetBucket(int const i, int const j)
+{
+	if (i >= 0 && i < ImageSize &&
+		j >= 0 && j < ImageSize)
+	{
+		return & Buckets[ImageSize * i + j];
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+CTopographyRasterizer::SPixelBucket * CTopographyRasterizer::Helper_GetBucket(vec2i const & index)
+{
+	return Helper_GetBucket(index.X, index.Y);
+}
+
+float CTopographyRasterizer::Helper_ClosestEdgeDistance(vec2f const & Point)
+{
+	float MinDistance = NumericLimits<float>::max();
+
+	for (size_t i = 0; i < SourceLongLatPostings.size(); ++ i)
+	{
+		vec2f const v = SourceLongLatPostings[i];
+		vec2f const w = SourceLongLatPostings[(i + 1) % SourceLongLatPostings.size()];
+
+		float const Distance = LineSegmentToPointDistance(v, w, Point);
+
+		MinDistance = Min(MinDistance, Distance);
+	}
+
+	return MinDistance;
+}
