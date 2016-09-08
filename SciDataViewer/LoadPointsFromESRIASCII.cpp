@@ -2,9 +2,9 @@
 #include <ionEngine.h>
 
 
-vector<vec3f> LoadPointsFromESRIASCII(string const & FileName)
+vector<vec3d> LoadPointsFromESRIASCII(string const & FileName)
 {
-	vector<vec3f> Points;
+	vector<vec3d> Points;
 	std::ifstream file(FileName);
 
 	if (! file.is_open())

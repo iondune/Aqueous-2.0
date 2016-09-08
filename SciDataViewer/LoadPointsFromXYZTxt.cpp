@@ -3,9 +3,9 @@
 
 #include "UTMtoLatLong.h"
 
-vector<vec3f> LoadPointsFromXYZTxt(string const & FileName, bool commas)
+vector<vec3d> LoadPointsFromXYZTxt(string const & FileName, bool commas)
 {
-	vector<vec3f> Points;
+	vector<vec3d> Points;
 
 	std::ifstream file(FileName);
 

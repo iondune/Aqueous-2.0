@@ -9,8 +9,8 @@ class ITerrainHeightSource
 
 public:
 
-	virtual bool IsPointInBounds(vec2f const & Position) = 0;
-	virtual float GetHeightAtPoint(vec2f const & Position) = 0;
+	virtual bool IsPointInBounds(vec2d const & Position) = 0;
+	virtual double GetHeightAtPoint(vec2d const & Position) = 0;
 
 };
 
@@ -19,7 +19,7 @@ class CBathymetryRasterizer : public ITerrainHeightSource
 
 public:
 
-	vector<vec3f> SourceElevationPostings;
+	vector<vec3d> SourceElevationPostings;
 	int ImageSize = 4096;
 	float RegionXCorner = 33.435f;
 	float RegionYCorner = -118.5f;
@@ -37,8 +37,8 @@ public:
 	void FillGroups();
 	void RasterizeImage();
 
-	bool IsPointInBounds(vec2f const & Position);
-	float GetHeightAtPoint(vec2f const & Position);
+	bool IsPointInBounds(vec2d const & Position);
+	double GetHeightAtPoint(vec2d const & Position);
 
 	void WriteToFile(string const & FileName);
 	void ReadFromFile(string const & FileName);
@@ -48,13 +48,13 @@ protected:
 	struct SPixelBucket
 	{
 		int Count = 0;
-		float Sum = 0;
+		double Sum = 0;
 		int Tag = 0;
 		bool Approximate = false;
 
-		float GetValue() const
+		double GetValue() const
 		{
-			return Sum / (float) Count;
+			return Sum / (double) Count;
 		}
 	};
 	SPixelBucket * Buckets = nullptr;
@@ -91,12 +91,12 @@ public:
 
 	struct SPixelBucket
 	{
-		float Value = 0;
+		double Value = 0;
 		bool Interior = false;
 	};
 	SPixelBucket * Buckets = nullptr;
 
-	vector<vec2f> SourceLongLatPostings;
+	vector<vec2d> SourceLongLatPostings;
 	int ImageSize = 4096;
 	float RegionXCorner = 33.435f;
 	float RegionYCorner = -118.5f;
@@ -110,14 +110,14 @@ public:
 	void WriteToFile(string const & FileName);
 	void ReadFromFile(string const & FileName);
 
-	bool IsPointInBounds(vec2f const & Position);
-	float GetHeightAtPoint(vec2f const & Position);
+	bool IsPointInBounds(vec2d const & Position);
+	double GetHeightAtPoint(vec2d const & Position);
 
 protected:
 
 	SPixelBucket * Helper_GetBucket(int const i, int const j);
 	SPixelBucket * Helper_GetBucket(vec2i const & index);
 
-	float Helper_ClosestEdgeDistance(vec2f const & Point);
+	double Helper_ClosestEdgeDistance(vec2d const & Point);
 
 };

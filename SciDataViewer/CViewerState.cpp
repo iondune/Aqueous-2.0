@@ -22,20 +22,20 @@ using namespace ion::Graphics;
 using namespace ion::Scene;
 
 
-ion::Scene::CSimpleMesh * CreatePolygonMesh(vector<vec2f> const & Points)
+ion::Scene::CSimpleMesh * CreatePolygonMesh(vector<vec2d> const & Points)
 {
 	ion::Scene::CSimpleMesh * Mesh = new ion::Scene::CSimpleMesh();
 
-	vector<STriangle2D> const Triangles = TriangulateEarClipping(Points);
+	vector<STriangle2D<double>> const Triangles = TriangulateEarClipping(Points);
 
 	for (size_t i = 0; i < Triangles.size(); i ++)
 	{
 		uint const Start = (uint) Mesh->Vertices.size();
 		vec3f const Normal = vec3f(0, 1, 0);
 
-		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].A.X - 33.3f) * 800, 0, (Triangles[i].A.Y + 118.3f) * 800), Normal));
-		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].B.X - 33.3f) * 800, 0, (Triangles[i].B.Y + 118.3f) * 800), Normal));
-		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3f((Triangles[i].C.X - 33.3f) * 800, 0, (Triangles[i].C.Y + 118.3f) * 800), Normal));
+		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3d((Triangles[i].A.X - 33.3) * 800, 0, (Triangles[i].A.Y + 118.3) * 800), Normal));
+		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3d((Triangles[i].B.X - 33.3) * 800, 0, (Triangles[i].B.Y + 118.3) * 800), Normal));
+		Mesh->Vertices.push_back(CSimpleMesh::SVertex(vec3d((Triangles[i].C.X - 33.3) * 800, 0, (Triangles[i].C.Y + 118.3) * 800), Normal));
 
 		CSimpleMesh::STriangle Triangle;
 		Triangle.Indices[0] = Start + 0;
@@ -138,16 +138,16 @@ void CViewerState::Init()
 	ParticleSystem = new CParticleSystem(Application->ParticleShader);
 	DefaultRenderPass->AddSceneObject(ParticleSystem);
 
-	auto PointsToParticles = [this](string const & FileName, color3i const & Color, bool Commas) -> vector<vec3f>
+	auto PointsToParticles = [this](string const & FileName, color3i const & Color, bool Commas) -> vector<vec3d>
 	{
-		vector<vec3f> Points = LoadPointsFromXYZTxt(FileName, Commas);
+		vector<vec3d> Points = LoadPointsFromXYZTxt(FileName, Commas);
 
 		for (size_t i = 0; i < Points.size(); i += 20)
 		{
-			vec3f const & Point = Points[i];
+			vec3d const & Point = Points[i];
 			CParticle p;
 			p.Color = Color;
-			p.Position = vec3f((Point.X - 33.3f) * 800, -Point.Z / 50.0f, (Point.Y + 118.3f) * 800);
+			p.Position = vec3d((Point.X - 33.3) * 800, -Point.Z / 50.0f, (Point.Y + 118.3) * 800);
 
 			ParticleSystem->Particles.push_back(p);
 		}
@@ -172,11 +172,11 @@ void CViewerState::Init()
 	CStopWatch sw;
 	sw.Start();
 
-	//vector<vec3f> RegionPoints = LoadPointsFromESRIASCII("Data/GEBCO2014_-122.3058_30.5922_-115.9466_36.0291_30Sec_ESRIASCII.asc");
+	//vector<vec3d> RegionPoints = LoadPointsFromESRIASCII("Data/GEBCO2014_-122.3058_30.5922_-115.9466_36.0291_30Sec_ESRIASCII.asc");
 
-	//vector<vec3f> HiResPoints = PointsToParticles("Data/CI_Block02_2m_xyz.txt", Colors::Orange, true);
+	//vector<vec3d> HiResPoints = PointsToParticles("Data/CI_Block02_2m_xyz.txt", Colors::Orange, true);
 
-	//vector<vec3f> CatalinaPoints;
+	//vector<vec3d> CatalinaPoints;
 	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block01_5mall_xyz.txt", false));
 	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block02_5mall_xyz.txt", true));
 	//AddAtEnd(CatalinaPoints, LoadPointsFromXYZTxt("Data/CI_Block03_5mall_xyz.txt", false));
@@ -292,25 +292,25 @@ void CViewerState::Init()
 
 		vector<ITerrainHeightSource *> Layers;
 
-		float LastHeight = 0;
-		float Scale = 1;
+		double LastHeight = 0;
+		double Scale = 1;
 
 		float GetTerrainHeight(vec2i const & Position)
 		{
 			LastHeight = -128;
 
-			vec2f const Pos = vec2f(Position) * Scale / (19200.f * 25.f) + vec2f(33.445f, -118.4865f);
+			vec2d const Pos = vec2d(Position) * Scale / (19200.0 * 25.0) + vec2d(33.445, -118.4865);
 
 			for (auto Layer : Layers)
 			{
 				if (Layer->IsPointInBounds(Pos))
 				{
-					LastHeight = -Layer->GetHeightAtPoint(Pos) * 20.f;
+					LastHeight = -Layer->GetHeightAtPoint(Pos) * 20.0;
 					break;
 				}
 			}
 
-			return LastHeight;
+			return (float) LastHeight;
 
 			//float const Input = (float) (Length(vec2f(Position)));
 			//return -cos(Input * 0.01f) * 15 - cos(Input * 0.5f) * 2;
@@ -326,7 +326,7 @@ void CViewerState::Init()
 	GeometryClipmapsObject = new CGeometryClipmapsSceneObject();
 	GeometryClipmapsObject->Shader = Application->GeometryClipmapsShader;
 	GeometryClipmapsObject->UseCameraPosition = true;
-	float const ClipmapsScale = 20.f;
+	float const ClipmapsScale = 1.f;
 	SimpleHeight * HeightInput = new SimpleHeight();
 	HeightInput->Scale = ClipmapsScale;
 	HeightInput->Layers.push_back(tr_catalina);

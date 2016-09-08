@@ -25,12 +25,12 @@ void CBathymetryRasterizer::ConvertAndRasterize(bool const Processing)
 	RasterizeImage();
 }
 
-bool CBathymetryRasterizer::IsPointInBounds(vec2f const & Position)
+bool CBathymetryRasterizer::IsPointInBounds(vec2d const & Position)
 {
 	if ((Position.X >= RegionXCorner && Position.X <= RegionXCorner + RegionXSize) &&
 		(Position.Y >= RegionYCorner && Position.Y <= RegionYCorner + RegionYSize))
 	{
-		vec2f RealIndex = vec2f(
+		vec2d RealIndex = vec2d(
 			(Position.X - RegionXCorner) / RegionXSize,
 			(Position.Y - RegionYCorner) / RegionYSize);
 
@@ -48,11 +48,11 @@ bool CBathymetryRasterizer::IsPointInBounds(vec2f const & Position)
 	return false;
 }
 
-float CBathymetryRasterizer::GetHeightAtPoint(vec2f const & Position)
+double CBathymetryRasterizer::GetHeightAtPoint(vec2d const & Position)
 {
-	vec2f const RealIndex = vec2f(
+	vec2d const RealIndex = vec2d(
 		(Position.X - RegionXCorner) / RegionXSize,
-		(Position.Y - RegionYCorner) / RegionYSize) * (float) ImageSize;
+		(Position.Y - RegionYCorner) / RegionYSize) * (double) ImageSize;
 
 	int const i = Clamp((int) RealIndex.X, 0, ImageSize - 1);
 	int const j = Clamp((int) RealIndex.Y, 0, ImageSize - 1);
@@ -60,10 +60,10 @@ float CBathymetryRasterizer::GetHeightAtPoint(vec2f const & Position)
 	auto Bucket = Helper_GetBucket(i, j);
 	if (Bucket && Bucket->Count)
 	{
-		float const Value = Bucket->GetValue();
+		double const Value = Bucket->GetValue();
 		return Value;
 
-		float Data[2][2] =
+		double Data[2][2] =
 		{
 			{ Value, Value },
 			{ Value, Value },
@@ -81,12 +81,12 @@ float CBathymetryRasterizer::GetHeightAtPoint(vec2f const & Position)
 			}
 		}
 
-		float integral;
+		double integral;
 		return BilinearInterpolate(Data, modf(RealIndex.X, &integral), modf(RealIndex.Y, &integral));
 	}
 	else
 	{
-		return std::numeric_limits<float>::quiet_NaN();
+		return std::numeric_limits<double>::quiet_NaN();
 	}
 
 }
@@ -204,7 +204,7 @@ void CBathymetryRasterizer::ClassifyGroups()
 	CStopWatch sw;
 	sw.Start();
 
-	vector<STriangle2D> Triangles;
+	vector<STriangle2D<double>> Triangles;
 	AddAtEnd(Triangles, TriangulateEarClipping(CatalinaOutline));
 	AddAtEnd(Triangles, TriangulateEarClipping(BirdRock));
 
@@ -213,9 +213,9 @@ void CBathymetryRasterizer::ClassifyGroups()
 		for (int j = 0; j < ImageSize; ++ j)
 		{
 			bool InsideTriangle = false;
-			vec2f const Point = vec2f(
-				RegionXCorner + ((float) i / (float) (ImageSize - 1)) * RegionXSize,
-				RegionYCorner + ((float) j / (float) (ImageSize - 1)) * RegionYSize
+			vec2d const Point = vec2d(
+				RegionXCorner + ((double) i / (double) (ImageSize - 1)) * RegionXSize,
+				RegionYCorner + ((double) j / (double) (ImageSize - 1)) * RegionYSize
 			);
 
 			for (auto const & Triangle : Triangles)
@@ -408,8 +408,8 @@ void CBathymetryRasterizer::Helper_EstimatePixelValue(vec2i const & index, int c
 {
 	int const HalfKernel = KernelSize / 2;
 
-	float Estimate = 0;
-	float Count = 0;
+	double Estimate = 0;
+	double Count = 0;
 	int NumSamples = 0;
 
 	for (int i = -HalfKernel; i <= HalfKernel; ++ i)
@@ -421,7 +421,7 @@ void CBathymetryRasterizer::Helper_EstimatePixelValue(vec2i const & index, int c
 				SPixelBucket * Bucket = Helper_GetBucket(index.X + i, index.Y + j);
 				if (Bucket && Bucket->Count && ! Bucket->Approximate)
 				{
-					float Weight = 1 + Sqrt((float) Sq(HalfKernel - Abs(i)) + (float) Sq(HalfKernel - Abs(j))) * 5.0f;
+					double Weight = 1 + Sqrt((double) Sq(HalfKernel - Abs(i)) + (double) Sq(HalfKernel - Abs(j))) * 5.0f;
 					Estimate += Bucket->GetValue() * Weight;
 					Count += Weight;
 					NumSamples ++;
@@ -434,15 +434,15 @@ void CBathymetryRasterizer::Helper_EstimatePixelValue(vec2i const & index, int c
 	{
 		SPixelBucket * Bucket = Helper_GetBucket(index);
 		Bucket->Count = 1;
-		Bucket->Sum = Estimate / (float) Count;
+		Bucket->Sum = Estimate / (double) Count;
 		Bucket->Approximate = true;
 	}
 }
 
 void CBathymetryRasterizer::Helper_EstimatePixelValueBridge(vec2i const & index, int const KernelSize, int const MinSamples)
 {
-	static vector<pair<float, float>> BathyEstimates;
-	static vector<float> LandDistances;
+	static vector<pair<double, double>> BathyEstimates;
+	static vector<double> LandDistances;
 
 	BathyEstimates.clear();
 	LandDistances.clear();
@@ -455,7 +455,7 @@ void CBathymetryRasterizer::Helper_EstimatePixelValueBridge(vec2i const & index,
 		{
 			if (i != 0 || j != 0)
 			{
-				float const Distance = (float) Sq(i) + (float) Sq(j);
+				double const Distance = (double) Sq(i) + (double) Sq(j);
 
 				SPixelBucket * Bucket = Helper_GetBucket(index.X + i, index.Y + j);
 
@@ -480,12 +480,12 @@ void CBathymetryRasterizer::Helper_EstimatePixelValueBridge(vec2i const & index,
 		BathyEstimates.resize(MinSamples);
 		LandDistances.resize(MinSamples);
 
-		float Weight = 0;
-		float Sum = 0;
+		double Weight = 0;
+		double Sum = 0;
 
 		for (auto Estimate : BathyEstimates)
 		{
-			float const w = 1.f / Sqrt(Estimate.first);
+			double const w = 1.f / Sqrt(Estimate.first);
 			Weight += w;
 			Sum += Estimate.second * w;
 		}
@@ -584,9 +584,9 @@ void CBathymetryRasterizer::RasterizeImage()
 
 			if (Buckets[Index].Count > 0)
 			{
-				float const Value = Buckets[Index].Sum / Buckets[Index].Count;
-				float const Intensity = 2.5f;
-				float const Bottom = 0;
+				double const Value = Buckets[Index].Sum / Buckets[Index].Count;
+				double const Intensity = 2.5f;
+				double const Bottom = 0;
 				int const Pixel = 255 - Clamp<int>((int) (Value * Intensity - Bottom), 0, 255);
 
 				LowPixel = Min(LowPixel, Pixel);
@@ -628,17 +628,17 @@ void CBathymetryRasterizer::RasterizeImage()
 	Log::Info("Rasterize to image took %.3f", sw.Stop());
 }
 
-float LineSegmentToPointDistance(vec2f const & v, vec2f const & w, vec2f const & p)
+double LineSegmentToPointDistance(vec2d const & v, vec2d const & w, vec2d const & p)
 {
 	// Return minimum distance between line segment vw and point p
-	const float l2 = LengthSq(v - w);  // i.e. |w-v|^2 -  avoid a sqrt
+	const double l2 = LengthSq(v - w);  // i.e. |w-v|^2 -  avoid a sqrt
 	if (l2 == 0.0) return Length(p - v);   // v == w case
 											// Consider the line extending the segment, parameterized as v + t (w - v).
 											// We find projection of point p onto the line. 
 											// It falls where t = [(p-v) . (w-v)] / |w-v|^2
 											// We clamp t from [0,1] to handle points outside the segment vw.
-	const float t = Max(0.f, Min(1.f, Dot(p - v, w - v) / l2));
-	vec2f const projection = v + t * (w - v);  // Projection falls on the segment
+	const double t = Max(0.0, Min(1.0, Dot(p - v, w - v) / l2));
+	vec2d const projection = v + t * (w - v);  // Projection falls on the segment
 	return Length(p - projection);
 }
 
@@ -646,19 +646,19 @@ void CTopographyRasterizer::FillInteriorPoints()
 {
 	Buckets = new SPixelBucket[ImageSize * ImageSize];
 
-	vector<STriangle2D> Triangles;
+	vector<STriangle2D<double>> Triangles;
 	AddAtEnd(Triangles, TriangulateEarClipping(CatalinaOutline));
 
-	float ActualMax = 0;
+	double ActualMax = 0;
 
 	for (int i = 0; i < ImageSize; ++ i)
 	{
 		for (int j = 0; j < ImageSize; ++ j)
 		{
 			bool InsideTriangle = false;
-			vec2f const Point = vec2f(
-				RegionXCorner + ((float) i / (float) (ImageSize - 1)) * RegionXSize,
-				RegionYCorner + ((float) j / (float) (ImageSize - 1)) * RegionYSize
+			vec2d const Point = vec2d(
+				RegionXCorner + ((double) i / (double) (ImageSize - 1)) * RegionXSize,
+				RegionYCorner + ((double) j / (double) (ImageSize - 1)) * RegionYSize
 			);
 
 			for (auto const & Triangle : Triangles)
@@ -681,7 +681,7 @@ void CTopographyRasterizer::FillInteriorPoints()
 		}
 	}
 
-	float const IdealMax = 255.f;
+	double const IdealMax = 255.0;
 
 	for (int i = 0; i < ImageSize; ++ i)
 	{
@@ -710,8 +710,8 @@ void CTopographyRasterizer::RasterizeImage()
 		{
 			int const Index = ImageSize * i + j;
 
-			float const Value = Buckets[Index].Value;
-			float const Intensity = 1.0f;
+			double const Value = Buckets[Index].Value;
+			double const Intensity = 1.0f;
 			int const Pixel = Clamp<int>((int) (Value * Intensity), 0, 255);
 
 			LowPixel = Min(LowPixel, Pixel);
@@ -762,12 +762,12 @@ void CTopographyRasterizer::ReadFromFile(string const & FileName)
 	fread(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
 }
 
-bool CTopographyRasterizer::IsPointInBounds(vec2f const & Position)
+bool CTopographyRasterizer::IsPointInBounds(vec2d const & Position)
 {
 	if ((Position.X >= RegionXCorner && Position.X <= RegionXCorner + RegionXSize) &&
 		(Position.Y >= RegionYCorner && Position.Y <= RegionYCorner + RegionYSize))
 	{
-		vec2f RealIndex = vec2f(
+		vec2d RealIndex = vec2d(
 			(Position.X - RegionXCorner) / RegionXSize,
 			(Position.Y - RegionYCorner) / RegionYSize);
 
@@ -785,11 +785,11 @@ bool CTopographyRasterizer::IsPointInBounds(vec2f const & Position)
 	return false;
 }
 
-float CTopographyRasterizer::GetHeightAtPoint(vec2f const & Position)
+double CTopographyRasterizer::GetHeightAtPoint(vec2d const & Position)
 {
-	vec2f const RealIndex = vec2f(
+	vec2d const RealIndex = vec2d(
 		(Position.X - RegionXCorner) / RegionXSize,
-		(Position.Y - RegionYCorner) / RegionYSize) * (float) ImageSize;
+		(Position.Y - RegionYCorner) / RegionYSize) * (double) ImageSize;
 
 	int const i = Clamp((int) RealIndex.X, 0, ImageSize - 1);
 	int const j = Clamp((int) RealIndex.Y, 0, ImageSize - 1);
@@ -797,9 +797,9 @@ float CTopographyRasterizer::GetHeightAtPoint(vec2f const & Position)
 	auto Bucket = Helper_GetBucket(i, j);
 	if (Bucket && Bucket->Interior)
 	{
-		float const Value = Bucket->Value;
+		double const Value = Bucket->Value;
 
-		float Data[2][2] =
+		double Data[2][2] =
 		{
 			{ Value, Value },
 			{ Value, Value },
@@ -821,12 +821,12 @@ float CTopographyRasterizer::GetHeightAtPoint(vec2f const & Position)
 			}
 		}
 
-		float integral;
+		double integral;
 		return -BilinearInterpolate(Data, modf(RealIndex.X, &integral), modf(RealIndex.Y, &integral));
 	}
 	else
 	{
-		return std::numeric_limits<float>::quiet_NaN();
+		return std::numeric_limits<double>::quiet_NaN();
 	}
 }
 
@@ -848,16 +848,16 @@ CTopographyRasterizer::SPixelBucket * CTopographyRasterizer::Helper_GetBucket(ve
 	return Helper_GetBucket(index.X, index.Y);
 }
 
-float CTopographyRasterizer::Helper_ClosestEdgeDistance(vec2f const & Point)
+double CTopographyRasterizer::Helper_ClosestEdgeDistance(vec2d const & Point)
 {
-	float MinDistance = NumericLimits<float>::max();
+	double MinDistance = NumericLimits<double>::max();
 
 	for (size_t i = 0; i < SourceLongLatPostings.size(); ++ i)
 	{
-		vec2f const v = SourceLongLatPostings[i];
-		vec2f const w = SourceLongLatPostings[(i + 1) % SourceLongLatPostings.size()];
+		vec2d const v = SourceLongLatPostings[i];
+		vec2d const w = SourceLongLatPostings[(i + 1) % SourceLongLatPostings.size()];
 
-		float const Distance = LineSegmentToPointDistance(v, w, Point);
+		double const Distance = LineSegmentToPointDistance(v, w, Point);
 
 		MinDistance = Min(MinDistance, Distance);
 	}

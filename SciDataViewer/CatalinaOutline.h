@@ -4,7 +4,7 @@
 #include <ionMath.h>
 
 
-static vector<vec2f> const CatalinaOutline =
+static vector<vec2d> const CatalinaOutline =
 {
 	vec2d(33.40287270967907,-118.48342836119),
 	vec2d(33.38168206583182,-118.4753000364343),
@@ -352,7 +352,7 @@ static vector<vec2f> const CatalinaOutline =
 	vec2d(33.41830903229968,-118.4877999204599),
 };
 
-static vector<vec2f> const BirdRock =
+static vector<vec2d> const BirdRock =
 {
 	vec2d(33.45079588836303,-118.4865879572093),
 	vec2d(33.45099722670513,-118.4866402347709),
