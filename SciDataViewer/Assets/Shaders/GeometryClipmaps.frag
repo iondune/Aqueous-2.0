@@ -1,5 +1,5 @@
 
-#version 150
+#version 330
 
 in vec2 fTexCoords;
 in vec3 fWorldPosition;
@@ -166,7 +166,9 @@ void main()
 
 	if (uDebugDisplay == 3) // Simple Diffuse
 	{
-		outColor = vec4(vec3(clamp(dot(Normal, normalize(vec3(1.0, 4.0, 2.0))), 0.0, 1.0)), 1.0);
+		vec3 LightDirection = normalize(vec3(1.0, 4.0, 2.0));
+		float Lighting = clamp(dot(Normal, LightDirection), 0.0, 1.0);
+		outColor = vec4(vec3(Lighting), 1.0);
 		return;
 	}
 

@@ -150,6 +150,9 @@
     <ClInclude Include="CatalinaOutline.h">
       <Filter>Data</Filter>
     </ClInclude>
+    <ClInclude Include="CGeometryClipmapsWindowWidget.h">
+      <Filter>Widgets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Spline">

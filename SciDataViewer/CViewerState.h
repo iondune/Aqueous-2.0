@@ -16,6 +16,7 @@ class CGeometryClipmapsSceneObject;
 class CCameraWindowWidget;
 class CPointsWindowWidget;
 class CDebugWindowWidget;
+class CGeometryClipmapsWindowWidget;
 
 class CViewerState : public IState, public Singleton<CViewerState>
 {
@@ -68,6 +69,7 @@ private:
 	CCameraWindowWidget * CameraWindow = nullptr;
 	CPointsWindowWidget * PointsWindow = nullptr;
 	CDebugWindowWidget * DebugWindow = nullptr;
+	CGeometryClipmapsWindowWidget * ClipmapsWindow = nullptr;
 
 	color4f ClearColor;
 

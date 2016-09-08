@@ -1,5 +1,5 @@
 
-#version 150
+#version 330
 
 in ivec2 vPosition;
 

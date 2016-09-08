@@ -2,9 +2,11 @@
 #include "CViewerState.h"
 #include "CApplication.h"
 #include "CParticleSystem.h"
+
 #include "CCameraWindowWidget.h"
 #include "CPointsWindowWidget.h"
 #include "CDebugWindowWidget.h"
+#include "CGeometryClipmapsWindowWidget.h"
 
 #include "CWaterSurfaceSceneObject.h"
 #include "CVolumeSceneObject.h"
@@ -357,6 +359,8 @@ void CViewerState::Init()
 	PointsWindow = new CPointsWindowWidget();
 	PointsWindow->ParticleSystem = ParticleSystem;
 
+	ClipmapsWindow = new CGeometryClipmapsWindowWidget(GeometryClipmapsObject);
+
 	// Caustics
 	std::vector<string> CausticFileNames;
 	char bfr[256];
@@ -477,6 +481,7 @@ void CViewerState::GUI()
 			if (ImGui::MenuItem("Points")) { PointsWindow->ToggleVisibility(); };
 			if (ImGui::MenuItem("Water")) { WaterSurface->ToggleGUI(); };
 			if (ImGui::MenuItem("Volume")) { Volume->ToggleGUI(); };
+			if (ImGui::MenuItem("Clipmaps")) { ClipmapsWindow->ToggleVisibility(); };
 			if (ImGui::MenuItem("Debug")) { DebugWindow->ToggleVisibility(); };
 
 			ImGui::EndMenu();
@@ -485,6 +490,7 @@ void CViewerState::GUI()
 	}
 
 	DebugWindow->DrawIfVisible();
+	ClipmapsWindow->DrawIfVisible();
 	CameraWindow->DrawIfVisible();
 	PointsWindow->DrawIfVisible();
 	WaterSurface->GUI();

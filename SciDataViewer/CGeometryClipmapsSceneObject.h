@@ -90,6 +90,7 @@ public:
 	};
 
 	void SetWireframeEnabled(bool const Enabled);
+	bool IsWireframeEnabled() const;
 
 	std::vector<SLayer *> Layers;
 

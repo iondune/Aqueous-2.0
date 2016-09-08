@@ -83,6 +83,7 @@
     <ClInclude Include="CDataSet.h" />
     <ClInclude Include="CDebugWindowWidget.h" />
     <ClInclude Include="CGeometryClipmapsSceneObject.h" />
+    <ClInclude Include="CGeometryClipmapsWindowWidget.h" />
     <ClInclude Include="ColorTable.h" />
     <ClInclude Include="CParticleSystem.h" />
     <ClInclude Include="CPointsWindowWidget.h" />

@@ -324,6 +324,7 @@ void CGeometryClipmapsSceneObject::Draw(ion::Scene::CRenderPass * RenderPass)
 
 void CGeometryClipmapsSceneObject::SetWireframeEnabled(bool const Enabled)
 {
+	Wireframe = Enabled;
 	for (auto Layer : Layers)
 	{
 		if (Layer->PipelineState)
@@ -331,6 +332,11 @@ void CGeometryClipmapsSceneObject::SetWireframeEnabled(bool const Enabled)
 			Layer->PipelineState->SetFeatureEnabled(ion::Graphics::EDrawFeature::Wireframe, Enabled);
 		}
 	}
+}
+
+bool CGeometryClipmapsSceneObject::IsWireframeEnabled() const
+{
+	return Wireframe;
 }
 
 vec3f CGeometryClipmapsSceneObject::IHeightInput::GetTerrainNormal(vec2i const & Position)
