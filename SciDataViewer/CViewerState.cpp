@@ -337,9 +337,6 @@ void CViewerState::Init()
 	GeometryClipmapsObject->SetScale(vec3f(ClipmapsScale, 1.f, ClipmapsScale));
 	DefaultRenderPass->AddSceneObject(GeometryClipmapsObject);
 
-	GeometryClipmapsObject->Load(DefaultRenderPass);
-	//GeometryClipmapsObject->SetWireframeEnabled(true);
-
 
 	CSimpleMeshSceneObject * PostProcessObject = new CSimpleMeshSceneObject();
 	PostProcessObject->SetMesh(CGeometryCreator::CreateScreenTriangle());

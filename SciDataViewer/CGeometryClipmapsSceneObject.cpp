@@ -98,6 +98,8 @@ void CGeometryClipmapsSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetTexture("uColorMap", Layer->ColorMap);
 		PipelineState->SetTexture("uNormalMap", Layer->NormalMap);
 
+		PipelineState->SetFeatureEnabled(ion::Graphics::EDrawFeature::Wireframe, Wireframe);
+
 		PipelineState->SetIndexBuffer(Layer->IndexBuffer);
 		RenderPass->PreparePipelineStateForRendering(PipelineState, this);
 	}
@@ -325,11 +327,12 @@ void CGeometryClipmapsSceneObject::Draw(ion::Scene::CRenderPass * RenderPass)
 void CGeometryClipmapsSceneObject::SetWireframeEnabled(bool const Enabled)
 {
 	Wireframe = Enabled;
+
 	for (auto Layer : Layers)
 	{
 		if (Layer->PipelineState)
 		{
-			Layer->PipelineState->SetFeatureEnabled(ion::Graphics::EDrawFeature::Wireframe, Enabled);
+			Layer->PipelineState->SetFeatureEnabled(ion::Graphics::EDrawFeature::Wireframe, Wireframe);
 		}
 	}
 }
