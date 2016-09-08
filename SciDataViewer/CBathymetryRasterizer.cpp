@@ -761,6 +761,74 @@ void CTopographyRasterizer::ReadFromFile(string const & FileName)
 	fread(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
 }
 
+bool CTopographyRasterizer::IsPointInBounds(vec2f const & Position)
+{
+	if ((Position.X >= RegionXCorner && Position.X <= RegionXCorner + RegionXSize) &&
+		(Position.Y >= RegionYCorner && Position.Y <= RegionYCorner + RegionYSize))
+	{
+		vec2f RealIndex = vec2f(
+			(Position.X - RegionXCorner) / RegionXSize,
+			(Position.Y - RegionYCorner) / RegionYSize);
+
+		int i = Clamp((int) (RealIndex.X * ImageSize), 0, ImageSize - 1);
+		int j = Clamp((int) (RealIndex.Y * ImageSize), 0, ImageSize - 1);
+
+		auto Bucket = Helper_GetBucket(i, j);
+
+		if (Bucket && Bucket->Interior)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+float CTopographyRasterizer::GetHeightAtPoint(vec2f const & Position)
+{
+	vec2f const RealIndex = vec2f(
+		(Position.X - RegionXCorner) / RegionXSize,
+		(Position.Y - RegionYCorner) / RegionYSize) * (float) ImageSize;
+
+	int const i = Clamp((int) RealIndex.X, 0, ImageSize - 1);
+	int const j = Clamp((int) RealIndex.Y, 0, ImageSize - 1);
+
+	auto Bucket = Helper_GetBucket(i, j);
+	if (Bucket && Bucket->Interior)
+	{
+		float const Value = Bucket->Value;
+
+		float Data[2][2] =
+		{
+			{ Value, Value },
+			{ Value, Value },
+		};
+
+		for (int m = 0; m < 2; ++ m)
+		{
+			for (int n = 0; n < 2; ++ n)
+			{
+				auto Bucket = Helper_GetBucket(i + m, j + n);
+				if (Bucket && Bucket->Interior)
+				{
+					Data[m][n] = Bucket->Value;
+				}
+				else
+				{
+					Data[m][n] = 0;
+				}
+			}
+		}
+
+		float integral;
+		return -BilinearInterpolate(Data, modf(RealIndex.X, &integral), modf(RealIndex.Y, &integral));
+	}
+	else
+	{
+		return std::numeric_limits<float>::quiet_NaN();
+	}
+}
+
 CTopographyRasterizer::SPixelBucket * CTopographyRasterizer::Helper_GetBucket(int const i, int const j)
 {
 	if (i >= 0 && i < ImageSize &&

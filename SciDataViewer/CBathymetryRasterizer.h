@@ -14,7 +14,7 @@ public:
 
 };
 
-class CBathymetryRasterizer
+class CBathymetryRasterizer : public ITerrainHeightSource
 {
 
 public:
@@ -84,7 +84,7 @@ protected:
 
 };
 
-class CTopographyRasterizer
+class CTopographyRasterizer : public ITerrainHeightSource
 {
 
 public:
@@ -109,6 +109,9 @@ public:
 
 	void WriteToFile(string const & FileName);
 	void ReadFromFile(string const & FileName);
+
+	bool IsPointInBounds(vec2f const & Position);
+	float GetHeightAtPoint(vec2f const & Position);
 
 protected:
 

@@ -221,7 +221,7 @@ void CViewerState::Init()
 
 	CTopographyRasterizer * tr_catalina = new CTopographyRasterizer();
 	tr_catalina->SourceLongLatPostings = CatalinaOutline;
-	tr_catalina->ImageSize = 2048;
+	tr_catalina->ImageSize = 4096;
 	tr_catalina->OutputName = "CatalinaTopo.png";
 	tr_catalina->RegionXCorner = 33.15f;
 	tr_catalina->RegionYCorner = -118.7f;
@@ -229,6 +229,8 @@ void CViewerState::Init()
 	tr_catalina->RegionYSize = 0.5f;
 	tr_catalina->FillInteriorPoints();
 	tr_catalina->RasterizeImage();
+	tr_catalina->WriteToFile("CatalinaTopo.bin");
+	//tr_catalina->ReadFromFile("CatalinaTopo.bin");
 
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)
@@ -286,7 +288,7 @@ void CViewerState::Init()
 
 	public:
 
-		vector<CBathymetryRasterizer *> Layers;
+		vector<ITerrainHeightSource *> Layers;
 
 		float LastHeight = 0;
 		float Scale = 1;
@@ -325,6 +327,7 @@ void CViewerState::Init()
 	float const ClipmapsScale = 20.f;
 	SimpleHeight * HeightInput = new SimpleHeight();
 	HeightInput->Scale = ClipmapsScale;
+	HeightInput->Layers.push_back(tr_catalina);
 	HeightInput->Layers.push_back(br_hires);
 	//HeightInput->Layers.push_back(br_catalina);
 	//HeightInput->Layers.push_back(br_region);
