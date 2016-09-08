@@ -227,10 +227,10 @@ void CViewerState::Init()
 	tr_catalina->RegionYCorner = -118.7f;
 	tr_catalina->RegionXSize = 0.5f;
 	tr_catalina->RegionYSize = 0.5f;
-	tr_catalina->FillInteriorPoints();
-	tr_catalina->RasterizeImage();
-	tr_catalina->WriteToFile("CatalinaTopo.bin");
-	//tr_catalina->ReadFromFile("CatalinaTopo.bin");
+	//tr_catalina->FillInteriorPoints();
+	//tr_catalina->RasterizeImage();
+	//tr_catalina->WriteToFile("CatalinaTopo.bin");
+	tr_catalina->ReadFromFile("CatalinaTopo.bin");
 
 	//for (int x = 1; x < 20; ++ x)
 	//for (int y = 1; y < 20; ++ y)

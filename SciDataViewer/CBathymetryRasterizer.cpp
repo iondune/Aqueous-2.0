@@ -758,6 +758,7 @@ void CTopographyRasterizer::ReadFromFile(string const & FileName)
 	fread(& RegionXSize, sizeof(RegionXSize), 1, file);
 	fread(& RegionYSize, sizeof(RegionYSize), 1, file);
 
+	Buckets = new SPixelBucket[ImageSize * ImageSize];
 	fread(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
 }
 
