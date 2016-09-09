@@ -91,12 +91,14 @@ void CGeometryClipmapsSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetUniform("uDebugDisplay", uDebugDisplay);
 
 		PipelineState->SetUniform("uScale", Layer->uScale);
-		PipelineState->SetUniform("uScaleFactor", Layer->uScaleFactor);
 		PipelineState->SetUniform("uTranslation", Layer->uTranslation);
 
 		PipelineState->SetTexture("uHeightMap", Layer->HeightMap);
 		PipelineState->SetTexture("uColorMap", Layer->ColorMap);
 		PipelineState->SetTexture("uNormalMap", Layer->NormalMap);
+
+		PipelineState->SetUniform("uOcclusionStrength", uOcclusionStrength);
+		PipelineState->SetUniform("uOcclusionCap", uOcclusionCap);
 
 		PipelineState->SetFeatureEnabled(ion::Graphics::EDrawFeature::Wireframe, Wireframe);
 
@@ -312,7 +314,6 @@ void CGeometryClipmapsSceneObject::Draw(ion::Scene::CRenderPass * RenderPass)
 			(float) Layer->ScaleFactor,
 			1,
 			(float) Layer->ScaleFactor);
-		Layer->uScaleFactor = Layer->ScaleFactor;
 	}
 
 	for (auto Layer : Layers)
@@ -342,14 +343,44 @@ bool CGeometryClipmapsSceneObject::IsWireframeEnabled() const
 	return Wireframe;
 }
 
-vec3f CGeometryClipmapsSceneObject::IHeightInput::GetTerrainNormal(vec2i const & Position)
+vec4f CGeometryClipmapsSceneObject::IHeightInput::GetTerrainNormalAndOcclusion(vec2i const & Position)
 {
-	double const s01 = GetTerrainHeight(Position + vec2i(-1, 0));
-	double const s21 = GetTerrainHeight(Position + vec2i(+1, 0));
-	double const s10 = GetTerrainHeight(Position + vec2i(0, -1));
-	double const s12 = GetTerrainHeight(Position + vec2i(0, +1));
+	double const s00 = GetTerrainHeight(Position + vec2i(0, 0));
 
+	double s01 = GetTerrainHeight(Position + vec2i(-1, 0));
+	double s21 = GetTerrainHeight(Position + vec2i(+1, 0));
+	double s10 = GetTerrainHeight(Position + vec2i(0, -1));
+	double s12 = GetTerrainHeight(Position + vec2i(0, +1));
+
+	// Normal
 	vec3d const va = Normalize(vec3d(2, s21 - s01, 0));
 	vec3d const vb = Normalize(vec3d(0, s12 - s10, 2));
-	return Normalize(Cross(vb, va));
+	vec3f Normal = Normalize(Cross(vb, va));
+
+	// Occlusion
+	double Occlusion = 0;
+	//if (s01 > s00)
+	//	Occlusion += (s01 - s00);
+	//if (s10 > s00)
+	//	Occlusion += (s10 - s00);
+	//if (s21 > s00)
+	//	Occlusion += (s21 - s00);
+	//if (s12 > s00)
+	//	Occlusion += (s12 - s00);
+
+	s01 = GetTerrainHeight(Position + vec2i(-2, 0));
+	s21 = GetTerrainHeight(Position + vec2i(+2, 0));
+	s10 = GetTerrainHeight(Position + vec2i(0, -2));
+	s12 = GetTerrainHeight(Position + vec2i(0, +2));
+
+	if (s01 > s00)
+		Occlusion += (s01 - s00);
+	if (s10 > s00)
+		Occlusion += (s10 - s00);
+	if (s21 > s00)
+		Occlusion += (s21 - s00);
+	if (s12 > s00)
+		Occlusion += (s12 - s00);
+	
+	return vec4f(Normal.X, Normal.Y, Normal.Z, (float) Occlusion);
 }

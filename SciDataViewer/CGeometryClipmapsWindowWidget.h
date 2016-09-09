@@ -18,7 +18,7 @@ public:
 
 	void Draw()
 	{
-		ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
+		ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiSetCond_Once);
 		ImGui::Begin("Geomtry Clipmaps", &IsVisible);
 
 		bool Checked = (Object->uDebugDisplay == 0);
@@ -57,6 +57,19 @@ public:
 		if (ImGui::Checkbox("Wireframe", & Checked))
 		{
 			Object->SetWireframeEnabled(Checked);
+		}
+
+		ImGui::Separator();
+
+		float FloatValue = Object->uOcclusionStrength;
+		if (ImGui::SliderFloat("Occlusion Strength", &FloatValue, 0.0, 2.0))
+		{
+			Object->uOcclusionStrength = FloatValue;
+		}
+		FloatValue = Object->uOcclusionCap;
+		if (ImGui::SliderFloat("Occlusion Cap", &FloatValue, 0.0, 1.0))
+		{
+			Object->uOcclusionCap = FloatValue;
 		}
 
 		ImGui::End();

@@ -19,7 +19,7 @@ public:
 
 		virtual float GetTerrainHeight(vec2i const & Position) = 0;
 		virtual color3f GetTerrainColor(vec2i const & Position) = 0;
-		virtual vec3f GetTerrainNormal(vec2i const & Position);
+		virtual vec4f GetTerrainNormalAndOcclusion(vec2i const & Position);
 
 	};
 
@@ -37,6 +37,9 @@ public:
 	virtual void Draw(ion::Scene::CRenderPass * RenderPass);
 
 	ion::Graphics::CUniform<int> uDebugDisplay = 0;
+	ion::Graphics::CUniform<float> uOcclusionStrength = 0.3f;
+	ion::Graphics::CUniform<float> uOcclusionCap = 0.75f;
+
 	bool UseCameraPosition = false;
 	bool UseCameraHeight = false;
 
@@ -70,7 +73,6 @@ public:
 		// Uniforms sent to shader
 		ion::Graphics::CUniform<vec3f> uScale;
 		ion::Graphics::CUniform<vec3f> uTranslation;
-		ion::Graphics::CUniform<int> uScaleFactor;
 		ion::Graphics::CUniform<vec2i> uDataOffset;
 
 		SLayer(CGeometryClipmapsSceneObject * Owner, int const i, ion::Scene::CRenderPass * RenderPass);

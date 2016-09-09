@@ -10,7 +10,9 @@ uniform sampler2D uHeightMap;
 
 uniform int uSamplingMode;
 uniform int uDebugDisplay;
-uniform int uScaleFactor;
+
+uniform float uOcclusionStrength;
+uniform float uOcclusionCap;
 
 
 #define LIGHT_MAX 3
@@ -77,66 +79,6 @@ vec4 textureBicubic(sampler2D tex, vec2 texCoords)
 		sy);
 }
 
-float getHeightAt(vec2 Offset)
-{
-	vec2 texSize = textureSize(uHeightMap, 0);
-	vec2 invTexSize = 1.0 / texSize;
-
-	return textureBicubic(uHeightMap, fTexCoords + Offset * invTexSize).r;
-}
-
-
-float getOcclusion(float Offset)
-{
-	float occlusion = 0;
-	float here = getHeightAt(vec2(0, 0));
-	float step;
-
-	// Offset /= float(uScaleFactor);
-
-	step = getHeightAt(vec2(Offset, 0));
-	if (step > here)
-		occlusion += step - here;
-	step = getHeightAt(vec2(-Offset, 0));
-	if (step > here)
-		occlusion += step - here;
-	step = getHeightAt(vec2(0, Offset));
-	if (step > here)
-		occlusion += step - here;
-	step = getHeightAt(vec2(0, -Offset));
-	if (step > here)
-		occlusion += step - here;
-
-	Offset *= 2;
-	step = getHeightAt(vec2(Offset, 0));
-	if (step > here)
-		occlusion += step - here;
-	step = getHeightAt(vec2(-Offset, 0));
-	if (step > here)
-		occlusion += step - here;
-	step = getHeightAt(vec2(0, Offset));
-	if (step > here)
-		occlusion += step - here;
-	step = getHeightAt(vec2(0, -Offset));
-	if (step > here)
-		occlusion += step - here;
-
-	Offset *= 2;
-	step = getHeightAt(vec2(Offset, 0));
-	if (step > here)
-		occlusion += step - here;
-	step = getHeightAt(vec2(-Offset, 0));
-	if (step > here)
-		occlusion += step - here;
-	step = getHeightAt(vec2(0, Offset));
-	if (step > here)
-		occlusion += step - here;
-	step = getHeightAt(vec2(0, -Offset));
-	if (step > here)
-		occlusion += step - here;
-	return occlusion / float(uScaleFactor);
-}
-
 void main()
 {
 	if (uDebugDisplay == 4) // Texture Coordinates
@@ -145,8 +87,10 @@ void main()
 		return;
 	}
 
-	vec3 Normal = textureBicubic(uNormalMap, fTexCoords).rgb;
+	vec4 Sample = textureBicubic(uNormalMap, fTexCoords);
 	vec3 Color = textureBicubic(uColorMap, fTexCoords).rgb;
+
+	vec3 Normal = Sample.rgb;
 
 	if (uDebugDisplay == 1) // Normals
 	{
@@ -185,6 +129,9 @@ void main()
 	// Material params
 	const float Ambient = 0.4;
 	const float Diffuse = 0.6;
-	// outColor = vec4(vec3(Ambient + Diffuse * Lighting) * Color * vec3(1.0 - getOcclusion(0.2 / 20.0) * 0.000), 1.0);
-	outColor = vec4(vec3(1.0 - getOcclusion(0.2 / 20.0) * 0.1), 1.0);
+
+	float Occlusion = 1.0 - clamp(Sample.a * uOcclusionStrength, 0.0, uOcclusionCap);
+
+	// outColor = vec4(vec3(Ambient + Diffuse * Lighting) * Color * vec3(1.0 - Occlusion), 1.0);
+	outColor = vec4(vec3(Occlusion), 1.0);
 }

@@ -24,7 +24,7 @@ CGeometryClipmapsSceneObject::SLayer::SLayer(CGeometryClipmapsSceneObject * Owne
 	NormalMap = RenderPass->GetGraphicsAPI()->CreateTexture2D(
 		vec2i(HeightmapResolution),
 		ion::Graphics::ITexture::EMipMaps::False,
-		ion::Graphics::ITexture::EFormatComponents::RGB,
+		ion::Graphics::ITexture::EFormatComponents::RGBA,
 		ion::Graphics::ITexture::EInternalFormatType::Fix8);
 	NormalMap->SetMagFilter(ion::Graphics::ITexture::EFilter::Linear);
 	NormalMap->SetMinFilter(ion::Graphics::ITexture::EFilter::Linear);
@@ -86,7 +86,7 @@ int CGeometryClipmapsSceneObject::SLayer::SendSample(int const x1, int const y1,
 	int const Size = (x2 - x1) * (y2 - y1);
 	float * const HeightData = new float[Size];
 	float * const ColorData = new float[Size * 3];
-	float * const NormalData = new float[Size * 3];
+	float * const NormalData = new float[Size * 4];
 
 	bool Succeeded = true;
 
@@ -113,14 +113,14 @@ int CGeometryClipmapsSceneObject::SLayer::SendSample(int const x1, int const y1,
 				Tile *= ScaleFactor;
 
 				float Height = 0;
-				vec3f Normal = vec3f(0, 1, 0);
+				vec4f Normal = vec4f(0, 1, 0, 0);
 				color3f Color = Colors::Blue;
 
 				if (Owner->HeightInput)
 				{
 					Height = Owner->HeightInput->GetTerrainHeight(Tile);
 					Color = Owner->HeightInput->GetTerrainColor(Tile);
-					Normal = Owner->HeightInput->GetTerrainNormal(Tile);
+					Normal = Owner->HeightInput->GetTerrainNormalAndOcclusion(Tile);
 				}
 
 				HeightData[Index] = Height;
@@ -129,9 +129,10 @@ int CGeometryClipmapsSceneObject::SLayer::SendSample(int const x1, int const y1,
 				ColorData[Index * 3 + 1] = Color.Green;
 				ColorData[Index * 3 + 2] = Color.Blue;
 
-				NormalData[Index * 3 + 0] = Normal.X;
-				NormalData[Index * 3 + 1] = Normal.Y;
-				NormalData[Index * 3 + 2] = Normal.Z;
+				NormalData[Index * 4 + 0] = Normal.X;
+				NormalData[Index * 4 + 1] = Normal.Y;
+				NormalData[Index * 4 + 2] = Normal.Z;
+				NormalData[Index * 4 + 3] = Normal.W;
 			}
 		}
 	}
@@ -143,7 +144,7 @@ int CGeometryClipmapsSceneObject::SLayer::SendSample(int const x1, int const y1,
 
 	HeightMap->UploadSubRegion(HeightData, vec2u(x1, y1), vec2u(x2 - x1, y2 - y1), ion::Graphics::ITexture::EFormatComponents::R, ion::Graphics::EScalarType::Float);
 	ColorMap->UploadSubRegion(ColorData, vec2u(x1, y1), vec2u(x2 - x1, y2 - y1), ion::Graphics::ITexture::EFormatComponents::RGB, ion::Graphics::EScalarType::Float);
-	NormalMap->UploadSubRegion(NormalData, vec2u(x1, y1), vec2u(x2 - x1, y2 - y1), ion::Graphics::ITexture::EFormatComponents::RGB, ion::Graphics::EScalarType::Float);
+	NormalMap->UploadSubRegion(NormalData, vec2u(x1, y1), vec2u(x2 - x1, y2 - y1), ion::Graphics::ITexture::EFormatComponents::RGBA, ion::Graphics::EScalarType::Float);
 
 	delete [] HeightData;
 	delete [] ColorData;
