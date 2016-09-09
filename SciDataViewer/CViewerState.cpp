@@ -307,7 +307,7 @@ void CViewerState::Init()
 
 		float GetTerrainHeight(vec2i const & Position)
 		{
-			LastHeight = -128;
+			LastHeight = -2048;
 
 			vec2d const Pos = WorldToLongLat(vec3f((float) Position.X, 0, (float) Position.Y) * Scale).XZ();
 
