@@ -26,6 +26,7 @@ public:
 		ImGui::SetNextWindowPos(ImVec2(950, 50), ImGuiSetCond_Once);
 		ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiSetCond_Once);
 		ImGui::Begin("Camera", &IsVisible);
+		ImGui::Text("Camera position: %.3f %.3f %.3f", Position.X, Position.Y, Position.Z);
 		//ImGui::InputFloat3("Position", &Position.Values[0]);
 		ImGui::DragFloat("Phi", &Phi, 0.01f, -1.56f, 1.56f);
 		ImGui::DragFloat("Theta", &Theta, 0.01f, -3.1415f, 3.14156f);

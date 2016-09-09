@@ -37,7 +37,7 @@ public:
 	virtual void Draw(ion::Scene::CRenderPass * RenderPass);
 
 	ion::Graphics::CUniform<int> uDebugDisplay = 0;
-	ion::Graphics::CUniform<float> uOcclusionStrength = 0.3f;
+	ion::Graphics::CUniform<float> uOcclusionStrength = 0.7f;
 	ion::Graphics::CUniform<float> uOcclusionCap = 0.75f;
 
 	bool UseCameraPosition = false;

@@ -345,7 +345,7 @@ bool CGeometryClipmapsSceneObject::IsWireframeEnabled() const
 
 vec4f CGeometryClipmapsSceneObject::IHeightInput::GetTerrainNormalAndOcclusion(vec2i const & Position)
 {
-	double const s00 = GetTerrainHeight(Position + vec2i(0, 0));
+	double const s11 = GetTerrainHeight(Position + vec2i(0, 0));
 
 	double s01 = GetTerrainHeight(Position + vec2i(-1, 0));
 	double s21 = GetTerrainHeight(Position + vec2i(+1, 0));
@@ -359,28 +359,40 @@ vec4f CGeometryClipmapsSceneObject::IHeightInput::GetTerrainNormalAndOcclusion(v
 
 	// Occlusion
 	double Occlusion = 0;
-	//if (s01 > s00)
-	//	Occlusion += (s01 - s00);
-	//if (s10 > s00)
-	//	Occlusion += (s10 - s00);
-	//if (s21 > s00)
-	//	Occlusion += (s21 - s00);
-	//if (s12 > s00)
-	//	Occlusion += (s12 - s00);
+	double Weight = 1.0;
 
-	s01 = GetTerrainHeight(Position + vec2i(-2, 0));
-	s21 = GetTerrainHeight(Position + vec2i(+2, 0));
-	s10 = GetTerrainHeight(Position + vec2i(0, -2));
-	s12 = GetTerrainHeight(Position + vec2i(0, +2));
+	double Left;
+	double Right;
 
-	if (s01 > s00)
-		Occlusion += (s01 - s00);
-	if (s10 > s00)
-		Occlusion += (s10 - s00);
-	if (s21 > s00)
-		Occlusion += (s21 - s00);
-	if (s12 > s00)
-		Occlusion += (s12 - s00);
+	Left = (s21 - s11);
+	Right = (s11 - s01);
+	if (Left > Right)
+		Occlusion += Left - Right;
+
+	Left = (s12 - s11);
+	Right = (s11 - s10);
+	if (Left > Right)
+		Occlusion += Left - Right;
+
+	for (int i = 2; i <= 32; i *= 2)
+	{
+		Weight /= 4.0;
+
+		s01 = GetTerrainHeight(Position + vec2i(-i, 0));
+		s21 = GetTerrainHeight(Position + vec2i(+i, 0));
+		s10 = GetTerrainHeight(Position + vec2i(0, -i));
+		s12 = GetTerrainHeight(Position + vec2i(0, +i));
+
+		Left = (s21 - s11);
+		Right = (s11 - s01);
+		if (Left > Right)
+			Occlusion += (Left - Right) * Weight;
+
+		Left = (s12 - s11);
+		Right = (s11 - s10);
+		if (Left > Right)
+			Occlusion += (Left - Right) * Weight;
+	}
 	
 	return vec4f(Normal.X, Normal.Y, Normal.Z, (float) Occlusion);
 }

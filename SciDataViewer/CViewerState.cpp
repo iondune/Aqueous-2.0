@@ -92,7 +92,7 @@ void CViewerState::Init()
 	SceneManager->AddRenderPass(FinalRenderPass);
 
 	DebugCamera = new CPerspectiveCamera(Application->GetWindow()->GetAspectRatio());
-	DebugCamera->SetPosition(vec3f(-10, 10, 0));
+	DebugCamera->SetPosition(vec3f(-320, 320, 0));
 	DebugCamera->SetFarPlane(50000.f);
 	DefaultRenderPass->SetActiveCamera(DebugCamera);
 	VolumeRenderPass->SetActiveCamera(DebugCamera);

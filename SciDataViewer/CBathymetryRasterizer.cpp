@@ -62,17 +62,19 @@ double CBathymetryRasterizer::GetHeightAtPoint(vec2d const & Position)
 	{
 		double const Value = Bucket->GetValue();
 
-		double Data[2][2] =
+		double Data[4][4] =
 		{
-			{ Value, Value },
-			{ Value, Value },
+			{ Value, Value, Value, Value },
+			{ Value, Value, Value, Value },
+			{ Value, Value, Value, Value },
+			{ Value, Value, Value, Value },
 		};
 
-		for (int m = 0; m < 2; ++ m)
+		for (int m = 0; m < 4; ++ m)
 		{
-			for (int n = 0; n < 2; ++ n)
+			for (int n = 0; n < 4; ++ n)
 			{
-				auto Bucket = Helper_GetBucket(i + m, j + n);
+				auto Bucket = Helper_GetBucket(i + m - 1, j + n - 1);
 				if (Bucket && Bucket->Count)
 				{
 					Data[m][n] = Bucket->GetValue();
@@ -81,7 +83,7 @@ double CBathymetryRasterizer::GetHeightAtPoint(vec2d const & Position)
 		}
 
 		double integral;
-		return BilinearInterpolate(Data, modf(RealIndex.X, &integral), modf(RealIndex.Y, &integral));
+		return BicubicInterpolate(Data, modf(RealIndex.X, &integral), modf(RealIndex.Y, &integral));
 	}
 	else
 	{
