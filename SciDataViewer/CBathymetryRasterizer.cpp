@@ -104,6 +104,8 @@ void CBathymetryRasterizer::WriteToFile(string const & FileName)
 	fwrite(& RegionYSize, sizeof(RegionYSize), 1, file);
 
 	fwrite(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
+
+	fclose(file);
 }
 
 void CBathymetryRasterizer::ReadFromFile(string const & FileName)
@@ -118,6 +120,8 @@ void CBathymetryRasterizer::ReadFromFile(string const & FileName)
 	fread(& RegionYSize, sizeof(RegionYSize), 1, file);
 
 	fread(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
+
+	fclose(file);
 }
 
 CBathymetryRasterizer::SPixelBucket * CBathymetryRasterizer::Helper_GetBucket(int const i, int const j)
@@ -746,6 +750,8 @@ void CTopographyRasterizer::WriteToFile(string const & FileName)
 	fwrite(& RegionYSize, sizeof(RegionYSize), 1, file);
 
 	fwrite(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
+
+	fclose(file);
 }
 
 void CTopographyRasterizer::ReadFromFile(string const & FileName)
@@ -761,6 +767,8 @@ void CTopographyRasterizer::ReadFromFile(string const & FileName)
 
 	Buckets = new SPixelBucket[ImageSize * ImageSize];
 	fread(Buckets, sizeof(SPixelBucket), ImageSize * ImageSize, file);
+
+	fclose(file);
 }
 
 bool CTopographyRasterizer::IsPointInBounds(vec2d const & Position)
