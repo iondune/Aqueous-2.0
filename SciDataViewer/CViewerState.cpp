@@ -222,6 +222,15 @@ void CViewerState::Init()
 	//br_region->ConvertAndRasterize(false);
 
 
+	CTopographyRasterizer * tr_hires = new CTopographyRasterizer();
+	tr_hires->SourceLongLatPostings = CatalinaOutline;
+	tr_hires->ImageSize = 2048;
+	tr_hires->OutputName = "HiResTop.png";
+	//tr_hires->FillInteriorPoints();
+	//tr_hires->RasterizeImage();
+	//tr_hires->WriteToFile("HiResTop.bin");
+	tr_hires->ReadFromFile("HiResTop.bin");
+
 	CTopographyRasterizer * tr_catalina = new CTopographyRasterizer();
 	tr_catalina->SourceLongLatPostings = CatalinaOutline;
 	tr_catalina->ImageSize = 4096;
@@ -330,8 +339,9 @@ void CViewerState::Init()
 	float const ClipmapsScale = 1.f;
 	SimpleHeight * HeightInput = new SimpleHeight();
 	HeightInput->Scale = ClipmapsScale;
-	HeightInput->Layers.push_back(tr_catalina);
+	HeightInput->Layers.push_back(tr_hires);
 	HeightInput->Layers.push_back(br_hires);
+	HeightInput->Layers.push_back(tr_catalina);
 	//HeightInput->Layers.push_back(br_catalina);
 	//HeightInput->Layers.push_back(br_region);
 	GeometryClipmapsObject->HeightInput = HeightInput;

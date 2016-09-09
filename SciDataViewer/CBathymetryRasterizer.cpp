@@ -649,6 +649,9 @@ double LineSegmentToPointDistance(vec2d const & v, vec2d const & w, vec2d const 
 
 void CTopographyRasterizer::FillInteriorPoints()
 {
+	CStopWatch sw;
+	sw.Start();
+
 	Buckets = new SPixelBucket[ImageSize * ImageSize];
 
 	vector<STriangle2D<double>> Triangles;
@@ -686,18 +689,22 @@ void CTopographyRasterizer::FillInteriorPoints()
 		}
 	}
 
-	double const IdealMax = 255.0;
+	double const ApexPoint = 0.06;
+	double const ScaleUp = 255.0 / 0.05;
 
 	for (int i = 0; i < ImageSize; ++ i)
 	{
 		for (int j = 0; j < ImageSize; ++ j)
 		{
 			auto Bucket = Helper_GetBucket(i, j);
-			Bucket->Value /= ActualMax;
+			Bucket->Value /= ApexPoint;
 			Bucket->Value = pow(Bucket->Value, 0.65f);
-			Bucket->Value *= IdealMax;
+			Bucket->Value *= ApexPoint * ScaleUp;
 		}
 	}
+
+	Log::Info("Max: %f Scaled Max: %f", ActualMax, ActualMax * ScaleUp);
+	Log::Info("Topography fill interior took %.3f", sw.Stop());
 }
 
 void CTopographyRasterizer::RasterizeImage()
