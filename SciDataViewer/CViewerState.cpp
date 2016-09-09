@@ -293,13 +293,13 @@ void CViewerState::Init()
 		vector<ITerrainHeightSource *> Layers;
 
 		double LastHeight = 0;
-		double Scale = 1;
+		float Scale = 1;
 
 		float GetTerrainHeight(vec2i const & Position)
 		{
 			LastHeight = -128;
 
-			vec2d const Pos = vec2d(Position) * Scale / (19200.0 * 25.0) + vec2d(33.445, -118.4865);
+			vec2d const Pos = WorldToLongLat(vec3f((float) Position.X, 0, (float) Position.Y) * Scale).XZ();
 
 			for (auto Layer : Layers)
 			{
@@ -587,4 +587,20 @@ void CViewerState::DoExportOBJ()
 	else {
 		printf("Error: %s\n", NFD_GetError());
 	}
+}
+
+
+vec3d const WorldCenter = vec3d(33.445, 0, -118.4865);
+double const WorldScale = (19200.0 * 25.0);
+double const ElevationScale = 1.0;
+vec3d const ScaleMultiplier = vec3d(WorldScale, ElevationScale, WorldScale);
+
+vec3d WorldToLongLat(vec3f const & World)
+{
+	return vec3d(World) / ScaleMultiplier + WorldCenter;
+}
+
+vec3f LongLatToWorld(vec3d const & LongLat)
+{
+	return vec3f(ScaleMultiplier * (LongLat - WorldCenter));
 }

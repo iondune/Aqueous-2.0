@@ -18,6 +18,11 @@ class CPointsWindowWidget;
 class CDebugWindowWidget;
 class CGeometryClipmapsWindowWidget;
 
+
+vec3d WorldToLongLat(vec3f const & World);
+vec3f LongLatToWorld(vec3d const & LongLat);
+
+
 class CViewerState : public IState, public Singleton<CViewerState>
 {
 
