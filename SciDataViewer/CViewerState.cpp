@@ -137,7 +137,7 @@ void CViewerState::Init()
 #endif
 
 	ParticleSystem = new CParticleSystem(Application->ParticleShader);
-	DefaultRenderPass->AddSceneObject(ParticleSystem);
+	//DefaultRenderPass->AddSceneObject(ParticleSystem);
 
 	auto PointsToParticles = [this](string const & FileName, color3i const & Color, bool Commas) -> vector<vec3d>
 	{
@@ -164,7 +164,7 @@ void CViewerState::Init()
 		p.Color = color3f(0.f, 1.f, (float) ndx / (float) Sum);
 		p.Position = vec3f((CatPt.X - 33.3f) * 800, 0.0f, (CatPt.Y + 118.3f) * 800);
 
-		Text3D.push_back(make_pair(p.Position, String::Build("%d", ndx)));
+		//Text3D.push_back(make_pair(p.Position, String::Build("%d", ndx)));
 		ParticleSystem->Particles.push_back(p);
 
 		ndx ++;
@@ -379,7 +379,7 @@ void CViewerState::Init()
 		sprintf(bfr, "Caustics/save.%02d.png", i);
 		CausticFileNames.push_back(string(bfr));
 	}
-	//SharedPointer<Graphics::ITexture3D> causticTextures = AssetManager->Load3DTexture(CausticFileNames);
+	SharedPointer<Graphics::ITexture3D> causticTextures = AssetManager->Load3DTexture(CausticFileNames);
 
 	// Shark
 	COrthographicCamera caustCam(64, 64, 64, 64);
@@ -389,12 +389,12 @@ void CViewerState::Init()
 	SharedPointer<ion::Graphics::IUniform> uCaustVPMatrix =
 		std::make_shared<ion::Graphics::CUniformValue<glm::mat4>>(caustCam.GetProjectionMatrix() * caustCam.GetViewMatrix());
 
-	//SharkObject = new SharkSceneObject("Assets/Models/leopardSharkUnparented.dae");
-	//SharkObject->SetUniform("uCaustVPMatrix", uCaustVPMatrix);
-	//SharkObject->SetTexture("uCausticTexture", causticTextures);
-	//SharkObject->SetShader(Application->SharkShader);
-	//SharkObject->TriggerReload();
-	//DefaultRenderPass->AddSceneObject(SharkObject);
+	SharkObject = new SharkSceneObject("Assets/Models/leopardSharkUnparented.dae");
+	SharkObject->SetUniform("uCaustVPMatrix", uCaustVPMatrix);
+	SharkObject->SetTexture("uCausticTexture", causticTextures);
+	SharkObject->SetShader(Application->SharkShader);
+	SharkObject->TriggerReload();
+	DefaultRenderPass->AddSceneObject(SharkObject);
 
 	//Add texture
 	//
@@ -408,15 +408,6 @@ void CViewerState::Init()
 	//Spline
 	Spline = std::make_shared<CKeySpline>();
 	glm::vec3 offset(0, 0, 0);
-
-	for (uint i = 0; i < SharkPathDataset->Size() && i < 500; i ++)
-	{
-		CDataRow const Row = SharkPathDataset->GetRow(i);
-		vec3d const Location = vec3d(Row.GetFieldAsDouble(4), 0, Row.GetFieldAsDouble(5));
-		vec3f const World = LongLatToWorld(Location);
-
-		Spline->AddNode(SSplineNode(World.ToGLM()));
-	}
 
 	//Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, 5)));
 	//Spline->AddNode(SSplineNode(offset + glm::vec3(1, 0, 2)));
@@ -432,6 +423,15 @@ void CViewerState::Init()
 	//Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, -8)));
 
 	//Spline->AddNode(SSplineNode(glm::vec3(0, 0, -10)));
+
+	for (uint i = 0; i < SharkPathDataset->Size() && i < 500; i ++)
+	{
+		CDataRow const Row = SharkPathDataset->GetRow(i);
+		vec3d const Location = vec3d(Row.GetFieldAsDouble(4), 0, Row.GetFieldAsDouble(5));
+		vec3f const World = LongLatToWorld(Location) - vec3f(0, 100, 0);
+
+		Spline->AddNode(SSplineNode(World.ToGLM()));
+	}
 
 	Spline2 = std::make_shared<CKeySpline>();
 	glm::vec3 offset2(0, 5, 0);
@@ -450,13 +450,13 @@ void CViewerState::Init()
 	SceneObject4->SetShader(Application->DiffuseShader);
 	//SceneObject4->SetFeatureEnabled(EDrawFeature::Wireframe, true);
 	SceneObject4->SetMesh(CreatePolygonMesh(CatalinaOutline));
-	DefaultRenderPass->AddSceneObject(SceneObject4);
+	//DefaultRenderPass->AddSceneObject(SceneObject4);
 
 	CSimpleMeshSceneObject * SceneObject5 = new CSimpleMeshSceneObject();
 	SceneObject5->SetShader(Application->DiffuseShader);
 	//SceneObject4->SetFeatureEnabled(EDrawFeature::Wireframe, true);
 	SceneObject5->SetMesh(CreatePolygonMesh(BirdRock));
-	DefaultRenderPass->AddSceneObject(SceneObject5);
+	//DefaultRenderPass->AddSceneObject(SceneObject5);
 }
 
 void CViewerState::Update(float const Elapsed)
@@ -464,8 +464,8 @@ void CViewerState::Update(float const Elapsed)
 	SceneFrameBuffer->ClearColorAndDepth();
 	CopyFrameBuffer->ClearColorAndDepth();
 	totalTime += Elapsed;
-	Transform t = Spline2->TransformAt(totalTime*0.25f);
-	//SharkObject->update(*Spline, Elapsed);
+	//Transform t = Spline2->TransformAt(totalTime*0.25f);
+	SharkObject->update(*Spline, Elapsed);
 
 	//DebugCamera->SetPosition(t.getPosition());
 	//DebugCamera->SetLookAtTarget(vec3f(0,0,0));
