@@ -15,6 +15,7 @@
 #include "UTMtoLatLong.h"
 #include "CBathymetryRasterizer.h"
 #include "CatalinaOutline.h"
+#include "CDataLoaderCSV.h"
 
 
 using namespace ion;
@@ -386,23 +387,39 @@ void CViewerState::Init()
 	//Add texture
 	//
 
+	CDataSet * SharkPathDataset = new CDataSet();
+	CDataLoaderCSV * CSVLoader = new CDataLoaderCSV();
+	CSVLoader->FileName = "Data/track_data-2015-07-29_08-01-23-AM.csv";
+	CSVLoader->Load(SharkPathDataset);
+
+
 	//Spline
 	Spline = std::make_shared<CKeySpline>();
 	glm::vec3 offset(0, 0, 0);
-	Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, 5)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(1, 0, 2)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(2, 0, -4)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, -8)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, 5)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(1, 0, 2)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(2, 0, -4)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, -8)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, 5)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(1, 0, 2)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(2, 0, -4)));
-	Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, -8)));
 
-	Spline->AddNode(SSplineNode(glm::vec3(0, 0, -10)));
+	for (uint i = 0; i < SharkPathDataset->Size() && i < 500; i ++)
+	{
+		CDataRow const Row = SharkPathDataset->GetRow(i);
+		vec3d const Location = vec3d(Row.GetFieldAsDouble(4), 0, Row.GetFieldAsDouble(5));
+		vec3f const World = LongLatToWorld(Location);
+
+		Spline->AddNode(SSplineNode(World.ToGLM()));
+	}
+
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, 5)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(1, 0, 2)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(2, 0, -4)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, -8)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, 5)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(1, 0, 2)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(2, 0, -4)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, -8)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, 5)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(1, 0, 2)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(2, 0, -4)));
+	//Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, -8)));
+
+	//Spline->AddNode(SSplineNode(glm::vec3(0, 0, -10)));
 
 	Spline2 = std::make_shared<CKeySpline>();
 	glm::vec3 offset2(0, 5, 0);
