@@ -130,12 +130,10 @@ void main()
 	const float Ambient = 0.4;
 	const float Diffuse = 0.6;
 
-	vec3 Hue = vec3(78.0, 104.0, 150.0) / 255.0;
-
-	if (fWorldPosition.y > 0)
-	{
-		Hue = vec3(106.0, 179.0, 82.0) / 255.0;
-	}
+	vec3 Hue = mix(
+		vec3(78.0, 104.0, 150.0) / 255.0,
+		vec3(106.0, 179.0, 82.0) / 255.0,
+		clamp((fWorldPosition.y / 512.0) + 0.5, 0.0, 1.0));
 
 	float Occlusion = 1.0 - clamp(Sample.a * uOcclusionStrength, 0.0, uOcclusionCap);
 

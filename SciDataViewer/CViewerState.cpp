@@ -260,7 +260,9 @@ void CViewerState::Init()
 
 	WaterSurface = new CWaterSurfaceSceneObject();
 	WaterSurface->SceneColor = SwapColor;
-	//WaterRenderPass->AddSceneObject(WaterSurface);
+	WaterSurface->SetPosition(-vec3f(1, 0, 1) * (1<<10));
+	//WaterSurface->SetScale(vec3f(50, 1, 50));
+	WaterRenderPass->AddSceneObject(WaterSurface);
 
 	Volume = new CVolumeSceneObject();
 	vec3u VolumeSize = vec3u(14, 23, 28);

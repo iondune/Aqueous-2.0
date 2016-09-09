@@ -49,7 +49,7 @@ CWaterSurfaceSceneObject::CWaterSurfaceSceneObject()
 
 	uTime = 0.f;
 	uScale = 10.f;
-	uFrequency = 6.356f;
+	uFrequency = 1.0f;
 	uHeight = 1.65f;
 	uSteepness = 0.5f;
 
@@ -99,7 +99,7 @@ void CWaterSurfaceSceneObject::GUI()
 	{
 		ImGui::DragFloat("Speed", &Speed, 0.001f, 0.f, 1.f);
 		ImGui::DragFloat("Scale", &uScale.Get(), 0.1f, 1.f, 20.f);
-		ImGui::DragFloat("Frequency", &uFrequency.Get(), 0.1f, 1.f, 20.f);
+		ImGui::DragFloat("Frequency", &uFrequency.Get(), 0.025f, 1.f, 200.f);
 		ImGui::DragFloat("Height", &uHeight.Get(), 0.1f, 1.f, 20.f);
 		ImGui::DragFloat("Steepness", &uSteepness.Get(), 0.01f, 0.f, 1.f);
 		ImGui::SliderInt("Wave Count", &uNumWaves.Get(), 1, 110);
