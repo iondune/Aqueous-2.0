@@ -8,11 +8,16 @@ uniform sampler2D uNormalMap;
 uniform sampler2D uColorMap;
 uniform sampler2D uHeightMap;
 
+
 uniform int uSamplingMode;
 uniform int uDebugDisplay;
 
 uniform float uOcclusionStrength;
 uniform float uOcclusionCap;
+
+uniform sampler2D uOverlayImage;
+uniform vec2 uOverlayScale;
+uniform vec2 uOverlayCenter;
 
 
 #define LIGHT_MAX 3
@@ -134,6 +139,18 @@ void main()
 		vec3(78.0, 104.0, 150.0) / 255.0,
 		vec3(106.0, 179.0, 82.0) / 255.0,
 		clamp((fWorldPosition.y / 512.0) + 0.5, 0.0, 1.0));
+
+	vec2 OverlayCoords = fWorldPosition.zx;
+
+	vec2 OverlayLowerCorner = uOverlayCenter - uOverlayScale / 2.0;
+	vec2 OverlayUpperCorner = uOverlayCenter + uOverlayScale / 2.0;
+	if (OverlayCoords.x >= OverlayLowerCorner.x && OverlayCoords.x <= OverlayUpperCorner.x &&
+		OverlayCoords.y >= OverlayLowerCorner.y && OverlayCoords.y <= OverlayUpperCorner.y)
+	{
+		Hue =
+		// vec3(1.0);
+		texture(uOverlayImage, (OverlayCoords - OverlayLowerCorner) / uOverlayScale).rgb;
+	}
 
 	float Occlusion = 1.0 - clamp(Sample.a * uOcclusionStrength, 0.0, uOcclusionCap);
 

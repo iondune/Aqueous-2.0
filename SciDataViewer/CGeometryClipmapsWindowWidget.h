@@ -18,7 +18,7 @@ public:
 
 	void Draw()
 	{
-		ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiSetCond_Once);
+		ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiSetCond_Once);
 		ImGui::Begin("Geomtry Clipmaps", &IsVisible);
 
 		bool Checked = (Object->uDebugDisplay == 0);
@@ -71,6 +71,22 @@ public:
 		{
 			Object->uOcclusionCap = FloatValue;
 		}
+
+		ImGui::Separator();
+
+		float Vec2Values[2] = { Object->uOverlayScale->X, Object->uOverlayScale->Y };
+		if (ImGui::DragFloat2("Overlay Scale", Vec2Values, 50.f))
+		{
+			Object->uOverlayScale = vec2f(Vec2Values[0], Vec2Values[1]);
+		}
+
+		Vec2Values[0] = Object->uOverlayCenter->X;
+		Vec2Values[1] = Object->uOverlayCenter->Y;
+		if (ImGui::DragFloat2("Overlay Center", Vec2Values, 10.f))
+		{
+			Object->uOverlayCenter = vec2f(Vec2Values[0], Vec2Values[1]);
+		}
+
 
 		ImGui::End();
 	}

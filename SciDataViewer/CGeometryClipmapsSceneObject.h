@@ -44,6 +44,10 @@ public:
 	bool UseCameraHeight = false;
 
 	SharedPointer<ion::Graphics::IShaderProgram> Shader;
+	SharedPointer<ion::Graphics::ITexture2D> OverlayImage;
+
+	ion::Graphics::CUniform<vec2f> uOverlayScale = vec2f(187250.0f, 97350.0f);
+	ion::Graphics::CUniform<vec2f> uOverlayCenter = vec2f(22470.0f, -26260.0f);
 
 	class SLayer : public CToroidalUpdater::ISampleUploader
 	{
@@ -99,7 +103,7 @@ public:
 protected:
 
 	// Shared vertex buffer for each later
-	SharedPointer<ion::Graphics::IVertexBuffer> VertexBuffer = nullptr;
+	SharedPointer<ion::Graphics::IVertexBuffer> VertexBuffer;
 
 	bool Wireframe = false;
 

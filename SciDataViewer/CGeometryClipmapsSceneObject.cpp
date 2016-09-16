@@ -96,9 +96,12 @@ void CGeometryClipmapsSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 		PipelineState->SetTexture("uHeightMap", Layer->HeightMap);
 		PipelineState->SetTexture("uColorMap", Layer->ColorMap);
 		PipelineState->SetTexture("uNormalMap", Layer->NormalMap);
+		PipelineState->SetTexture("uOverlayImage", OverlayImage);
 
 		PipelineState->SetUniform("uOcclusionStrength", uOcclusionStrength);
 		PipelineState->SetUniform("uOcclusionCap", uOcclusionCap);
+		PipelineState->SetUniform("uOverlayCenter", uOverlayCenter);
+		PipelineState->SetUniform("uOverlayScale", uOverlayScale);
 
 		PipelineState->SetFeatureEnabled(ion::Graphics::EDrawFeature::Wireframe, Wireframe);
 

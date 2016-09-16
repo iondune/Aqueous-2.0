@@ -336,6 +336,7 @@ void CViewerState::Init()
 
 	GeometryClipmapsObject = new CGeometryClipmapsSceneObject();
 	GeometryClipmapsObject->Shader = Application->GeometryClipmapsShader;
+	GeometryClipmapsObject->OverlayImage = AssetManager->LoadTexture("CatalinaTexture.png");
 	GeometryClipmapsObject->UseCameraPosition = true;
 	float const ClipmapsScale = 1.f;
 	SimpleHeight * HeightInput = new SimpleHeight();
