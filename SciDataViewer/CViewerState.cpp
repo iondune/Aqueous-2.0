@@ -137,7 +137,7 @@ void CViewerState::Init()
 #endif
 
 	ParticleSystem = new CParticleSystem(Application->ParticleShader);
-	//DefaultRenderPass->AddSceneObject(ParticleSystem);
+	DefaultRenderPass->AddSceneObject(ParticleSystem);
 
 	auto PointsToParticles = [this](string const & FileName, color3i const & Color, bool Commas) -> vector<vec3d>
 	{
@@ -150,7 +150,7 @@ void CViewerState::Init()
 			p.Color = Color;
 			p.Position = vec3d((Point.X - 33.3) * 800, -Point.Z / 50.0f, (Point.Y + 118.3) * 800);
 
-			ParticleSystem->Particles.push_back(p);
+			//ParticleSystem->Particles.push_back(p);
 		}
 
 		return Points;
@@ -165,7 +165,7 @@ void CViewerState::Init()
 		p.Position = vec3f((CatPt.X - 33.3f) * 800, 0.0f, (CatPt.Y + 118.3f) * 800);
 
 		//Text3D.push_back(make_pair(p.Position, String::Build("%d", ndx)));
-		ParticleSystem->Particles.push_back(p);
+		//ParticleSystem->Particles.push_back(p);
 
 		ndx ++;
 	}
@@ -256,7 +256,6 @@ void CViewerState::Init()
 
 	//	ParticleSystem->Particles.push_back(p);
 	//}
-	ParticleSystem->Update();
 
 	WaterSurface = new CWaterSurfaceSceneObject();
 	WaterSurface->SceneColor = SwapColor;
@@ -431,7 +430,14 @@ void CViewerState::Init()
 		vec3f const World = LongLatToWorld(Location) + vec3f(0, 25, 0);
 
 		Spline->AddNode(SSplineNode(World.ToGLM()));
+
+		CParticle p;
+		p.Color = Colors::Cyan;
+		p.Position = vec3f(World * vec3f(1, -1, 1) + vec3f(0, -5, 3));
+
+		ParticleSystem->Particles.push_back(p);
 	}
+	ParticleSystem->Update();
 
 	Spline2 = std::make_shared<CKeySpline>();
 	glm::vec3 offset2(0, 5, 0);
