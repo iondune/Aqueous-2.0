@@ -407,7 +407,7 @@ void CViewerState::Init()
 
 	//Spline
 	Spline = std::make_shared<CKeySpline>();
-	glm::vec3 offset(0, 0, 0);
+	//glm::vec3 offset(0, 0, 0);
 
 	//Spline->AddNode(SSplineNode(offset + glm::vec3(-3, 0, 5)));
 	//Spline->AddNode(SSplineNode(offset + glm::vec3(1, 0, 2)));
@@ -428,7 +428,7 @@ void CViewerState::Init()
 	{
 		CDataRow const Row = SharkPathDataset->GetRow(i);
 		vec3d const Location = vec3d(Row.GetFieldAsDouble(4), 0, Row.GetFieldAsDouble(5));
-		vec3f const World = LongLatToWorld(Location) - vec3f(0, 100, 0);
+		vec3f const World = LongLatToWorld(Location) + vec3f(0, 25, 0);
 
 		Spline->AddNode(SSplineNode(World.ToGLM()));
 	}

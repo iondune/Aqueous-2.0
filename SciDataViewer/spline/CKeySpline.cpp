@@ -266,7 +266,7 @@ SharedPointer<ion::Graphics::IVertexBuffer> CKeySpline::GetVertexBuffer()
 				float u = i / (n - 1.0f);
 				Eigen::Vector4f uVec(1.0, u, u*u, u*u*u);
 				Eigen::Vector3f P = Gk*B*uVec;
-				positions.push_back(glm::vec3(P(0), P(1), P(2)));
+				positions.push_back(glm::vec3(P(0), -P(1) - 5, P(2) + 3));
 			}
 		}
 		VertexBuffer->UploadData(positions);
