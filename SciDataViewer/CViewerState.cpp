@@ -342,8 +342,8 @@ void CViewerState::Init()
 	SimpleHeight * HeightInput = new SimpleHeight();
 	HeightInput->Scale = ClipmapsScale;
 	HeightInput->Layers.push_back(tr_hires);
-	HeightInput->Layers.push_back(br_hires);
 	HeightInput->Layers.push_back(tr_catalina);
+	HeightInput->Layers.push_back(br_hires);
 	//HeightInput->Layers.push_back(br_catalina);
 	//HeightInput->Layers.push_back(br_region);
 	GeometryClipmapsObject->HeightInput = HeightInput;

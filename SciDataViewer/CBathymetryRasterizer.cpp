@@ -780,15 +780,16 @@ void CTopographyRasterizer::ReadFromFile(string const & FileName)
 
 bool CTopographyRasterizer::IsPointInBounds(vec2d const & Position)
 {
-	if ((Position.X >= RegionXCorner && Position.X <= RegionXCorner + RegionXSize) &&
-		(Position.Y >= RegionYCorner && Position.Y <= RegionYCorner + RegionYSize))
+	double const Margin = 0.0001;
+	if ((Position.X > RegionXCorner + Margin && Position.X < RegionXCorner + RegionXSize - Margin) &&
+		(Position.Y > RegionYCorner + Margin && Position.Y < RegionYCorner + RegionYSize - Margin))
 	{
 		vec2d RealIndex = vec2d(
 			(Position.X - RegionXCorner) / RegionXSize,
-			(Position.Y - RegionYCorner) / RegionYSize);
+			(Position.Y - RegionYCorner) / RegionYSize) * (double) ImageSize;
 
-		int i = Clamp((int) (RealIndex.X * ImageSize), 0, ImageSize - 1);
-		int j = Clamp((int) (RealIndex.Y * ImageSize), 0, ImageSize - 1);
+		int i = (int) RealIndex.X;
+		int j = (int) RealIndex.Y;
 
 		auto Bucket = Helper_GetBucket(i, j);
 
@@ -807,8 +808,8 @@ double CTopographyRasterizer::GetHeightAtPoint(vec2d const & Position)
 		(Position.X - RegionXCorner) / RegionXSize,
 		(Position.Y - RegionYCorner) / RegionYSize) * (double) ImageSize;
 
-	int const i = Clamp((int) RealIndex.X, 0, ImageSize - 1);
-	int const j = Clamp((int) RealIndex.Y, 0, ImageSize - 1);
+	int const i = (int) RealIndex.X;
+	int const j = (int) RealIndex.Y;
 
 	auto Bucket = Helper_GetBucket(i, j);
 	if (Bucket && Bucket->Interior)
