@@ -149,7 +149,7 @@ void main()
 	{
 		Hue =
 		// vec3(1.0);
-		texture(uOverlayImage, (OverlayCoords - OverlayLowerCorner) / uOverlayScale).rgb;
+		textureBicubic(uOverlayImage, (OverlayCoords - OverlayLowerCorner) / uOverlayScale).rgb;
 	}
 
 	float Occlusion = 1.0 - clamp(Sample.a * uOcclusionStrength, 0.0, uOcclusionCap);
