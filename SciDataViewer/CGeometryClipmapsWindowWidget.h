@@ -61,6 +61,14 @@ public:
 
 		ImGui::Separator();
 
+		Checked = Object->UseCameraPosition;
+		if (ImGui::Checkbox("Follow Camera", & Checked))
+		{
+			Object->UseCameraPosition = Checked;
+		}
+
+		ImGui::Separator();
+
 		float FloatValue = Object->uOcclusionStrength;
 		if (ImGui::SliderFloat("Occlusion Strength", &FloatValue, 0.0, 2.0))
 		{

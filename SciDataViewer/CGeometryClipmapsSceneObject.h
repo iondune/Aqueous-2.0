@@ -27,7 +27,7 @@ public:
 
 	static int const GeometrySize = 128;
 	static int const HeightmapResolution = GeometrySize + 2;
-	static int const LayerCount = 9;
+	static int const LayerCount = 13;
 
 	int DrawLevel = 0;
 

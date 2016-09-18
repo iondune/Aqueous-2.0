@@ -93,7 +93,6 @@ void CViewerState::Init()
 
 	DebugCamera = new CPerspectiveCamera(Application->GetWindow()->GetAspectRatio());
 	DebugCamera->SetPosition(vec3f(-320, 320, 0));
-	DebugCamera->SetFarPlane(50000.f);
 	DefaultRenderPass->SetActiveCamera(DebugCamera);
 	VolumeRenderPass->SetActiveCamera(DebugCamera);
 	WaterRenderPass->SetActiveCamera(DebugCamera);
@@ -478,6 +477,17 @@ void CViewerState::Update(float const Elapsed)
 	//DebugCamera->SetLookAtTarget(vec3f(0,0,0));
 
 	DebugCameraControl->Update(Elapsed);
+
+	if (DebugCamera->GetPosition().Y > 10000.f)
+	{
+		DebugCamera->SetNearPlane(DebugCamera->GetPosition().Y / 2.f);
+		DebugCamera->SetFarPlane(250000.f);
+	}
+	else
+	{
+		DebugCamera->SetNearPlane(0.1f);
+		DebugCamera->SetFarPlane(50000.f);
+	}
 
 	if (SkyBox)
 	{
