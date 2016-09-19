@@ -681,7 +681,17 @@ void CViewerState::WriteFramesToFile()
 
 	uint const NumFrames = (uint) AnimationFrames.size();
 	fwrite(& NumFrames, sizeof(uint), 1, file);
-	fwrite(AnimationFrames.data(), sizeof(SAnimationFrame), AnimationFrames.size(), file);
+
+	vector<float> Data;
+	for (auto Frame : AnimationFrames)
+	{
+		Data.push_back(Frame.Position.X);
+		Data.push_back(Frame.Position.Y);
+		Data.push_back(Frame.Position.Z);
+		Data.push_back(Frame.Direction.X);
+		Data.push_back(Frame.Direction.Y);
+	}
+	fwrite(Data.data(), sizeof(float), Data.size(), file);
 
 	fclose(file);
 }
@@ -698,8 +708,20 @@ void CViewerState::ReadFramesFromFile()
 		uint NumFrames = 0;
 		fread(& NumFrames, sizeof(uint), 1, file);
 
+		vector<float> Data;
+		Data.resize(NumFrames * 5);
+
+		fread(Data.data(), sizeof(float), Data.size(), file);
+
 		AnimationFrames.resize(NumFrames);
-		fread(AnimationFrames.data(), sizeof(SAnimationFrame), AnimationFrames.size(), file);
+		size_t i = 0;
+		for (auto & Frame : AnimationFrames)
+		{
+			Frame.Position = vec3f(Data[i + 0], Data[i + 1], Data[i + 2]);
+			Frame.Direction = vec2f(Data[i + 3], Data[i + 4]);
+
+			i += 5;
+		}
 
 		fclose(file);
 	}
