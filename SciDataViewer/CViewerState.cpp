@@ -50,6 +50,8 @@ ion::Scene::CSimpleMesh * CreatePolygonMesh(vector<vec2d> const & Points)
 
 void CViewerState::Init()
 {
+	ReadFramesFromFile();
+
 	SingletonPointer<ion::CAssetManager> AssetManager;
 
 	SceneFrameBuffer = Application->Context->CreateFrameBuffer();
@@ -478,6 +480,12 @@ void CViewerState::Update(float const Elapsed)
 
 	DebugCameraControl->Update(Elapsed);
 
+	if (AnimationPlayingBack)
+	{
+		CurrentAnimationTime += Elapsed;
+		ApplyCurrentTime(CurrentAnimationTime);
+	}
+
 	if (DebugCamera->GetPosition().Y > 10000.f)
 	{
 		DebugCamera->SetNearPlane(DebugCamera->GetPosition().Y / 2.f);
@@ -584,6 +592,10 @@ void CViewerState::OnEvent(IEvent & Event)
 				Volume->ToggleGUI();
 				break;
 
+			case EKey::G:
+				ClipmapsWindow->ToggleVisibility();
+				break;
+
 			case EKey::F1:
 				DebugWindow->ToggleVisibility();
 				break;
@@ -594,6 +606,26 @@ void CViewerState::OnEvent(IEvent & Event)
 					DoImport();
 				}
 				break;
+
+			case EKey::LeftBracket:
+				WriteFramesToFile();
+				break;
+
+			case EKey::U:
+				PushAnimationFrame();
+				break;
+
+			case EKey::Space:
+				if (AnimationPlayingBack)
+				{
+					StopAnimationPlayback();
+				}
+				else
+				{
+					StartAnimationPlayback();
+				}
+				break;
+
 			}
 		}
 	}
@@ -638,6 +670,96 @@ void CViewerState::DoExportOBJ()
 	else {
 		printf("Error: %s\n", NFD_GetError());
 	}
+}
+
+void CViewerState::WriteFramesToFile()
+{
+	static string const FileName = "Frames.bin";
+
+	FILE * file = nullptr;
+	file = fopen(FileName.c_str(), "wb");
+
+	uint const NumFrames = (uint) AnimationFrames.size();
+	fwrite(& NumFrames, sizeof(uint), 1, file);
+	fwrite(AnimationFrames.data(), sizeof(SAnimationFrame), AnimationFrames.size(), file);
+
+	fclose(file);
+}
+
+void CViewerState::ReadFramesFromFile()
+{
+	static string const FileName = "Frames.bin";
+
+	FILE * file = nullptr;
+	file = fopen(FileName.c_str(), "rb");
+
+	if (file)
+	{
+		uint NumFrames = 0;
+		fread(& NumFrames, sizeof(uint), 1, file);
+
+		AnimationFrames.resize(NumFrames);
+		fread(AnimationFrames.data(), sizeof(SAnimationFrame), AnimationFrames.size(), file);
+
+		fclose(file);
+	}
+}
+
+void CViewerState::ApplyCurrentTime(float const t)
+{
+	if (0 == AnimationFrames.size())
+	{
+		return;
+	}
+
+	int CurrentFrame = (int) (t / TimePerFrame);
+	float CurrentFrameDelta = (t - (float) CurrentFrame * TimePerFrame) / TimePerFrame;
+
+	if (CurrentFrame >= AnimationFrames.size())
+	{
+		CurrentFrame = (int) AnimationFrames.size() - 1;
+		CurrentFrameDelta = 0;
+	}
+
+	auto & Frame = AnimationFrames[CurrentFrame];
+
+	vec3f PositionData[4] = { Frame.Position, Frame.Position, Frame.Position, Frame.Position };
+	vec2f DirectionData[4] = { Frame.Direction, Frame.Direction, Frame.Direction, Frame.Direction };
+	for (int i = -1; i <= 2; ++ i)
+	{
+		if (CurrentFrame + i >= 0 && CurrentFrame + i < AnimationFrames.size())
+		{
+			PositionData[i + 1] = AnimationFrames[CurrentFrame + i].Position;
+			DirectionData[i + 1] = AnimationFrames[CurrentFrame + i].Direction;
+		}
+	}
+
+	DebugCamera->SetPosition(CubicInterpolate(PositionData, vec3f(CurrentFrameDelta)));
+	vec2f Direction = CubicInterpolate(DirectionData, vec2f(CurrentFrameDelta));
+	DebugCameraControl->SetPhi(Direction.X);
+	DebugCameraControl->SetTheta(Direction.Y);
+}
+
+void CViewerState::PushAnimationFrame()
+{
+	SAnimationFrame Frame;
+	Frame.Position = DebugCamera->GetPosition();
+	Frame.Direction.X = DebugCameraControl->GetPhi();
+	Frame.Direction.Y = DebugCameraControl->GetTheta();
+
+	AnimationFrames.push_back(Frame);
+}
+
+void CViewerState::StartAnimationPlayback()
+{
+	AnimationPlayingBack = true;
+	CurrentAnimationTime = 0;
+	ApplyCurrentTime(CurrentAnimationTime);
+}
+
+void CViewerState::StopAnimationPlayback()
+{
+	AnimationPlayingBack = false;
 }
 
 

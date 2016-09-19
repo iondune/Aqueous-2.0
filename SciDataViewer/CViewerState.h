@@ -81,4 +81,25 @@ private:
 	void DoImport();
 	void DoExportOBJ();
 
+	struct SAnimationFrame
+	{
+		vec3f Position;
+		vec2f Direction;
+	};
+
+	bool AnimationPlayingBack = false;
+	float CurrentAnimationTime = 0;
+	float const TimePerFrame = 1.f;
+
+	vector<SAnimationFrame> AnimationFrames;
+
+	void WriteFramesToFile();
+	void ReadFramesFromFile();
+
+	void ApplyCurrentTime(float const t);
+	void PushAnimationFrame();
+
+	void StartAnimationPlayback();
+	void StopAnimationPlayback();
+
 };
