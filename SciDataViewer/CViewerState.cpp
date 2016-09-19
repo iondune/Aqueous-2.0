@@ -483,6 +483,11 @@ void CViewerState::Update(float const Elapsed)
 		DebugCamera->SetNearPlane(DebugCamera->GetPosition().Y / 2.f);
 		DebugCamera->SetFarPlane(250000.f);
 	}
+	else if (DebugCamera->GetPosition().Y > 1000.f)
+	{
+		DebugCamera->SetNearPlane(10.f);
+		DebugCamera->SetFarPlane(50000.f + 200000.f * (DebugCamera->GetPosition().Y / 10000.f));
+	}
 	else
 	{
 		DebugCamera->SetNearPlane(0.1f);
