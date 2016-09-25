@@ -292,7 +292,7 @@ void CViewerState::Init()
 	VolumeData->SetWrapMode(ITexture::EWrapMode::Clamp);
 	Volume->VolumeData = VolumeData;
 	Volume->SceneDepth = SceneDepth;
-	Volume->SetScale(vec3f(16.f));
+	Volume->SetScale(vec3f(1600.f, 400.f, 1600.f));
 	//Volume->SetPosition(vec3f(1280.f, -1600.f, 1280.f));
 	VolumeRenderPass->AddSceneObject(Volume);
 
