@@ -65,7 +65,7 @@ float getAmplitude(float length, float speed)
 
 SharkSceneObject::SharkSceneObject(std::string ModelName) :
 	Model(ModelName),
-	InternalTime(0),
+	InternalTime(115.f),
 	parentTransforms(true)
 {
 	//Load mesh
@@ -122,11 +122,11 @@ void SharkSceneObject::setTime(f64 newTime)
 	this->InternalTime = newTime;
 }
 
-void SharkSceneObject::update(CKeySpline & spline, f64 dt) {
+void SharkSceneObject::update(CKeySpline & spline, f64 deltaTime) {
 	static float targSpeed = 1.0f;
 	static float speed = 1.0f;
 
-	InternalTime += speed * dt;
+	InternalTime += speed * deltaTime;
 	static float length = 100;
 	float s = (float) InternalTime;
 	bool smoothTurn = true;
@@ -194,7 +194,7 @@ void SharkSceneObject::update(CKeySpline & spline, f64 dt) {
 		targSpeed = std::min(getMaxSpeed(), targSpeed);
 		targSpeed = std::max(getMinSpeed(), targSpeed);
 
-		float accel = (targSpeed - speed) * (float) dt;
+		float accel = (targSpeed - speed) * (float) deltaTime;
 
 		speed += accel;
 		//Set Frequency and Amplitude from speed
@@ -221,7 +221,7 @@ void SharkSceneObject::update(CKeySpline & spline, f64 dt) {
 	for (std::vector<SharkSpineOscilator>::iterator osc = oscilators.begin(); osc != oscilators.end(); ++osc)
 	{
 		//osc->handleGUI();
-		osc->update((float) dt);
+		osc->update((float) deltaTime);
 		osc->apply(Model);
 	}
 

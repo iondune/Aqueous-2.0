@@ -16,7 +16,7 @@ public:
 
 	SharkSceneObject(std::string modelName);
 	~SharkSceneObject();
-	void update(CKeySpline & spline, f64 dt);
+	void update(CKeySpline & spline, f64 const deltaTime);
 	virtual void Load(ion::Scene::CRenderPass * renderpass);
 	void setTime(f64 newTime);
 	void applyParentTransforms(bool toggle) { parentTransforms = toggle; }
