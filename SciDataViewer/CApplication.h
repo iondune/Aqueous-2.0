@@ -30,7 +30,10 @@ public:
 	SharedPointer<ion::Graphics::IGraphicsContext> Context;
 	SharedPointer<ion::Graphics::IRenderTarget> RenderTarget;
 
+	float GetFrameTime() const;
+
 	bool Recording = false;
+	bool FixedFrameRate = false;
 
 private:
 
@@ -49,5 +52,7 @@ private:
 
 
 	ion::CWindow * Window = nullptr;
+
+	float Elapsed = 0;
 
 };

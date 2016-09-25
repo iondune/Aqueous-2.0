@@ -4,6 +4,8 @@
 #include <ionScene.h>
 #include <ionApplication.h>
 
+class CApplication;
+
 
 class CWaterSurfaceSceneObject : public ion::Scene::ISceneObject
 {
@@ -25,6 +27,7 @@ protected:
 	SingletonPointer<ion::CGraphicsAPI> GraphicsAPI;
 	SingletonPointer<ion::CAssetManager> AssetManager;
 	SingletonPointer<ion::CTimeManager> TimeManager;
+	SingletonPointer<CApplication> Application;
 
 	SharedPointer<ion::Graphics::IShaderProgram> Shader;
 	SharedPointer<ion::Graphics::IVertexBuffer> VertexBuffer;

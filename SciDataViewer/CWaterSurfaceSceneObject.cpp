@@ -1,5 +1,7 @@
 
 #include "CWaterSurfaceSceneObject.h"
+#include "CApplication.h"
+
 #include <ionGUI.h>
 
 
@@ -82,7 +84,7 @@ void CWaterSurfaceSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 
 void CWaterSurfaceSceneObject::Draw(ion::Scene::CRenderPass * RenderPass)
 {
-	uTime = uTime.Get() + (float) TimeManager->GetElapsedTime() * Speed;
+	uTime = uTime.Get() + Application->GetFrameTime() * Speed;
 	RenderPass->SubmitPipelineStateForRendering(PipelineState, this);
 }
 

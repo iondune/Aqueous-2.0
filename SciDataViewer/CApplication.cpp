@@ -23,7 +23,15 @@ void CApplication::Run()
 
 		GUIManager->NewFrame();
 		StateManager->DoStateChange();
-		StateManager->Update((f32) TimeManager->GetElapsedTime());
+		if (FixedFrameRate)
+		{
+			Elapsed = 1 / 30.f;
+		}
+		else
+		{
+			Elapsed = (f32) TimeManager->GetElapsedTime();
+		}
+		StateManager->Update(Elapsed);
 
 		RenderTarget->ClearColorAndDepth();
 		SceneManager->DrawAll();
@@ -90,6 +98,11 @@ CWindow * CApplication::GetWindow()
 	return Window;
 }
 
+
+float CApplication::GetFrameTime() const
+{
+	return Elapsed;
+}
 
 void CApplication::InitWindow()
 {
