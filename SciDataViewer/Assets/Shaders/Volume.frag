@@ -125,6 +125,8 @@ void main()
 	vec3 FrontPosition;
 	vec3 CameraPosition = (uInvModelMatrix * vec4(uCameraPosition, 1.0)).xyz;
 
+	bool CameraInternal = false;
+
 	if (CameraPosition.x >= -0.5 &&
 		CameraPosition.y >= -0.5 &&
 		CameraPosition.z >= -0.5 &&
@@ -133,6 +135,7 @@ void main()
 		CameraPosition.z <=  0.5)
 	{
 		FrontPosition = CameraPosition + vec3(0.5);
+		CameraInternal = true;
 	}
 	else
 	{
@@ -158,6 +161,11 @@ void main()
 	vec3 DirectionStep = Direction * uStepSize;
 
 	vec3 Iterator = FrontPosition;
+
+	if (CameraInternal)
+	{
+		Iterator += DirectionStep;
+	}
 
 	vec4 ColorAccumulator = vec4(0.0);
 	float AlphaAccumulator = 0.0;
