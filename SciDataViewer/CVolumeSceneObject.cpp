@@ -10,7 +10,7 @@ using namespace ion::Scene;
 CVolumeSceneObject::CVolumeSceneObject()
 	: Mode(2), SliceAxis(vec3f(1.f, 0.f, 0.f)),
 	LocalRange(0.2f), MinimumAlpha(0.1f),
-	EmphasisLocation(0.5f), AlphaIntensity(1.f),
+	EmphasisLocation(0.5f), AlphaIntensity(1.f), ColorIntensity(1.f),
 	StepSize(1.f / 10.f), QualityLevel(10.f), DebugLevel(0), UseShading(0)
 {
 	Mesh = new CSimpleMesh();
@@ -105,6 +105,7 @@ void CVolumeSceneObject::Load(ion::Scene::CRenderPass * RenderPass)
 
 		PipelineState->SetUniform("uInvModelMatrix", InvModelMatrix);
 		PipelineState->SetUniform("uAlphaIntensity", AlphaIntensity);
+		PipelineState->SetUniform("uColorIntensity", ColorIntensity);
 		PipelineState->SetUniform("uHighlightMode", Mode);
 		PipelineState->SetUniform("uSliceAxis", SliceAxis);
 		PipelineState->SetUniform("uLocalRange", LocalRange);
@@ -145,6 +146,7 @@ void CVolumeSceneObject::GUI()
 		ImGui::SliderInt("Draw Mode", &Mode.Get(), 0, 3);
 		ImGui::SliderFloat("Emphasis Location", &EmphasisLocation.Get(), 0.f, 1.f);
 		ImGui::SliderFloat("Alpha Intensity", &AlphaIntensity.Get(), 0.5f, 10.f);
+		ImGui::SliderFloat("Color Intensity", &ColorIntensity.Get(), 0.5f, 10.f);
 		ImGui::SliderFloat("Minimum Alpha", &MinimumAlpha.Get(), 0.f, 0.5f);
 		ImGui::SliderFloat("Local Range", &LocalRange.Get(), 0.05f, 0.5f);
 		if (ImGui::SliderFloat("Quality", &QualityLevel, 5.f, 1000.f, "%.3f", 2.f))

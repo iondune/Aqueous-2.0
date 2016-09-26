@@ -17,6 +17,7 @@ public:
 	ion::Graphics::CUniform<float> MinimumAlpha;
 	ion::Graphics::CUniform<float> EmphasisLocation;
 	ion::Graphics::CUniform<float> AlphaIntensity;
+	ion::Graphics::CUniform<float> ColorIntensity;
 	float QualityLevel;
 	ion::Graphics::CUniform<float> StepSize;
 
