@@ -250,9 +250,9 @@ void main()
 		return;
 	}
 
-	ColorAccumulator.r = clamp(ColorAccumulator.r, 0.0, 1.0);
-	ColorAccumulator.g = clamp(ColorAccumulator.g, 0.0, 1.0);
-	ColorAccumulator.b = clamp(ColorAccumulator.b, 0.0, 1.0);
+	ColorAccumulator.r = clamp(ColorAccumulator.r / uAlphaIntensity, 0.0, 1.0);
+	ColorAccumulator.g = clamp(ColorAccumulator.g / uAlphaIntensity, 0.0, 1.0);
+	ColorAccumulator.b = clamp(ColorAccumulator.b / uAlphaIntensity, 0.0, 1.0);
 	ColorAccumulator.a = clamp(ColorAccumulator.a, 0.0, 1.0);
 
 	if (uDebugLevel == 1)
