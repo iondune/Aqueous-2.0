@@ -265,7 +265,7 @@ void CViewerState::Init()
 	WaterRenderPass->AddSceneObject(WaterSurface);
 
 	Volume = new CVolumeSceneObject();
-	vec3u VolumeSize = vec3u(14, 23, 28);
+	vec3u VolumeSize = vec3u(14, 28, 23);
 	SharedPointer<Graphics::ITexture3D> VolumeData = GraphicsAPI->CreateTexture3D(VolumeSize, ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
 	vector<double> DataNorm = LoadOxymapsCSVData("Data/oxyMaps.csv");
 	byte * Data = new byte[28 * 23 * 14 * 4];
@@ -275,12 +275,13 @@ void CViewerState::Init()
 		{
 			for (int i = 0; i < 14; ++ i)
 			{
-				int const Index = i + j * 14 + k * 23 * 14;
-				color4i const Color = NormDataToColor(DataNorm[Index]);
+				int const DataIndex = i + j * 14 + k * 23 * 14;
+				int const VolumeIndex = i + k * 14 + j * 23 * 14;
+				color4i const Color = NormDataToColor(DataNorm[DataIndex]);
 
 				for (int t = 0; t < 4; ++ t)
 				{
-					Data[Index * 4 + t] = Color[t];
+					Data[VolumeIndex * 4 + t] = Color[t];
 				}
 			}
 		}
@@ -292,8 +293,8 @@ void CViewerState::Init()
 	VolumeData->SetWrapMode(ITexture::EWrapMode::Clamp);
 	Volume->VolumeData = VolumeData;
 	Volume->SceneDepth = SceneDepth;
-	Volume->SetScale(vec3f(2400.f, 400.f, 2400.f));
-	Volume->SetPosition(vec3f(200.f, -200.f, 200.f));
+	Volume->SetScale(vec3f(2400.f, 600.f, 2400.f));
+	Volume->SetPosition(vec3f(200.f, -300.f, 200.f));
 	//Volume->SetPosition(vec3f(1280.f, -1600.f, 1280.f));
 	VolumeRenderPass->AddSceneObject(Volume);
 
