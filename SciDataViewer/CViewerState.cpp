@@ -264,40 +264,6 @@ void CViewerState::Init()
 	//WaterSurface->SetScale(vec3f(50, 1, 50));
 	WaterRenderPass->AddSceneObject(WaterSurface);
 
-	Volume = new CVolumeSceneObject();
-	vec3u VolumeSize = vec3u(14, 28, 23);
-	SharedPointer<Graphics::ITexture3D> VolumeData = GraphicsAPI->CreateTexture3D(VolumeSize, ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
-	vector<double> DataNorm = LoadOxymapsCSVData("Data/oxyMaps.csv");
-	byte * Data = new byte[28 * 23 * 14 * 4];
-	for (int k = 0; k < 28; ++ k)
-	{
-		for (int j = 0; j < 23; ++ j)
-		{
-			for (int i = 0; i < 14; ++ i)
-			{
-				int const DataIndex = i + j * 14 + k * 23 * 14;
-				int const VolumeIndex = i + k * 14 + j * 23 * 14;
-				color4i const Color = NormDataToColor(DataNorm[DataIndex]);
-
-				for (int t = 0; t < 4; ++ t)
-				{
-					Data[VolumeIndex * 4 + t] = Color[t];
-				}
-			}
-		}
-	}
-	VolumeData->Upload(Data, VolumeSize, ITexture::EFormatComponents::RGBA, EScalarType::UnsignedInt8);
-	delete[] Data;
-	VolumeData->SetMinFilter(ITexture::EFilter::Linear);
-	VolumeData->SetMagFilter(ITexture::EFilter::Linear);
-	VolumeData->SetWrapMode(ITexture::EWrapMode::Clamp);
-	Volume->VolumeData = VolumeData;
-	Volume->SceneDepth = SceneDepth;
-	Volume->SetScale(vec3f(2400.f, 600.f, 2400.f));
-	Volume->SetPosition(vec3f(200.f, -300.f, 200.f));
-	//Volume->SetPosition(vec3f(1280.f, -1600.f, 1280.f));
-	VolumeRenderPass->AddSceneObject(Volume);
-
 
 	class SimpleHeight : public CGeometryClipmapsSceneObject::IHeightInput
 	{
@@ -314,7 +280,11 @@ void CViewerState::Init()
 			LastHeight = -2048;
 
 			vec2d const Pos = WorldToLongLat(vec3f((float) Position.X, 0, (float) Position.Y) * Scale).XZ();
+			return GetTerrainHeightAtPosition(Pos);
+		}
 
+		float GetTerrainHeightAtPosition(vec2d const & Pos)
+		{
 			for (auto Layer : Layers)
 			{
 				if (Layer->IsPointInBounds(Pos))
@@ -352,6 +322,56 @@ void CViewerState::Init()
 	GeometryClipmapsObject->HeightInput = HeightInput;
 	GeometryClipmapsObject->SetScale(vec3f(ClipmapsScale, 1.f, ClipmapsScale));
 	DefaultRenderPass->AddSceneObject(GeometryClipmapsObject);
+
+	Volume = new CVolumeSceneObject();
+	vec3f const VolumeScale = vec3f(2400.f, 600.f, 2400.f);
+	vec3f const VolumePosition = vec3f(200.f, -300.f, 200.f);
+	vec3u VolumeSize = vec3u(14, 23, 28);
+	SharedPointer<Graphics::ITexture3D> VolumeData = GraphicsAPI->CreateTexture3D(VolumeSize, ITexture::EMipMaps::False, ITexture::EFormatComponents::RGBA, ITexture::EInternalFormatType::Fix8);
+	vector<double> DataNorm = LoadOxymapsCSVData("Data/oxyMaps.csv");
+	byte * Data = new byte[28 * 23 * 14 * 4];
+	for (int k = 0; k < 28; ++ k)
+	{
+		for (int j = 0; j < 23; ++ j)
+		{
+			for (int i = 0; i < 14; ++ i)
+			{
+				int const DataIndex = i + j * 14 + k * 23 * 14;
+				color4i Color = NormDataToColor(DataNorm[DataIndex]);
+
+				Color = color4f((float) i / 14.f, (float) j / 23.f, (float) k / 28.f, 1.f);
+
+				vec3f World = vec3f((float) i / 14.f - 0.5f, 0.f, (float) j / 23.f - 0.5f) * VolumeScale + VolumePosition;
+
+				float const Elevation = HeightInput->GetTerrainHeightAtPosition(WorldToLongLat(World).XZ());
+				float const Depth = ((float) j / 23.f - 0.5f) * VolumeScale.Y + VolumePosition.Y;
+
+				float const SST = 29.f;
+				float const DepthRatio = Depth / Elevation;// Clamp(-Elevation / 800.f, 0.f, 1.f);
+				float const Temperature = 29.f - DepthRatio * 5.f;
+				float const Value = (Temperature - 24.f) / (29.f - 24.f);
+
+				Color = color4f(Value, 1.f, 0.f, Value);
+
+				int const VolumeIndex = i + j * 14 + k * 23 * 14;
+				for (int t = 0; t < 4; ++ t)
+				{
+					Data[VolumeIndex * 4 + t] = Color[t];
+				}
+			}
+		}
+	}
+	VolumeData->Upload(Data, VolumeSize, ITexture::EFormatComponents::RGBA, EScalarType::UnsignedInt8);
+	delete[] Data;
+	VolumeData->SetMinFilter(ITexture::EFilter::Linear);
+	VolumeData->SetMagFilter(ITexture::EFilter::Linear);
+	VolumeData->SetWrapMode(ITexture::EWrapMode::Clamp);
+	Volume->VolumeData = VolumeData;
+	Volume->SceneDepth = SceneDepth;
+	Volume->SetScale(VolumeScale);
+	Volume->SetPosition(VolumePosition);
+	//Volume->SetPosition(vec3f(1280.f, -1600.f, 1280.f));
+	VolumeRenderPass->AddSceneObject(Volume);
 
 
 	CSimpleMeshSceneObject * PostProcessObject = new CSimpleMeshSceneObject();
