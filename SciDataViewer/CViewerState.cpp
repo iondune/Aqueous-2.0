@@ -337,21 +337,52 @@ void CViewerState::Init()
 			for (int i = 0; i < 14; ++ i)
 			{
 				int const DataIndex = i + j * 14 + k * 23 * 14;
-				color4i Color = NormDataToColor(DataNorm[DataIndex]);
+				double const LoadedData = DataNorm[DataIndex];
+				color4i Color = NormDataToColor(LoadedData);
 
-				Color = color4f((float) i / 14.f, (float) j / 23.f, (float) k / 28.f, 1.f);
+				Color = color4f((float) i / 13.f, (float) j / 22.f, (float) k / 27.f, 1.f);
 
-				vec3f World = vec3f((float) i / 14.f - 0.5f, 0.f, (float) j / 23.f - 0.5f) * VolumeScale + VolumePosition;
+				vec3f World = vec3f((float) i / 13.f - 0.5f, 0.f, (float) j / 22.f - 0.5f) * VolumeScale + VolumePosition;
 
 				float const Elevation = HeightInput->GetTerrainHeightAtPosition(WorldToLongLat(World).XZ());
-				float const Depth = ((float) j / 23.f - 0.5f) * VolumeScale.Y + VolumePosition.Y;
+				float const Depth = ((float) k / 27.f - 0.5f) * VolumeScale.Y + VolumePosition.Y;
+
+				float DepthRatio;
+				if (Depth > Elevation)
+				{
+					DepthRatio = (Depth - Elevation) / Elevation;
+				}
+				else
+				{
+					DepthRatio = 1.f;
+					//DepthRatio = Clamp(Depth / Elevation, 0.f, 1.f);
+					//DepthRatio = Clamp(-Elevation / 800.f, 0.f, 1.f);
+				}
+
+				//if (Abs(Depth - Elevation) < 10.f)
+				//{
+				//	DepthRatio = 1.f;
+				//}
+				//else
+				//{
+				//	DepthRatio = 0.f;
+				//}
+
+				//if (Elevation < 0)
+				//	DepthRatio = 1.f;
+				//else
+				//	DepthRatio = 0.f;
+
+				//if (Depth < -300.f)
+				//	DepthRatio = 1.f;
+				//else
+				//	DepthRatio = 0.f;
 
 				float const SST = 29.f;
-				float const DepthRatio = Depth / Elevation;// Clamp(-Elevation / 800.f, 0.f, 1.f);
-				float const Temperature = 29.f - DepthRatio * 5.f;
-				float const Value = (Temperature - 24.f) / (29.f - 24.f);
+				float const BottomTemperature = 24.f;
+				float const Temperature = BottomTemperature + DepthRatio * (SST - BottomTemperature);
 
-				Color = color4f(Value, 1.f, 0.f, Value);
+				Color = color4f(DepthRatio, 1.f, 0.f, DepthRatio);
 
 				int const VolumeIndex = i + j * 14 + k * 23 * 14;
 				for (int t = 0; t < 4; ++ t)
