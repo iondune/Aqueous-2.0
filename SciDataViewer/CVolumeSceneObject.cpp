@@ -73,10 +73,10 @@ CVolumeSceneObject::CVolumeSceneObject()
 	Mesh->Triangles.resize(12);
 	for (int i = 0; i < 6; ++ i)
 	{
-		Mesh->Vertices[4 * i + 0].TextureCoordinates = SVector2f(0, 1);
-		Mesh->Vertices[4 * i + 1].TextureCoordinates = SVector2f(0, 0);
-		Mesh->Vertices[4 * i + 2].TextureCoordinates = SVector2f(1, 0);
-		Mesh->Vertices[4 * i + 3].TextureCoordinates = SVector2f(1, 1);
+		Mesh->Vertices[4 * i + 0].TextureCoordinates = vec2f(0, 1);
+		Mesh->Vertices[4 * i + 1].TextureCoordinates = vec2f(0, 0);
+		Mesh->Vertices[4 * i + 2].TextureCoordinates = vec2f(1, 0);
+		Mesh->Vertices[4 * i + 3].TextureCoordinates = vec2f(1, 1);
 
 		Mesh->Triangles[2 * i].Indices[0] = 4 * i + 0;
 		Mesh->Triangles[2 * i].Indices[1] = 4 * i + 1;
